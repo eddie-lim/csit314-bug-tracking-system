@@ -24,7 +24,6 @@ use common\components\keyStorage\FormModel;
 use common\components\keyStorage\FormWidget;
 
 $bundle = BackendAsset::register($this);
-Yii::info(Yii::$app->components["i18n"]["translations"]['*']['class'], 'test');
 
 $keyStorage = Yii::$app->keyStorage;
 
@@ -116,7 +115,6 @@ $logEntries[] = [
                             '.Html::img(Yii::$app->user->identity->userProfile->getAvatar('/img/anonymous.png'), ['class' => ['img-circle', 'elevation-2', 'bg-white'], 'alt' => 'User image']).'
                             <p>
                                 '.Yii::$app->user->identity->publicIdentity.'
-                                <small>'.Yii::t('backend', 'Member since {0, date, short}', Yii::$app->user->identity->created_at).'</small>
                             </p>
                         </li>
                         <!-- Menu Footer-->
@@ -223,7 +221,7 @@ $logEntries[] = [
                         ],
                         [
                             'label' => Yii::t('backend', 'Static pages'),
-                            'url' => ['/content/page/index'],
+                            'url' => ['/'],
                             'icon' => FAS::icon('thumbtack', ['class' => ['nav-icon']]),
                             'active' => Yii::$app->controller->id === 'page',
                         ],
@@ -237,13 +235,13 @@ $logEntries[] = [
                             'items' => [
                                 [
                                     'label' => Yii::t('backend', 'Articles'),
-                                    'url' => ['/content/article/index'],
+                                    'url' => ['/'],
                                     'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
                                     'active' => Yii::$app->controller->id === 'article',
                                 ],
                                 [
                                     'label' => Yii::t('backend', 'Categories'),
-                                    'url' => ['/content/category/index'],
+                                    'url' => ['/'],
                                     'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
                                     'active' => Yii::$app->controller->id === 'category',
                                 ],
@@ -258,105 +256,27 @@ $logEntries[] = [
                             'items' => [
                                 [
                                     'label' => Yii::t('backend', 'Text Blocks'),
-                                    'url' => ['/widget/text/index'],
+                                    'url' => ['/'],
                                     'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
                                     'active' => Yii::$app->controller->id === 'text',
                                 ],
                                 [
                                     'label' => Yii::t('backend', 'Menu'),
-                                    'url' => ['/widget/menu/index'],
+                                    'url' => ['/'],
                                     'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
                                     'active' => Yii::$app->controller->id === 'menu',
                                 ],
                                 [
                                     'label' => Yii::t('backend', 'Carousel'),
-                                    'url' => ['/widget/carousel/index'],
+                                    'url' => ['/'],
                                     'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
                                     'active' => in_array(Yii::$app->controller->id, ['carousel', 'carousel-item']),
                                 ],
                             ],
                         ],
                         [
-                            'label' => Yii::t('backend', 'Translation'),
-                            'options' => ['class' => 'nav-header'],
-                            'visible' => Yii::$app->components["i18n"]["translations"]['*']['class'] === \yii\i18n\DbMessageSource::class,
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Translation'),
-                            'url' => ['/translation/default/index'],
-                            'icon' => FAS::icon('language', ['class' => ['nav-icon']]),
-                            'active' => (Yii::$app->controller->module->id == 'translation'),
-                            'visible' => Yii::$app->components["i18n"]["translations"]['*']['class'] === \yii\i18n\DbMessageSource::class,
-                        ],
-                        [
                             'label' => Yii::t('backend', 'System'),
                             'options' => ['class' => 'nav-header'],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'RBAC Rules'),
-                            'url' => '#',
-                            'icon' => FAS::icon('user-shield', ['class' => ['nav-icon']]),
-                            'options' => ['class' => 'nav-item has-treeview'],
-                            'active' => (Yii::$app->controller->module->id == 'rbac'),
-                            'items' => [
-                                [
-                                    'label' => Yii::t('backend', 'Assignments'),
-                                    'url' => ['/rbac/rbac-auth-assignment/index'],
-                                    'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'Items'),
-                                    'url' => ['/rbac/rbac-auth-item/index'],
-                                    'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'Child Items'),
-                                    'url' => ['/rbac/rbac-auth-item-child/index'],
-                                    'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'Rules'),
-                                    'url' => ['/rbac/rbac-auth-rule/index'],
-                                    'icon' => FAR::icon('circle', ['class' => ['nav-icon']]),
-                                ],
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Files'),
-                            'url' => '#',
-                            'icon' => FAS::icon('folder-open', ['class' => ['nav-icon']]),
-                            'options' => ['class' => 'nav-item has-treeview'],
-                            'active' => (Yii::$app->controller->module->id == 'file'),
-                            'items' => [
-                                [
-                                    'label' => Yii::t('backend', 'Storage'),
-                                    'url' => ['/file/storage/index'],
-                                    'icon' => FAS::icon('database', ['class' => ['nav-icon']]),
-                                    'active' => (Yii::$app->controller->id == 'storage'),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'Manager'),
-                                    'url' => ['/file/manager/index'],
-                                    'icon' => FAS::icon('archive', ['class' => ['nav-icon']]),
-                                    'active' => (Yii::$app->controller->id == 'manager'),
-                                ],
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Key-Value Storage'),
-                            'url' => ['/system/key-storage/index'],
-                            'icon' => FAS::icon('exchange-alt', ['class' => ['nav-icon']]),
-                            'active' => (Yii::$app->controller->id == 'key-storage'),
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Cache'),
-                            'url' => ['/system/cache/index'],
-                            'icon' => FAS::icon('sync', ['class' => ['nav-icon']]),
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'System Information'),
-                            'url' => ['/system/information/index'],
-                            'icon' => FAS::icon('tachometer-alt', ['class' => ['nav-icon']]),
                         ],
                         [
                             'label' => Yii::t('backend', 'Logs'),
