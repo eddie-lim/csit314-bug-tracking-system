@@ -21,7 +21,7 @@
 <VirtualHost *:80>
     ServerAdmin webmaster@bts.com
     DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\frontend\web"
-    ServerName dashboard.bts.localhost
+    ServerName bts.localhost
     ErrorLog "logs/api-bts-error.log"
     CustomLog "logs/dummy-host2.example.com-access.log" common
 </VirtualHost>
