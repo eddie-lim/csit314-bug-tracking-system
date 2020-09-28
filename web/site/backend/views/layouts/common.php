@@ -340,7 +340,7 @@ $logEntries[] = [
     <!-- footer -->
     <footer class="main-footer <?php echo $keyStorage->get('adminlte.footer-small-text') ? 'text-sm' : null ?>">
         <strong>&copy; My Company <?php echo date('Y') ?></strong>
-        <div class="float-right d-none d-sm-inline-block"><?php echo Yii::powered() ?></div>
+        <div class="float-right d-none d-sm-inline-block"></div>
     </footer>
     <!-- /footer -->
 
