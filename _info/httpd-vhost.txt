@@ -1,0 +1,27 @@
+
+# ----------------------------------- #
+# csit314-bug-tracking-system Website #
+# ----------------------------------- #
+<VirtualHost *:80>
+    ServerAdmin webmaster@bts.com
+    DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\backend\web"
+    ServerName admin.bts.localhost
+    ErrorLog "logs/admin-bts-error.log"
+    CustomLog "logs/dummy-host2.example.com-access.log" common
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@bts.com
+    DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\api\web"
+    ServerName api.bts.localhost
+    ErrorLog "logs/api-bts-error.log"
+    CustomLog "logs/dummy-host2.example.com-access.log" common
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@bts.com
+    DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\frontend\web"
+    ServerName dashboard.bts.localhost
+    ErrorLog "logs/api-bts-error.log"
+    CustomLog "logs/dummy-host2.example.com-access.log" common
+</VirtualHost>
