@@ -54,7 +54,7 @@ class Bug extends \yii\db\ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'bug_status' => 'Bug Status',
-            'priority_level' => 'Pirority Level',
+            'priority_level' => 'Priority Level',
             'developer_user_id' => 'Developer User ID',
             'notes' => 'Notes',
             'delete_status' => 'Delete Status',

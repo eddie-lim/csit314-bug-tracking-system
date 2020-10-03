@@ -19,7 +19,7 @@ use yii\bootstrap4\ActiveForm;
                 <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
                 <?php echo $form->field($model, 'description')->textarea(['rows' => 6]) ?>
                 <?php echo $form->field($model, 'bug_status')->dropDownList([ 'new' => 'New', 'assigned' => 'Assigned', 'fixing' => 'Fixing', 'pending_review' => 'Pending review', 'completed' => 'Completed', 'rejected' => 'Rejected', 'reopen' => 'Reopen', ], ['prompt' => '']) ?>
-                <?php echo $form->field($model, 'pirority_level')->dropDownList([ 1 => '1', 2 => '2', 3 => '3', ], ['prompt' => '']) ?>
+                <?php echo $form->field($model, 'priority_level')->dropDownList([ 1 => '1', 2 => '2', 3 => '3', ], ['prompt' => '']) ?>
                 <?php echo $form->field($model, 'developer_user_id')->textInput() ?>
                 <?php echo $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
                 <?php echo $form->field($model, 'delete_status')->dropDownList([ 'enabled' => 'Enabled', 'disabled' => 'Disabled', ], ['prompt' => '']) ?>

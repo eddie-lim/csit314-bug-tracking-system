@@ -21,7 +21,7 @@ use yii\bootstrap4\ActiveForm;
     <?php echo $form->field($model, 'title') ?>
     <?php echo $form->field($model, 'description') ?>
     <?php echo $form->field($model, 'bug_status') ?>
-    <?php echo $form->field($model, 'pirority_level') ?>
+    <?php echo $form->field($model, 'priority_level') ?>
     <?php // echo $form->field($model, 'developer_user_id') ?>
     <?php // echo $form->field($model, 'notes') ?>
     <?php // echo $form->field($model, 'delete_status') ?>

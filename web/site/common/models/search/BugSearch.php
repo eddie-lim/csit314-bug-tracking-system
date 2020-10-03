@@ -19,7 +19,7 @@ class BugSearch extends Bug
     {
         return [
             [['id', 'developer_user_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title', 'description', 'bug_status', 'pirority_level', 'notes', 'delete_status'], 'safe'],
+            [['title', 'description', 'bug_status', 'priority_level', 'notes', 'delete_status'], 'safe'],
         ];
     }
 
@@ -63,7 +63,7 @@ class BugSearch extends Bug
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'bug_status', $this->bug_status])
-            ->andFilterWhere(['like', 'pirority_level', $this->pirority_level])
+            ->andFilterWhere(['like', 'priority_level', $this->priority_level])
             ->andFilterWhere(['like', 'notes', $this->notes])
             ->andFilterWhere(['like', 'delete_status', $this->delete_status]);
 
