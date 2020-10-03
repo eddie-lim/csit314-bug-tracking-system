@@ -10,11 +10,9 @@ use Yii;
  * @property int $id
  * @property int|null $bug_id
  * @property string|null $comment
- * @property string $status
+ * @property string $delete_status
  * @property int|null $created_at
  * @property int|null $created_by
- * @property int|null $updated_at
- * @property int|null $updated_by
  */
 class BugComment extends \yii\db\ActiveRecord
 {
@@ -32,8 +30,8 @@ class BugComment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bug_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['comment', 'status'], 'string'],
+            [['bug_id', 'created_at', 'created_by'], 'integer'],
+            [['comment', 'delete_status'], 'string'],
         ];
     }
 
@@ -46,11 +44,9 @@ class BugComment extends \yii\db\ActiveRecord
             'id' => 'ID',
             'bug_id' => 'Bug ID',
             'comment' => 'Comment',
-            'status' => 'Status',
+            'delete_status' => 'Delete Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
         ];
     }
 

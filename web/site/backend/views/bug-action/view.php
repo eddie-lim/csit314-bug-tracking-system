@@ -32,11 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'bug_id',
                     'action_type',
                     'notes:ntext',
-                    'status',
+                    'delete_status',
                     'created_at',
                     'created_by',
-                    'updated_at',
-                    'updated_by',
                     
                 ],
             ]) ?>

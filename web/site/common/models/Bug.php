@@ -9,11 +9,12 @@ use Yii;
  *
  * @property int $id
  * @property string $title
- * @property string $summary
+ * @property string $description
  * @property string $bug_status
- * @property string|null $notes
  * @property string $pirority_level
- * @property string $status
+ * @property int|null $developer_user_id
+ * @property string|null $notes
+ * @property string $delete_status
  * @property int|null $created_at
  * @property int|null $created_by
  * @property int|null $updated_at
@@ -35,9 +36,9 @@ class Bug extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'summary', 'bug_status', 'pirority_level'], 'required'],
-            [['summary', 'bug_status', 'pirority_level', 'status'], 'string'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['title', 'description', 'bug_status', 'pirority_level'], 'required'],
+            [['description', 'bug_status', 'pirority_level', 'delete_status'], 'string'],
+            [['developer_user_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title'], 'string', 'max' => 128],
             [['notes'], 'string', 'max' => 1028],
         ];
@@ -51,11 +52,12 @@ class Bug extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'title' => 'Title',
-            'summary' => 'Summary',
+            'description' => 'Description',
             'bug_status' => 'Bug Status',
-            'notes' => 'Notes',
             'pirority_level' => 'Pirority Level',
-            'status' => 'Status',
+            'developer_user_id' => 'Developer User ID',
+            'notes' => 'Notes',
+            'delete_status' => 'Delete Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

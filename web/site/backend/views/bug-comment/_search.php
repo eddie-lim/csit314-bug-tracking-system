@@ -20,11 +20,9 @@ use yii\bootstrap4\ActiveForm;
     <?php echo $form->field($model, 'id') ?>
     <?php echo $form->field($model, 'bug_id') ?>
     <?php echo $form->field($model, 'comment') ?>
-    <?php echo $form->field($model, 'status') ?>
+    <?php echo $form->field($model, 'delete_status') ?>
     <?php echo $form->field($model, 'created_at') ?>
     <?php // echo $form->field($model, 'created_by') ?>
-    <?php // echo $form->field($model, 'updated_at') ?>
-    <?php // echo $form->field($model, 'updated_by') ?>
 
     <div class="form-group">
         <?php echo Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

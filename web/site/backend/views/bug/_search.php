@@ -19,11 +19,12 @@ use yii\bootstrap4\ActiveForm;
 
     <?php echo $form->field($model, 'id') ?>
     <?php echo $form->field($model, 'title') ?>
-    <?php echo $form->field($model, 'summary') ?>
+    <?php echo $form->field($model, 'description') ?>
     <?php echo $form->field($model, 'bug_status') ?>
-    <?php echo $form->field($model, 'notes') ?>
-    <?php // echo $form->field($model, 'pirority_level') ?>
-    <?php // echo $form->field($model, 'status') ?>
+    <?php echo $form->field($model, 'pirority_level') ?>
+    <?php // echo $form->field($model, 'developer_user_id') ?>
+    <?php // echo $form->field($model, 'notes') ?>
+    <?php // echo $form->field($model, 'delete_status') ?>
     <?php // echo $form->field($model, 'created_at') ?>
     <?php // echo $form->field($model, 'created_by') ?>
     <?php // echo $form->field($model, 'updated_at') ?>

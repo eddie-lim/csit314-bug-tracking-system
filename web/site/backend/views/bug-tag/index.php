@@ -37,11 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id',
                     'bug_id',
                     'name',
-                    'status',
+                    'delete_status',
                     'created_at',
                     // 'created_by',
-                    // 'updated_at',
-                    // 'updated_by',
                     
                     ['class' => \common\widgets\ActionColumn::class],
                 ],

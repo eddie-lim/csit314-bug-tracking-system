@@ -18,8 +18,8 @@ class BugTagSearch extends BugTag
     public function rules()
     {
         return [
-            [['id', 'bug_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['name', 'status'], 'safe'],
+            [['id', 'bug_id', 'created_at', 'created_by'], 'integer'],
+            [['name', 'delete_status'], 'safe'],
         ];
     }
 
@@ -56,12 +56,10 @@ class BugTagSearch extends BugTag
             'bug_id' => $this->bug_id,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'delete_status', $this->delete_status]);
 
         return $dataProvider;
     }

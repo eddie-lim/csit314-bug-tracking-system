@@ -18,8 +18,8 @@ class BugActionSearch extends BugAction
     public function rules()
     {
         return [
-            [['id', 'bug_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['action_type', 'notes', 'status'], 'safe'],
+            [['id', 'bug_id', 'created_at', 'created_by'], 'integer'],
+            [['action_type', 'notes', 'delete_status'], 'safe'],
         ];
     }
 
@@ -56,13 +56,11 @@ class BugActionSearch extends BugAction
             'bug_id' => $this->bug_id,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
-            'updated_at' => $this->updated_at,
-            'updated_by' => $this->updated_by,
         ]);
 
         $query->andFilterWhere(['like', 'action_type', $this->action_type])
             ->andFilterWhere(['like', 'notes', $this->notes])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'delete_status', $this->delete_status]);
 
         return $dataProvider;
     }

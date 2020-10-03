@@ -11,11 +11,9 @@ use Yii;
  * @property int|null $bug_id
  * @property string|null $action_type
  * @property string|null $notes
- * @property string $status
+ * @property string $delete_status
  * @property int|null $created_at
  * @property int|null $created_by
- * @property int|null $updated_at
- * @property int|null $updated_by
  */
 class BugAction extends \yii\db\ActiveRecord
 {
@@ -33,8 +31,8 @@ class BugAction extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bug_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['action_type', 'notes', 'status'], 'string'],
+            [['bug_id', 'created_at', 'created_by'], 'integer'],
+            [['action_type', 'notes', 'delete_status'], 'string'],
         ];
     }
 
@@ -48,11 +46,9 @@ class BugAction extends \yii\db\ActiveRecord
             'bug_id' => 'Bug ID',
             'action_type' => 'Action Type',
             'notes' => 'Notes',
-            'status' => 'Status',
+            'delete_status' => 'Delete Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
         ];
     }
 

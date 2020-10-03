@@ -18,8 +18,8 @@ class BugSearch extends Bug
     public function rules()
     {
         return [
-            [['id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title', 'summary', 'bug_status', 'notes', 'pirority_level', 'status'], 'safe'],
+            [['id', 'developer_user_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['title', 'description', 'bug_status', 'pirority_level', 'notes', 'delete_status'], 'safe'],
         ];
     }
 
@@ -53,6 +53,7 @@ class BugSearch extends Bug
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'developer_user_id' => $this->developer_user_id,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,
@@ -60,11 +61,11 @@ class BugSearch extends Bug
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'summary', $this->summary])
+            ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'bug_status', $this->bug_status])
-            ->andFilterWhere(['like', 'notes', $this->notes])
             ->andFilterWhere(['like', 'pirority_level', $this->pirority_level])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'notes', $this->notes])
+            ->andFilterWhere(['like', 'delete_status', $this->delete_status]);
 
         return $dataProvider;
     }

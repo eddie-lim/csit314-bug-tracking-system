@@ -10,11 +10,9 @@ use Yii;
  * @property int $id
  * @property int $bug_id
  * @property string|null $file_path
- * @property string $status
+ * @property string $delete_status
  * @property int|null $created_at
  * @property int|null $created_by
- * @property int|null $updated_at
- * @property int|null $updated_by
  */
 class BugDocument extends \yii\db\ActiveRecord
 {
@@ -33,8 +31,8 @@ class BugDocument extends \yii\db\ActiveRecord
     {
         return [
             [['bug_id'], 'required'],
-            [['bug_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['status'], 'string'],
+            [['bug_id', 'created_at', 'created_by'], 'integer'],
+            [['delete_status'], 'string'],
             [['file_path'], 'string', 'max' => 2056],
         ];
     }
@@ -48,11 +46,9 @@ class BugDocument extends \yii\db\ActiveRecord
             'id' => 'ID',
             'bug_id' => 'Bug ID',
             'file_path' => 'File Path',
-            'status' => 'Status',
+            'delete_status' => 'Delete Status',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
         ];
     }
 

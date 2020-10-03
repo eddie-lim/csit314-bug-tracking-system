@@ -31,11 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id',
                     'bug_id',
                     'file_path',
-                    'status',
+                    'delete_status',
                     'created_at',
                     'created_by',
-                    'updated_at',
-                    'updated_by',
                     
                 ],
             ]) ?>

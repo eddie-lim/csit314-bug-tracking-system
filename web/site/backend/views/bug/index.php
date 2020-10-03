@@ -34,13 +34,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'id',
-                    'title',
-                    'summary:ntext',
+                    // 'id',
+                    [
+                        'attribute'=>'title',
+                        'format' => 'raw',
+                        'value' => function($model) {
+                            $html = '';
+                            $html .= "<h3>Title: ".$model->title."</h3>";
+                            $html .= "<p>Description: ".$model->description."</p>";
+
+                            return $html;
+                        },
+                        'headerOptions' => ['width' => '300px'],
+                        'filterInputOptions' => [
+                            'class'       => 'form-control',
+                            'placeholder' => 'Type to search...'
+                        ]
+                    ],
+                    // 'title',
+                    // 'description:ntext',
                     'bug_status',
-                    'notes',
-                    // 'pirority_level',
-                    // 'status',
+                    'pirority_level',
+                    // 'developer_user_id',
+                    // 'notes',
+                    // 'delete_status',
                     // 'created_at',
                     // 'created_by',
                     // 'updated_at',
