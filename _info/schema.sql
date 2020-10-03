@@ -29,7 +29,7 @@ CREATE TABLE `bug` (
   `title` varchar(128) NOT NULL,
   `description` text NOT NULL,
   `bug_status` enum('new','assigned','fixing','pending_review','completed','rejected','reopen') NOT NULL,
-  `pirority_level` enum('1','2','3') NOT NULL,
+  `priority_level` enum('1','2','3') NOT NULL,
   `developer_user_id` int(11) DEFAULT NULL,
   `notes` varchar(1028) DEFAULT NULL,
   `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
