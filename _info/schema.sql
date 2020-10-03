@@ -402,6 +402,7 @@ CREATE TABLE `user` (
   `oauth_client_user_id` varchar(255) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `account_status` varchar(255) DEFAULT NULL,
+  `role_type` enum('user','developer','triager','reviewer') NOT NULL DEFAULT 'user',
   `status` smallint(6) NOT NULL DEFAULT 2,
   `logged_at` int(11) DEFAULT NULL,
   `created_at` int(11) DEFAULT NULL,
