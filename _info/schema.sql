@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `csit314` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `csit314`;
--- MySQL dump 10.16  Distrib 10.1.36-MariaDB, for Win32 (AMD64)
+-- MariaDB dump 10.17  Distrib 10.4.13-MariaDB, for Win64 (AMD64)
 --
 -- Host: 127.0.0.1    Database: csit314
 -- ------------------------------------------------------
--- Server version	10.1.36-MariaDB
+-- Server version	10.4.8-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,9 +29,10 @@ CREATE TABLE `bug` (
   `title` varchar(128) NOT NULL,
   `description` text NOT NULL,
   `bug_status` enum('new','assigned','fixing','pending_review','completed','rejected','reopen') NOT NULL,
-  `notes` varchar(1028) DEFAULT NULL,
   `pirority_level` enum('1','2','3') NOT NULL,
-  `status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
+  `developer_user_id` int(11) DEFAULT NULL,
+  `notes` varchar(1028) DEFAULT NULL,
+  `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
   `created_at` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
@@ -46,7 +47,7 @@ CREATE TABLE `bug` (
 
 LOCK TABLES `bug` WRITE;
 /*!40000 ALTER TABLE `bug` DISABLE KEYS */;
-INSERT INTO `bug` VALUES (1,'keep crashing at profile page','i was trying to update my photo and username, but when i click \'save\', it will crash','new','','2','enabled',123,1,123,1);
+INSERT INTO `bug` VALUES (1,'keep crashing at profile page','i was trying to update my photo and username, but when i click \'save\', it will crash','new','2',NULL,'','enabled',123,1,123,1);
 /*!40000 ALTER TABLE `bug` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,12 +62,10 @@ CREATE TABLE `bug_action` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bug_id` int(11) DEFAULT NULL,
   `action_type` enum('new','assigned','fixing','pending_review','completed','rejected','reopen') DEFAULT NULL,
-  `notes` text,
-  `status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
+  `notes` text DEFAULT NULL,
+  `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
   `created_at` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -90,12 +89,10 @@ DROP TABLE IF EXISTS `bug_comment`;
 CREATE TABLE `bug_comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bug_id` int(11) DEFAULT NULL,
-  `comment` text,
-  `status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
+  `comment` text DEFAULT NULL,
+  `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
   `created_at` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -120,11 +117,9 @@ CREATE TABLE `bug_document` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bug_id` int(11) NOT NULL,
   `file_path` varchar(2056) DEFAULT NULL,
-  `status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
+  `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
   `created_at` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -149,11 +144,9 @@ CREATE TABLE `bug_tag` (
   `id` int(11) NOT NULL,
   `bug_id` int(11) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
-  `status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
+  `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',
   `created_at` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -198,55 +191,6 @@ LOCK TABLES `file_storage_item` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `i18n_message`
---
-
-DROP TABLE IF EXISTS `i18n_message`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `i18n_message` (
-  `id` int(11) NOT NULL,
-  `language` varchar(16) NOT NULL,
-  `translation` text,
-  PRIMARY KEY (`id`,`language`),
-  CONSTRAINT `fk_i18n_message_source_message` FOREIGN KEY (`id`) REFERENCES `i18n_source_message` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `i18n_message`
---
-
-LOCK TABLES `i18n_message` WRITE;
-/*!40000 ALTER TABLE `i18n_message` DISABLE KEYS */;
-/*!40000 ALTER TABLE `i18n_message` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `i18n_source_message`
---
-
-DROP TABLE IF EXISTS `i18n_source_message`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `i18n_source_message` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category` varchar(32) DEFAULT NULL,
-  `message` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `i18n_source_message`
---
-
-LOCK TABLES `i18n_source_message` WRITE;
-/*!40000 ALTER TABLE `i18n_source_message` DISABLE KEYS */;
-/*!40000 ALTER TABLE `i18n_source_message` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `key_storage_item`
 --
 
@@ -256,7 +200,7 @@ DROP TABLE IF EXISTS `key_storage_item`;
 CREATE TABLE `key_storage_item` (
   `key` varchar(128) NOT NULL,
   `value` text NOT NULL,
-  `comment` text,
+  `comment` text DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`key`),
@@ -310,9 +254,9 @@ DROP TABLE IF EXISTS `rbac_auth_item`;
 CREATE TABLE `rbac_auth_item` (
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `type` smallint(6) NOT NULL,
-  `description` text COLLATE utf8_unicode_ci,
+  `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `rule_name` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `data` blob,
+  `data` blob DEFAULT NULL,
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`name`),
@@ -366,7 +310,7 @@ DROP TABLE IF EXISTS `rbac_auth_rule`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rbac_auth_rule` (
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `data` blob,
+  `data` blob DEFAULT NULL,
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`name`)
@@ -395,8 +339,8 @@ CREATE TABLE `system_log` (
   `level` int(11) DEFAULT NULL,
   `category` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `log_time` double DEFAULT NULL,
-  `prefix` text COLLATE utf8_unicode_ci,
-  `message` text COLLATE utf8_unicode_ci,
+  `prefix` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `message` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_log_level` (`level`),
   KEY `idx_log_category` (`category`)
@@ -424,7 +368,7 @@ CREATE TABLE `timeline_event` (
   `application` varchar(64) NOT NULL,
   `category` varchar(64) NOT NULL,
   `event` varchar(64) NOT NULL,
-  `data` text,
+  `data` text DEFAULT NULL,
   `created_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_created_at` (`created_at`)
@@ -451,17 +395,17 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) DEFAULT NULL,
-  `expertise` varchar(255) DEFAULT NULL,
   `password_hash` varchar(255) NOT NULL,
   `auth_key` varchar(32) NOT NULL,
   `access_token` varchar(40) NOT NULL,
   `oauth_client` varchar(255) DEFAULT NULL,
   `oauth_client_user_id` varchar(255) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `status` smallint(6) NOT NULL DEFAULT '2',
+  `account_status` varchar(255) DEFAULT NULL,
+  `status` smallint(6) NOT NULL DEFAULT 2,
+  `logged_at` int(11) DEFAULT NULL,
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
-  `logged_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -472,7 +416,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'webmaster',NULL,'$2y$13$ZmTDeY4OhOvRnyNlEDlRhuQy3jjeZkfTiorPlomjSWkZxyGqc5lHi','iT3_D9YxRLPbxc12WpjCjdZnBxcfK4Wf','7Cj4d1OTC2eLHUyKcuPioqg07HALPE_9Iti1YXfy',NULL,NULL,'webmaster@example.com',2,1601299366,1601299366,1601553526),(2,'manager',NULL,'$2y$13$gR.aI1oqqxhtiDYcDFDiiugTR5dOATKLQ0xW3PzRfSHNiK7J/fUAG','lYrVEstrva498MqRUYqotwSa75WEyWaf','puZVx8bKqB6PgnhY6rdZz7b1521wJrZvO2OQPfpO',NULL,NULL,'manager@example.com',2,1601299366,1601299366,NULL),(3,'user',NULL,'$2y$13$C93kpySma.mvMa5OG4Fdk.jNW3TWYde4Vuup9ryB9j97JO9B6Uph.','70TgvlgGbK3BRFC0MVlxc3bMymuIV6vl','9l-MFC_Z8yh71gxI0PDODLhjDOTRkwK9MMzw2f91',NULL,NULL,'user@example.com',2,1601299367,1601299367,NULL);
+INSERT INTO `user` VALUES (1,'webmaster','$2y$13$ZmTDeY4OhOvRnyNlEDlRhuQy3jjeZkfTiorPlomjSWkZxyGqc5lHi','iT3_D9YxRLPbxc12WpjCjdZnBxcfK4Wf','7Cj4d1OTC2eLHUyKcuPioqg07HALPE_9Iti1YXfy',NULL,NULL,'webmaster@example.com',NULL,2,1601553526,1601299366,1601299366),(2,'manager','$2y$13$gR.aI1oqqxhtiDYcDFDiiugTR5dOATKLQ0xW3PzRfSHNiK7J/fUAG','lYrVEstrva498MqRUYqotwSa75WEyWaf','puZVx8bKqB6PgnhY6rdZz7b1521wJrZvO2OQPfpO',NULL,NULL,'manager@example.com',NULL,2,NULL,1601299366,1601299366),(3,'user','$2y$13$C93kpySma.mvMa5OG4Fdk.jNW3TWYde4Vuup9ryB9j97JO9B6Uph.','70TgvlgGbK3BRFC0MVlxc3bMymuIV6vl','9l-MFC_Z8yh71gxI0PDODLhjDOTRkwK9MMzw2f91',NULL,NULL,'user@example.com',NULL,2,NULL,1601299367,1601299367);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -544,4 +488,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-02 14:50:40
+-- Dump completed on 2020-10-03 17:37:22
