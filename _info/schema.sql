@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `bug`;
 CREATE TABLE `bug` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(128) NOT NULL,
-  `summary` text NOT NULL,
+  `description` text NOT NULL,
   `bug_status` enum('new','assigned','fixing','pending_review','completed','rejected','reopen') NOT NULL,
   `notes` varchar(1028) DEFAULT NULL,
   `pirority_level` enum('1','2','3') NOT NULL,
