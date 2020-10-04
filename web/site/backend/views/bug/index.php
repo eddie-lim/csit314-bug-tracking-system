@@ -16,11 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card">
         <div class="card-header">
             <?php echo Html::a('Create Bug', ['create'], ['class' => 'btn btn-success']) ?>
+            <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?>
+            <?php echo Html::a('My Tasks', ['tasks'], ['class' => 'btn btn-success']) ?>
         </div>
 
         <div class="card-body p-0">
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    
+
             <?php echo GridView::widget([
                 'layout' => "{items}\n{pager}",
                 'options' => [
@@ -41,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value'=> function($data){
                             return Html::a(
                                 $data->title,
-                                ['bug/view', 'id'=>$data->id], 
+                                ['bug/view', 'id'=>$data->id],
                                 ['bugcomment/view', 'id'=>$data->id],
                                 ['bug'=>'View', 'class'=>'no-pjax'],
                             );
@@ -57,11 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     // 'created_by',
                     // 'updated_at',
                     // 'updated_by',
-                    
+
                     ['class' => \common\widgets\ActionColumn::class],
                 ],
             ]); ?>
-    
+
         </div>
         <div class="card-footer">
             <?php echo getDataProviderSummary($dataProvider) ?>

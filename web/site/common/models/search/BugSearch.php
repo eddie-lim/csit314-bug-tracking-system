@@ -12,6 +12,18 @@ use common\models\Bug;
  */
 class BugSearch extends Bug
 {
+    /*Class Variables*/
+    public $filterBy = ["new", "assigned", "fixing", "pending_review", "completed", "rejected", "reopen"];
+    public $assignedTo;
+
+    public function setFilterBy($byWhat) {
+      $this->filterBy = $byWhat;
+    }
+
+    public function setAssignedTo($toWho) {
+      $this->assignedTo = $toWho;
+    }
+
     /**
      * @inheritdoc
      */
@@ -42,6 +54,9 @@ class BugSearch extends Bug
     public function search($params)
     {
         $query = Bug::find();
+        $query->andWhere(["bug_status" => $this->filterBy]);
+        $query->andWhere(["developer_user_id" => $this->assignedTo]);
+
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

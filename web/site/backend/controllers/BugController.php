@@ -32,6 +32,21 @@ class BugController extends Controller
         ];
     }
 
+    public function actionTasks() {
+      $searchModel = new BugSearch();
+
+      $userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
+      if ($userRole === 'reviewer') $searchModel->setFilterBy(["pending_review"]);
+      if ($userRole === 'triager') $searchModel->setFilterBy(["new", "reopen", "rejected"]);
+      if ($userRole === 'developer') $searchModel->setAssignedTo(Yii::$app->user->getID());;
+
+      $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+      return $this->render('index', [
+          'searchModel' => $searchModel,
+          'dataProvider' => $dataProvider,
+      ]);
+    }
     /**
      * Lists all Bug models.
      * @return mixed
@@ -65,7 +80,7 @@ class BugController extends Controller
             'allModels' => $commentData,
         ]);
 
-        return $this->render('view', 
+        return $this->render('view',
             [
                 'model' => $this->findModel($id),
                 'dataProvider' => $provider,
