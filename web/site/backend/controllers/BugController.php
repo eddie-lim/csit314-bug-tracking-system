@@ -4,10 +4,14 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Bug;
+use common\models\BugComment;
 use common\models\search\BugSearch;
+use backend\controllers\BugCommentController;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
+use yii\data\ArrayDataProvider;
 
 /**
  * BugController implements the CRUD actions for Bug model.
@@ -50,9 +54,23 @@ class BugController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $newComment = new BugComment();
+
+        if ($newComment->load(Yii::$app->request->post()) && $newComment->save()){
+            $newComment->comment = "";
+        }
+
+        $commentData = BugCommentController::findModel($id);
+        $provider = new ArrayDataProvider([
+            'allModels' => $commentData,
         ]);
+
+        return $this->render('view', 
+            [
+                'model' => $this->findModel($id),
+                'dataProvider' => $provider,
+                'comment' => $newComment,
+            ]);
     }
 
     /**

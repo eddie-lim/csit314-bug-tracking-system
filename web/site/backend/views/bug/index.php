@@ -35,8 +35,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'id',
-                    'title',
-                    'description:ntext',
+                    [
+                        'attribute'=>'title',
+                        'format'=>'raw',
+                        'value'=> function($data){
+                            return Html::a(
+                                $data->title,
+                                ['bug/view', 'id'=>$data->id], 
+                                ['bugcomment/view', 'id'=>$data->id],
+                                ['bug'=>'View', 'class'=>'no-pjax'],
+                            );
+                        }
+                    ],
+                    //'description:ntext',
                     'bug_status',
                     'priority_level',
                     // 'developer_user_id',

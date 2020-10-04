@@ -77,7 +77,7 @@ $config = [
             ],
             [
                 'allow' => true,
-                'roles' => ['manager', 'administrator'],
+                'roles' => ['manager', 'administrator', 'user'],
             ],
         ],
     ],

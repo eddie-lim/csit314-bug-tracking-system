@@ -110,11 +110,14 @@ class BugCommentController extends Controller
      * @return BugComment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    //protected function findModel($id)
+    public function findModel($id)
     {
-        if (($model = BugComment::findOne($id)) !== null) {
+        if (($model = BugComment::findAll(['bug_id'=>$id])) !== null) {
+            return $model;
+        } else {
             return $model;
         }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        //throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
