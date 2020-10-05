@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $data->title,
                                 ['bug/view', 'id'=>$data->id],
                                 ['bugcomment/view', 'id'=>$data->id],
-                                ['bug'=>'View', 'class'=>'no-pjax'],
+                                ['bug'=>'View', 'class'=>'no-pjax']
                             );
                         }
                     ],
