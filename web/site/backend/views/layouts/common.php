@@ -9,6 +9,7 @@
 use backend\assets\BackendAsset;
 use backend\modules\system\models\SystemLog;
 use backend\widgets\MainSidebarMenu;
+use common\models\Bug;
 use common\models\TimelineEvent;
 use yii\bootstrap4\Alert;
 use yii\helpers\ArrayHelper;
@@ -202,23 +203,38 @@ $logEntries[] = [
                             'options' => ['class' => 'nav-header'],
                         ],
                         [
-                            'label' => Yii::t('backend', 'Timeline'),
-                            'icon' => FAS::icon('stream', ['class' => ['nav-icon']]),
-                            'url' => ['/timeline-event/index'],
-                            'badge' => TimelineEvent::find()->today()->count(),
-                            'badgeBgClass' => 'badge-success',
-                        ],
-                        [
                             'label' => Yii::t('backend', 'Bugs'),
                             'icon' => FAS::icon('clipboard-list', ['class' => ['nav-icon']]),
                             'url' => ['/bug/index'],
                             'active' => Yii::$app->controller->id === 'bug',
                         ],
                         [
+                            'label' => Yii::t('backend', 'Statistics'),
+                            'icon' => FAS::icon('chart-bar', ['class' => ['nav-icon']]),
+                            'url' => ['/'],
+                            'active' => Yii::$app->controller->id === 'page',
+                        ],
+                        [
                             'label' => Yii::t('backend', 'Generate Report'),
                             'url' => ['/'],
-                            'icon' => FAS::icon('thumbtack', ['class' => ['nav-icon']]),
+                            'icon' => FAS::icon('file-download', ['class' => ['nav-icon']]),
                             'active' => Yii::$app->controller->id === 'page',
+                        ],
+                        [
+                            'label' => Yii::t('backend', 'System'),
+                            'options' => ['class' => 'nav-header'],
+                        ],
+                        [
+                            'label' => Yii::t('backend', 'Users'),
+                            'icon' => FAS::icon('users', ['class' => ['nav-icon']]),
+                            'url' => ['/user/index'],
+                            'active' => Yii::$app->controller->id === 'user',
+                        ],
+                        [
+                            'label' => Yii::t('backend', 'Audit Trail'),
+                            'url' => ['/activity-log/audit-trail-log'],
+                            'icon' => FAS::icon('history', ['class' => ['nav-icon']]),
+                            'active' => Yii::$app->controller->id === 'activity-log',
                         ],
                     ],
                 ]) ?>

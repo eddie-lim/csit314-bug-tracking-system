@@ -65,9 +65,9 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
     }
     static public function getUserStatusHtml($model) {
         $m = $model;
-        if ($m->account_status == $m::ACCOUNT_STATUS_SUSPENDED || $m->delete_status == SELF::DELETE_STATUS_DISABLED) {
+        if ($m->status == 1) {
             $html = "<i class='text-danger fas fa-circle'></i>";
-        } else if ($m->delete_status == SELF::DELETE_STATUS_ENABLED) {
+        } else if ($m->status == 2) {
             $html = "<i class='text-success fas fa-circle'></i>";
         } 
         return $html;
