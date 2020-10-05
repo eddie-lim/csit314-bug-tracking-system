@@ -72,10 +72,10 @@ class BugController extends Controller
         $newComment = new BugComment();
 
         if ($newComment->load(Yii::$app->request->post()) && $newComment->save()){
-            $newComment->comment = "";
+            $newComment = new BugComment();
         }
 
-        $commentData = BugCommentController::findModel($id);
+        $commentData = BugComment::findAll(['bug_id'=>$id]);
         $provider = new ArrayDataProvider([
             'allModels' => $commentData,
         ]);
