@@ -22,6 +22,14 @@ use Yii;
  */
 class Bug extends \common\components\MyCustomActiveRecord
 {
+    const BUG_STATUS_NEW = "new";
+    const BUG_STATUS_ASSIGNED = "assigned";
+    const BUG_STATUS_FIXING = "fixing";
+    const BUG_STATUS_PENDING_REVIEW = "pending_review";
+    const BUG_STATUS_COMPLETED = "completed";
+    const BUG_STATUS_REJECTED ="rejected";
+    const BUG_STATUS_REOPEN = "reopen";
+
     /**
      * {@inheritdoc}
      */
@@ -72,5 +80,17 @@ class Bug extends \common\components\MyCustomActiveRecord
     public static function find()
     {
         return new \common\models\query\BugQuery(get_called_class());
+    }
+
+    public static function getAllBugStatus() {      
+      return [
+          SELF::BUG_STATUS_NEW => "status: new",
+          SELF::BUG_STATUS_ASSIGNED => "status: assigned",
+          SELF::BUG_STATUS_FIXING => "status: fixing",
+          SELF::BUG_STATUS_PENDING_REVIEW => "status: pending_review",
+          SELF::BUG_STATUS_COMPLETED => "status: completed",
+          SELF::BUG_STATUS_REJECTED => "status: rejected",
+          SELF::BUG_STATUS_REOPEN => "status_reopen",
+      ];
     }
 }
