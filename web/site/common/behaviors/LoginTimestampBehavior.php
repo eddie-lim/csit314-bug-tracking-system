@@ -4,6 +4,7 @@ namespace common\behaviors;
 
 use yii\base\Behavior;
 use yii\web\User;
+use common\models\SystemLoginHistory;
 
 /**
  * @author Eugene Terentev <eugene@terentev.net>
@@ -34,5 +35,8 @@ class LoginTimestampBehavior extends Behavior
         $user = $event->identity;
         $user->touch($this->attribute);
         $user->save(false);
+
+        $loginHistory = SystemLoginHistory::makeModel();
+        $loginHistory->save();
     }
 }

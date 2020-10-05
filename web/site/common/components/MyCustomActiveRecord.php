@@ -6,6 +6,7 @@ use \yii\db\Expression;
 use trntv\filekit\behaviors\UploadBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use common\behaviors\MyAuditTrailBehavior;
 use yii\helpers\ArrayHelper;
 
 
@@ -35,6 +36,7 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
                 'pathAttribute' => 'path',
                 'baseUrlAttribute' => 'base_url'
             ],
+            "auditTrail" => MyAuditTrailBehavior::className(),  
         ];
     }
     public function rules()
