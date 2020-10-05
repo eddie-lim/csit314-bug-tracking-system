@@ -36,8 +36,8 @@ class BugController extends Controller
       $searchModel = new BugSearch();
 
       //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
-      if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy(["pending_review"]);
-      if (Yii::$app->user->can('triager')) $searchModel->setFilterBy(["new", "reopen", "rejected"]);
+      if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
+      if (Yii::$app->user->can('triager')) $searchModel->setFilterBy([Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_REOPEN, Bug::BUG_STATUS_REJECTED]);
       if (Yii::$app->user->can('developer')) $searchModel->setAssignedTo(Yii::$app->user->getID());;
 
       $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
