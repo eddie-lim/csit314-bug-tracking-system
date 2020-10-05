@@ -30,6 +30,10 @@ class Bug extends \common\components\MyCustomActiveRecord
     const BUG_STATUS_REJECTED ="rejected";
     const BUG_STATUS_REOPEN = "reopen";
 
+    const PRIORITY_LOW = '1';
+    const PRIORITY_MED = '2';
+    const PRIORITY_HIGH = '3';
+
     /**
      * {@inheritdoc}
      */
@@ -82,7 +86,7 @@ class Bug extends \common\components\MyCustomActiveRecord
         return new \common\models\query\BugQuery(get_called_class());
     }
 
-    public static function getAllBugStatus() {      
+    public static function getAllBugStatus() {
       return [
           SELF::BUG_STATUS_NEW => "status: new",
           SELF::BUG_STATUS_ASSIGNED => "status: assigned",
