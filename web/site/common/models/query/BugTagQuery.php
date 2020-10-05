@@ -7,7 +7,7 @@ namespace common\models\query;
  *
  * @see \common\models\BugTag
  */
-class BugTagQuery extends \yii\db\ActiveQuery
+class BugTagQuery extends \common\components\MyCustomActiveRecordQuery
 {
     /*public function active()
     {

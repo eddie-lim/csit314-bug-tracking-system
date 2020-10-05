@@ -20,7 +20,7 @@ use Yii;
  * @property int|null $updated_at
  * @property int|null $updated_by
  */
-class Bug extends \yii\db\ActiveRecord
+class Bug extends \common\components\MyCustomActiveRecord
 {
     /**
      * {@inheritdoc}

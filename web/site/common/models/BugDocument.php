@@ -14,7 +14,7 @@ use Yii;
  * @property int|null $created_at
  * @property int|null $created_by
  */
-class BugDocument extends \yii\db\ActiveRecord
+class BugDocument extends \common\components\MyCustomActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -30,7 +30,6 @@ class BugDocument extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bug_id'], 'required'],
             [['bug_id', 'created_at', 'created_by'], 'integer'],
             [['delete_status'], 'string'],
             [['file_path'], 'string', 'max' => 2056],

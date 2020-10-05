@@ -15,7 +15,7 @@ use Yii;
  * @property int|null $created_at
  * @property int|null $created_by
  */
-class BugAction extends \yii\db\ActiveRecord
+class BugAction extends \common\components\MyCustomActiveRecord
 {
     /**
      * {@inheritdoc}

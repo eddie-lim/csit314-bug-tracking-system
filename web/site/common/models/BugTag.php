@@ -30,7 +30,6 @@ class BugTag extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
             [['id', 'bug_id', 'created_at', 'created_by'], 'integer'],
             [['delete_status'], 'string'],
             [['name'], 'string', 'max' => 128],
