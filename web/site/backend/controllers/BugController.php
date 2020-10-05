@@ -35,10 +35,10 @@ class BugController extends Controller
     public function actionTasks() {
       $searchModel = new BugSearch();
 
-      $userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
-      if ($userRole === 'reviewer') $searchModel->setFilterBy(["pending_review"]);
-      if ($userRole === 'triager') $searchModel->setFilterBy(["new", "reopen", "rejected"]);
-      if ($userRole === 'developer') $searchModel->setAssignedTo(Yii::$app->user->getID());;
+      //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
+      if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy(["pending_review"]);
+      if (Yii::$app->user->can('triager')) $searchModel->setFilterBy(["new", "reopen", "rejected"]);
+      if (Yii::$app->user->can('developer')) $searchModel->setAssignedTo(Yii::$app->user->getID());;
 
       $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

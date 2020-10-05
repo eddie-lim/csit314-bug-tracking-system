@@ -21,7 +21,7 @@ class BugSearch extends Bug
     }
 
     public function setAssignedTo($toWho) {
-      $this->assignedTo = $toWho;
+      $this->developer_user_id = $toWho;
     }
 
     /**
