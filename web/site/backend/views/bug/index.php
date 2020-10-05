@@ -14,10 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bug-index">
     <div class="card">
+        <?= \backend\widgets\TabMenuBugWidget::widget(['page'=>$page]); ?>
         <div class="card-header">
             <?php echo Html::a('Create Bug', ['create'], ['class' => 'btn btn-success']) ?>
-            <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?>
-            <?php echo Html::a('My Tasks', ['tasks'], ['class' => 'btn btn-success']) ?>
+            <!-- <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?> -->
+            <!-- <?php echo Html::a('My Tasks', ['tasks'], ['class' => 'btn btn-success']) ?> -->
         </div>
 
         <div class="card-body p-0">

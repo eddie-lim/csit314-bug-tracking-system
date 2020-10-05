@@ -45,6 +45,7 @@ class BugController extends Controller
       return $this->render('index', [
           'searchModel' => $searchModel,
           'dataProvider' => $dataProvider,
+          'page'=>'tasks',
       ]);
     }
     /**
@@ -59,6 +60,7 @@ class BugController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'page'=>'index',
         ]);
     }
 
