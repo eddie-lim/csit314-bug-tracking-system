@@ -64,6 +64,7 @@ class BugSearch extends Bug
           $query->andWhere(["developer_user_id" => $this->developer_user_id]);
         }
 
+        $query->orderBy(['updated_at'=>SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
