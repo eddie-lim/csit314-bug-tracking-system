@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use common\models\Bug;
 
 /**
  * @var yii\web\View $this
@@ -33,10 +34,6 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'delete_status')->dropDownList(
                         [ 'enabled' => 'Enabled', 'disabled' => 'Disabled', ],
                         ['prompt' => '']) ?>
-                    <?= $form->field($model, 'created_at')->textInput() ?>
-                    <?= $form->field($model, 'created_by')->textInput() ?>
-                    <?= $form->field($model, 'updated_at')->textInput() ?>
-                    <?= $form->field($model, 'updated_by')->textInput() ?>
                 <?php endif; ?>
 
             </div>

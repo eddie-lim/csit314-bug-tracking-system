@@ -19,8 +19,6 @@ use yii\bootstrap4\ActiveForm;
                 <?php echo $form->field($model, 'bug_id')->textInput() ?>
                 <?php echo $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
                 <?php echo $form->field($model, 'delete_status')->dropDownList([ 'enabled' => 'Enabled', 'disabled' => 'Disabled', ], ['prompt' => '']) ?>
-                <?php echo $form->field($model, 'created_at')->textInput() ?>
-                <?php echo $form->field($model, 'created_by')->textInput() ?>
                 
             </div>
             <div class="card-footer">

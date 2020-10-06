@@ -16,12 +16,9 @@ use yii\bootstrap4\ActiveForm;
             <div class="card-body">
                 <?php echo $form->errorSummary($model); ?>
 
-                <?php echo $form->field($model, 'id')->textInput() ?>
                 <?php echo $form->field($model, 'bug_id')->textInput() ?>
                 <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 <?php echo $form->field($model, 'delete_status')->dropDownList([ 'enabled' => 'Enabled', 'disabled' => 'Disabled', ], ['prompt' => '']) ?>
-                <?php echo $form->field($model, 'created_at')->textInput() ?>
-                <?php echo $form->field($model, 'created_by')->textInput() ?>
                 
             </div>
             <div class="card-footer">

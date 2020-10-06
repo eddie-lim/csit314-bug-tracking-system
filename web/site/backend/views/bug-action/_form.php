@@ -20,8 +20,6 @@ use yii\bootstrap4\ActiveForm;
                 <?php echo $form->field($model, 'action_type')->dropDownList([ 'new' => 'New', 'assigned' => 'Assigned', 'fixing' => 'Fixing', 'pending_review' => 'Pending review', 'completed' => 'Completed', 'rejected' => 'Rejected', 'reopen' => 'Reopen', ], ['prompt' => '']) ?>
                 <?php echo $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
                 <?php echo $form->field($model, 'delete_status')->dropDownList([ 'enabled' => 'Enabled', 'disabled' => 'Disabled', ], ['prompt' => '']) ?>
-                <?php echo $form->field($model, 'created_at')->textInput() ?>
-                <?php echo $form->field($model, 'created_by')->textInput() ?>
                 
             </div>
             <div class="card-footer">

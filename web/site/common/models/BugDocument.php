@@ -55,14 +55,6 @@ class BugDocument extends \common\components\MyCustomActiveRecord
      */
     public function rules()
     {
-        return [
-            [['bug_id', 'created_at', 'created_by'], 'integer'],
-            [['delete_status'], 'string'],
-            [['file_path'], 'string', 'max' => 2056],
-        ];
-    }
-    public function rules()
-    {
         return ArrayHelper::merge([
             [['bug_id', 'created_at', 'created_by'], 'integer'],
             [['delete_status'], 'string'],
