@@ -37,15 +37,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'id',
+                    // 'id',
                     [
                         'attribute'=>'title',
                         'format'=>'raw',
-                        'value'=> function($data){
+                        'value'=> function($model){
                             return Html::a(
-                                $data->title,
-                                ['bug/view', 'id'=>$data->id],
-                                ['bugcomment/view', 'id'=>$data->id],
+                                $model->title,
+                                ['bug/view', 'id'=>$model->id],
+                                ['bugcomment/view', 'id'=>$model->id],
                                 ['bug'=>'View', 'class'=>'no-pjax']
                             );
                         }
@@ -53,6 +53,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     //'description:ntext',
                     'bug_status',
                     'priority_level',
+                    [
+                        'attribute'=>'created_at',
+                        'format'=>'raw',
+                        'value'=> function($model){
+                            return Yii::$app->formatter->asDateTime($model->created_at);
+                        }
+                    ],
                     // 'developer_user_id',
                     // 'notes',
                     // 'delete_status',
