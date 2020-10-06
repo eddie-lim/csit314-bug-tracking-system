@@ -48,6 +48,18 @@ class BugController extends Controller
           'page'=>'tasks',
       ]);
     }
+
+    public function actionClosed() {
+      $searchModel = new BugSearch();
+      $searchModel->setFilterBy([Bug::BUG_STATUS_COMPLETED]);
+      $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+      return $this->render('index', [
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
+        'page' => 'closed',
+      ]);
+    }
     /**
      * Lists all Bug models.
      * @return mixed
