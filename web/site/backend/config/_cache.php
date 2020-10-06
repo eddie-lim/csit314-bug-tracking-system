@@ -5,7 +5,7 @@
 
 $cache = [
     'class' => 'yii\caching\FileCache',
-    'cachePath' => '@frontend/runtime/cache'
+    'cachePath' => '@backend/runtime/cache'
 ];
 
 if (YII_ENV_DEV) {
