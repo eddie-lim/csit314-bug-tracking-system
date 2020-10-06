@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bug_comment".
@@ -22,6 +23,25 @@ class BugComment extends \common\components\MyCustomActiveRecord
     public static function tableName()
     {
         return 'bug_comment';
+    }
+
+    public function behaviors()
+    {
+        return [
+            "timestamp" => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                ],
+            ],
+            "blame" => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
+                ],
+            ],
+            "auditTrail" => \common\behaviors\MyAuditTrailBehavior::className(),  
+        ];
     }
 
     /**

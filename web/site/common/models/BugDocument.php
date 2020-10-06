@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "bug_document".
@@ -24,6 +25,31 @@ class BugDocument extends \common\components\MyCustomActiveRecord
         return 'bug_document';
     }
 
+    public function behaviors()
+    {
+        return [
+            "timestamp" => [
+                'class' => yii\behaviors\TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                ],
+            ],
+            "blame" => [
+                'class' => yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
+                ],
+            ],
+            "upload" =>
+            [
+                'class' => trntv\filekit\behaviors\UploadBehavior::className(),
+                'attribute' => 'upload_file',
+                'pathAttribute' => 'path',
+                'baseUrlAttribute' => 'base_url'
+            ],
+            "auditTrail" => common\behaviors\MyAuditTrailBehavior::className(),
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -34,6 +60,14 @@ class BugDocument extends \common\components\MyCustomActiveRecord
             [['delete_status'], 'string'],
             [['file_path'], 'string', 'max' => 2056],
         ];
+    }
+    public function rules()
+    {
+        return ArrayHelper::merge([
+            [['bug_id', 'created_at', 'created_by'], 'integer'],
+            [['delete_status'], 'string'],
+            [['file_path'], 'string', 'max' => 2056],
+        ], parent::rules());
     }
 
     /**

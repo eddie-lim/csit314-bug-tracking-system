@@ -24,6 +24,25 @@ class BugAction extends \common\components\MyCustomActiveRecord
     {
         return 'bug_action';
     }
+    
+    public function behaviors()
+    {
+        return [
+            "timestamp" => [
+                'class' => yii\behaviors\TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                ],
+            ],
+            "blame" => [
+                'class' => yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
+                ],
+            ],
+            "auditTrail" => common\behaviors\MyAuditTrailBehavior::className(),  
+        ];
+    }
 
     /**
      * {@inheritdoc}
