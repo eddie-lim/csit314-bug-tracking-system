@@ -26,9 +26,29 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
     
     public function behaviors()
     {
+        //https://www.yiiframework.com/doc/api/2.0/yii-behaviors-timestampbehavior
+        //https://www.yiiframework.com/doc/api/2.0/yii-db-tableschema
+
+        // get tableName from relevant model
+        $tableName = $this->getTableSchema()->name;
+        $bugComment = ($tableName === "bug_comment");
+
         return [
-            "timestamp" => TimestampBehavior::className(),
-            "blame" => BlameableBehavior::className(),
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => $bugComment ? false : 'updated_at',
+                'value' => 123, //new Expression('NOW()'),
+                // BugComment created_at column uses INT
+            ],
+            //"timestamp" => TimestampBehavior::className(),
+            //"blame" => BlameableBehavior::className(),
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'created_by',
+                'updatedByAttribute' => $bugComment ? false : 'updated_by',
+                'value' => Yii::$app->user->identity->id, 
+            ],
             "upload" =>
             [
                 'class' => UploadBehavior::className(),

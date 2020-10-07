@@ -4,9 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 use yii\bootstrap4\ActiveForm;
+use yii\bootstrap4\Accordion;
 use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
+
+use rmrevin\yii\fontawesome\FAS;
+use yii\widgets\ListView;
 
 /**
  * @var yii\web\View $this
@@ -57,18 +61,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <div class="bug-comment">
-    <?php 
-        echo GridView::widget([
-            'dataProvider' => $dataProvider,
-            'columns' => [
-                'comment',
-                'created_at',
-                'created_by',
-            ],
-            'layout' => '{items}',
-        ]);
-    ?>
-
+    <?php echo Accordion::widget([
+        'items' => [
+            [
+                'label' => 'Comments',
+                'content' => ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'itemView' => 'comment',
+                    'summary' => '',
+                    'viewParams' => [
+                        'fullView' => true,
+                    ],
+                ]),
+                'contentOptions' => ['class' => 'in']
+            ]
+        ],
+    ]) ?>
 
     <?php $form = ActiveForm::begin(); ?>
         <?php echo $form->field($comment, 'bug_id')->hiddenInput(['value'=> $model->id])->label(false); ?>
