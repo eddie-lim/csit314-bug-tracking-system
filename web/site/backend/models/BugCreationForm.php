@@ -47,22 +47,9 @@ class BugCreationForm extends Model
         if ($bug->save()) {
             $this->newBugId = $bug->id;
             foreach ($this->documents as $doc) {
-                // $this->saveDocument($doc);
+                $this->saveDocument($doc);
                 $bugDocument = $this->buildNewBugDocument($bug->id, $doc->name);
-                // $bugDocument->setAttribute('path', $doc->name);
-                // $bugDocument->setAttribute('base_url', 'uploads');
-                // $bugDocument->save();
-
-                $details = [
-                    'vars' => get_object_vars($bugDocument),
-                    'methods' => get_class_methods($bugDocument)
-                ];
-
-                file_put_contents(
-                    'uploads/log',
-                    json_encode($details, JSON_PRETTY_PRINT),
-                    FILE_APPEND
-                );
+                $bugDocument->save();
             }
             return true;
         } else {
