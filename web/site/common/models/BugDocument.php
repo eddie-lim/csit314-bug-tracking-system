@@ -5,6 +5,11 @@ namespace common\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 
+## imports to solve errors; not sure if approach is correct
+use common\components\MyCustomActiveRecord;
+use common\behaviors\MyAuditTrailBehavior;
+use \trntv\filekit\behaviors\UploadBehavior;
+
 /**
  * This is the model class for table "bug_document".
  *
@@ -31,23 +36,23 @@ class BugDocument extends \common\components\MyCustomActiveRecord
             "timestamp" => [
                 'class' => yii\behaviors\TimestampBehavior::className(),
                 'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    MyCustomActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                 ],
             ],
             "blame" => [
                 'class' => yii\behaviors\BlameableBehavior::className(),
                 'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
+                    MyCustomActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
                 ],
             ],
-            "upload" =>
-            [
-                'class' => trntv\filekit\behaviors\UploadBehavior::className(),
-                'attribute' => 'upload_file',
-                'pathAttribute' => 'path',
-                'baseUrlAttribute' => 'base_url'
-            ],
-            "auditTrail" => common\behaviors\MyAuditTrailBehavior::className(),
+            /* "upload" =>
+             * [
+             *     'class' => UploadBehavior::className(),
+             *     'attribute' => 'upload_file',
+             *     'pathAttribute' => 'path',
+             *     'baseUrlAttribute' => 'base_url'
+             * ], */
+            "auditTrail" => MyAuditTrailBehavior::className(),
         ];
     }
     /**
@@ -56,9 +61,10 @@ class BugDocument extends \common\components\MyCustomActiveRecord
     public function rules()
     {
         return ArrayHelper::merge([
+            [['path', 'base_url'], 'safe'],
             [['bug_id', 'created_at', 'created_by'], 'integer'],
             [['delete_status'], 'string'],
-            [['file_path'], 'string', 'max' => 2056],
+            // [['file_path'], 'string', 'max' => 2056],
         ], parent::rules());
     }
 
