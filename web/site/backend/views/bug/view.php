@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
 use yii\bootstrap4\ActiveForm;
 use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
@@ -32,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) */?>
         </div>
         -->
+
         <div class="card-body">
             <?php echo DetailView::widget([
                 'model' => $model,
@@ -48,16 +48,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     'created_by',
                     'updated_at',
                     'updated_by',
-                    
+                    [
+                        'label' => 'Documents [temp field]',
+                        'value' => array_reduce($documents, function($a, $b) {
+                            return $a . (empty($a) ? '' : ', ') . $b->attributes['path'];
+                        }, '')
+                    ],
                 ],
             ]) ?>
         </div>
-    </div> 
+    </div>
 </div>
 
 
 <div class="bug-comment">
-    <?php 
+    <?php
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [

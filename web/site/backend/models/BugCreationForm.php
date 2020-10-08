@@ -40,26 +40,21 @@ class BugCreationForm extends Model
         ];
     }
 
-    public function create()
+    public function createBug()
     {
         $bug = $this->buildNewBug();
 
         if ($bug->save()) {
             $this->newBugId = $bug->id;
             foreach ($this->documents as $doc) {
-                $this->saveDocument($doc);
-                $bugDocument = $this->buildNewBugDocument($bug->id, $doc->name);
+                $filepath = $this->writeFile($doc);
+                $bugDocument = $this->buildNewBugDocument($bug->id, $filepath);
                 $bugDocument->save();
             }
             return true;
         } else {
             return false;
         }
-    }
-
-    public function getNewBugId()
-    {
-        return $this->newBugId;
     }
 
     private function buildNewBug()
@@ -73,18 +68,21 @@ class BugCreationForm extends Model
         return $bug;
     }
 
-    private function buildNewBugDocument($bugId, $path)
+    private function buildNewBugDocument($bugId, $filepath)
     {
         $bugDoc = new BugDocument();
         $bugDoc->bug_id = $bugId;
-        $bugDoc->path = $path;
-        $bugDoc->base_url = 'uploads';
+        $bugDoc->path = $filepath['path'];
+        $bugDoc->base_url = $filepath['base_url'];
         return $bugDoc;
     }
 
-    private function saveDocument($doc)
+    private function writeFile($doc)
     {
-        $dir = 'uploads';
+        $dir = 'uploads/bug_' . strval($this->getNewBugId());
+        if (!file_exists($dir)) {
+            exec("mkdir -p $dir");
+        }
         $base = $doc->baseName;
         $ext = $doc->extension;
         $N = "";
@@ -93,5 +91,15 @@ class BugCreationForm extends Model
             $N = strval(intval($N) + 1);
         }
         $doc->saveAs("$dir/$base$N.$ext");
+
+        return [
+            'path' => "$base$N.$ext",
+            'base_url' => $dir,
+        ];
+    }
+
+    public function getNewBugId()
+    {
+        return $this->newBugId;
     }
 }

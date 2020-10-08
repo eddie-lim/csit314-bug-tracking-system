@@ -5,9 +5,9 @@ namespace backend\controllers;
 use Yii;
 use common\models\Bug;
 use common\models\BugComment;
+use common\models\BugDocument;
 use common\models\search\BugSearch;
 use backend\models\BugCreationForm;
-use backend\controllers\BugCommentController;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use yii\web\NotFoundHttpException;
@@ -89,6 +89,7 @@ class BugController extends Controller
                 'model' => $this->findModel($id),
                 'dataProvider' => $provider,
                 'comment' => $newComment,
+                'documents' => BugDocument::findAll([ 'bug_id' => $id ]),
             ]);
     }
 
@@ -103,14 +104,12 @@ class BugController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->documents = UploadedFile::getInstances($model, 'documents');
-            if ($model->create()) {
+            if ($model->createBug()) {
                 return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
             }
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', [ 'model' => $model ]);
     }
 
     /**
