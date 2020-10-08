@@ -6,8 +6,10 @@ use Yii;
 use common\models\Bug;
 use common\models\BugComment;
 use common\models\search\BugSearch;
+use backend\models\BugCreationForm;
 use backend\controllers\BugCommentController;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -97,13 +99,12 @@ class BugController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Bug();
+        $model = new BugCreationForm();
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->bug_status = BUG::BUG_STATUS_NEW;
-            $model->priority_level = BUG::PRIORITY_LOW;
-            if ($model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->documents = UploadedFile::getInstances($model, 'documents');
+            if ($model->create()) {
+                return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
             }
         }
 
