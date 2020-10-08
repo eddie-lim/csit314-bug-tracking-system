@@ -12,7 +12,7 @@ class MyCustomActiveRecordQuery extends \yii\db\ActiveQuery
 {
     public function active()
     {
-        $this->andWhere(['delete_status' => MyCustomActiveRecord::STATUS_ENABLED]);
+        $this->andWhere(['delete_status' => MyCustomActiveRecord::DELETE_STATUS_ENABLED]);
         return $this;
     }
 

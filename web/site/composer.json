@@ -57,7 +57,8 @@
     "trntv/sitemaped": "^0.1",
     "yii2mod/yii2-swagger": "^1.1",
     "rmrevin/yii2-fontawesome": "^3.4",
-    "kartik-v/yii2-widgets": "^3.4"
+    "kartik-v/yii2-widgets": "^3.4",
+    "2amigos/yii2-chartjs-widget" : "~2.0"
   },
   "require-dev": {
     "yiisoft/yii2-gii": "^2.0.0",

@@ -36,7 +36,13 @@ $config = [
         ],
 
         'formatter' => [
-            'class' => yii\i18n\Formatter::class
+            'class' => yii\i18n\Formatter::class,
+            'defaultTimeZone' => 'UTC',
+            'timeZone' => 'Asia/Singapore',
+            'dateFormat' => 'php:d M Y',
+            'datetimeFormat' => 'php:d M Y h:i:s A',
+            'thousandSeparator' => ',',
+            'decimalSeparator' => '.',
         ],
 
         'glide' => [
