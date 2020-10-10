@@ -15,6 +15,10 @@ use yii\db\Expression;
 use yii\data\ArrayDataProvider;
 use yii\data\ActiveDataProvider;
 
+//jonny begins here
+use yii\helpers\Html;
+
+
 class StatisticsController extends Controller
 {
     public function actionIndex(){
@@ -70,6 +74,34 @@ class StatisticsController extends Controller
             'pagination'=>false,
         ]);
 
+        $dataProviderPagination = new ArrayDataProvider([
+            'allModels'=>Bug::find()->all(),
+            'pagination'=> [
+              'pageSize' => 20,
+            ],
+        ]);
+
+        // jonny starts here
+        $gridColumns = [
+          ['class' => 'kartik\grid\SerialColumn'],
+          //'id',
+          [
+            'attribute'=>'bug',
+            'label'=>'Bug',
+            'vAlign'=>'middle',
+            'width'=>'190px',
+            'value'=>function ($model, $key, $index, $widget) {
+              return Html::a($model->title, '../bug/view?id='.$model->id, []);
+            },
+            'format'=>'raw'
+          ],
+          'description',
+          'bug_status',
+          'priority_level',
+          'developer_user_id',
+          ['class' => 'kartik\grid\ActionColumn', 'urlCreator'=>function(){return '#';}]
+        ];
+
         return $this->render('index', [
             'actBugs' => $actBugs,
             'resBugs' => $resBugs,
@@ -81,6 +113,10 @@ class StatisticsController extends Controller
             'resolvedBugs' => $resolvedBugs,
             'curBugStatus' => $curBugStatus,
             'dataProvider' => $dataProvider,
-        ]); 
+            'gridColumns' => $gridColumns,
+            'dataProviderPagination' => $dataProviderPagination,
+        ]);
+
+
     }
 }

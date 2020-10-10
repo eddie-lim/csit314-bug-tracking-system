@@ -1,11 +1,13 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+//use yii\grid\GridView;
 use kartik\export\ExportMenu;
 use dosamigos\chartjs\ChartJs;
 use common\models\Bug;
 use common\models\User;
+
+use kartik\grid\GridView;
 
 $this->title = 'Statistics';
 $this->params['breadcrumbs'][] = $this->title;
@@ -188,13 +190,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="d-inline-flex flex-column justify-content-around w-25 m-3">
             <b>Bugs solved by our developers this month</b>
             <div class="d-inline-flex flex-column justify-content-center">
-                <?php 
+                <?php
                     $colorArray = [
                         "background-color: rgb(254,225,12)",
                         "background-color: rgb(215,215,215)",
                         "background-color: rgb(167,112,68)",
                     ];
-                    foreach($devStats as $stats): 
+                    foreach($devStats as $stats):
                 ?>
                 <div class="card p-2" style="<?=array_shift($colorArray)?>">
                         <div class="container">
@@ -203,7 +205,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?= $stats['counter'] ?>
                             </span>
                         </div>
-                    </div>        
+                    </div>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -253,11 +255,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ?>
                 <div class="card-text">
-                        Reported bugs 
+                        Reported bugs
                         <span class="badge badge-danger">
                         <?php echo $curMonthRep;?>
                         </span><br>
-                        Resolved bugs 
+                        Resolved bugs
                         <span class="badge badge-success">
                         <?php echo $curMonthRes;?>
                         </span><br>
@@ -267,9 +269,24 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <hr class="w-100"/>
     <h3>Exporting</h3>
-    <?php 
+    <?php
+        // echo ExportMenu::widget([
+        //     'dataProvider' => $dataProvider,
+        // ]);
         echo ExportMenu::widget([
-            'dataProvider' => $dataProvider,
+          'dataProvider' => $dataProvider,
+          'columns' => $gridColumns,
+          'dropdownOptions' => [
+            'label' => 'Export All',
+            'class' => 'btn btn-outline-secondary',
+          ]
+        ]) . "<hr>\n".
+        GridView::widget([
+        'dataProvider' => $dataProviderPagination,
+        //'dataProvider' => $dataProvider,
+        'columns' => $gridColumns,
+        'toolbar'=>['{toggleData}'],
         ]);
+        Yii::warning("am here");
     ?>
 </div>
