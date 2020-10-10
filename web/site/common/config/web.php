@@ -7,6 +7,11 @@ $config = [
             'appendTimestamp' => YII_ENV_DEV
         ]
     ],
+    'modules' => [
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+        ],
+    ],
     'as locale' => [
         'class' => common\behaviors\LocaleBehavior::class,
         'enablePreferredLanguage' => true
