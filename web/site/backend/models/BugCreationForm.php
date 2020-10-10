@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\web\UploadedFile;
 use common\models\Bug;
 use common\models\BugDocument;
+use common\models\BugTag;
 
 class BugCreationForm extends Model
 {
@@ -14,6 +15,7 @@ class BugCreationForm extends Model
     public $description;
     public $notes;
     public $documents;
+    public $tags;
 
     private $newBugId;
 
@@ -27,6 +29,7 @@ class BugCreationForm extends Model
             [ ['notes'], 'string', 'max' => 1028 ],
             [ ['documents'], 'file', 'skipOnEmpty' => true,
               'extensions' => 'png, jpg, txt, csv, pdf', 'maxFiles' => 5 ],
+            [ ['tags'], 'each', 'rule' => [ 'string', 'max' => 15 ] ],
         ];
     }
 
@@ -37,6 +40,7 @@ class BugCreationForm extends Model
             'description' => 'Description',
             'notes' => 'Notes',
             'documents' => 'Upload Supporting Documents',
+            'tags' => 'Tags',
         ];
     }
 
@@ -46,11 +50,20 @@ class BugCreationForm extends Model
 
         if ($bug->save()) {
             $this->newBugId = $bug->id;
+
             foreach ($this->documents as $doc) {
                 $filepath = $this->writeFile($doc);
                 $bugDocument = $this->buildNewBugDocument($bug->id, $filepath);
                 $bugDocument->save();
             }
+
+            foreach ($this->tags as $idx => $name) {
+                $bugTag = new BugTag();
+                $bugTag->bug_id = $bug->id;
+                $bugTag->name = $name;
+                $bugTag->save();
+            }
+
             return true;
         } else {
             return false;
@@ -101,5 +114,15 @@ class BugCreationForm extends Model
     public function getNewBugId()
     {
         return $this->newBugId;
+    }
+
+    public function getCommonTags()
+    {
+        $tags = BugTag::find()
+                    ->select([ 'name', 'count' => 'count(*)' ])
+                    ->groupBy('name')
+                    ->orderBy([ 'count' => SORT_DESC, 'name' => SORT_ASC ])
+                    ->limit(10)->column();
+        return array_combine($tags, $tags);
     }
 }

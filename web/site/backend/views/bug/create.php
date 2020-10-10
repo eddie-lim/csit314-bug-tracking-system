@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 // use common\models\Bug;
 use common\components\MyCustomActiveRecord;
+use kartik\select2\Select2;
 
 /**
  * @var yii\web\View $this
@@ -30,6 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
           <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
           <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
           <?= $form->field($model, 'documents[]')->fileInput(['multiple' => 'true']) ?>
+          <?= $form->field($model, 'tags')->widget(Select2::classname(), [
+              'data' => $model->getCommonTags(),
+              'showToggleAll' => false,
+              'options' => [ 'multiple' => true ],
+              'pluginOptions' => [ 'tags' => true,
+                                   'tokenSeparators' => [ ',', ' '],
+                                   'maximumInputLength' => 15,
+                                   'allowClear' => true],
+            ]); ?>
         </div>
 
         <div class="card-footer">

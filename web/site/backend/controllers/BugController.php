@@ -6,6 +6,7 @@ use Yii;
 use common\models\Bug;
 use common\models\BugComment;
 use common\models\BugDocument;
+use common\models\BugTag;
 use common\models\search\BugSearch;
 use backend\models\BugCreationForm;
 use yii\web\Controller;
@@ -90,6 +91,7 @@ class BugController extends Controller
                 'dataProvider' => $provider,
                 'comment' => $newComment,
                 'documents' => BugDocument::findAll([ 'bug_id' => $id ]),
+                'tags' => BugTag::findAll([ 'bug_id' => $id ]),
             ]);
     }
 

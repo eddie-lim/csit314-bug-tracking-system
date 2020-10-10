@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bug_tag".
@@ -14,7 +15,7 @@ use Yii;
  * @property int|null $created_at
  * @property int|null $created_by
  */
-class BugTag extends \yii\db\ActiveRecord
+class BugTag extends \common\components\MyCustomActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -24,16 +25,34 @@ class BugTag extends \yii\db\ActiveRecord
         return 'bug_tag';
     }
 
+    public function behaviors()
+    {
+        return [
+            "timestamp" => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                ],
+            ],
+            "blame" => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
+                ],
+            ],
+            "auditTrail" => \common\behaviors\MyAuditTrailBehavior::className(),
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'bug_id', 'created_at', 'created_by'], 'integer'],
+            [['bug_id', 'created_at', 'created_by'], 'integer'],
             [['delete_status'], 'string'],
             [['name'], 'string', 'max' => 128],
-            [['id'], 'unique'],
         ];
     }
 
