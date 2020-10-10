@@ -215,12 +215,6 @@ $logEntries[] = [
                             'active' => Yii::$app->controller->id === 'statistics',
                         ],
                         [
-                            'label' => Yii::t('backend', 'Generate Report'),
-                            'url' => ['/'],
-                            'icon' => FAS::icon('file-download', ['class' => ['nav-icon']]),
-                            'active' => Yii::$app->controller->id === 'page',
-                        ],
-                        [
                             'label' => Yii::t('backend', 'System'),
                             'options' => ['class' => 'nav-header'],
                         ],
