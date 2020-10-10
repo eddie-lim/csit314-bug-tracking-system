@@ -77,6 +77,16 @@ class Bug extends \common\components\MyCustomActiveRecord
         ];
     }
 
+    public function getDocuments()
+    {
+        return $this->hasMany(BugDocument::className(), [ 'bug_id' => 'id' ]);
+    }
+
+    public function getTags()
+    {
+        return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id' ]);
+    }
+
     /**
      * {@inheritdoc}
      * @return \common\models\query\BugQuery the active query used by this AR class.

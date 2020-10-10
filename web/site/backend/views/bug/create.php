@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-// use common\models\Bug;
 use common\components\MyCustomActiveRecord;
 use kartik\select2\Select2;
 
@@ -17,10 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="bug-create">
-
-  <!-- Ignore this for the time being -->
-  <?php //echo $this->render('_form', ['model' => $model,]) ?>
-
   <div class="bug-form">
     <?php $form = ActiveForm::begin([ 'options' => ['enctype' => 'multipart/form-data'] ]); ?>
       <div class="card">
@@ -30,16 +25,29 @@ $this->params['breadcrumbs'][] = $this->title;
           <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
           <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
           <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
-          <?= $form->field($model, 'documents[]')->fileInput(['multiple' => 'true']) ?>
-          <?= $form->field($model, 'tags')->widget(Select2::classname(), [
-              'data' => $model->getCommonTags(),
-              'showToggleAll' => false,
-              'options' => [ 'multiple' => true ],
-              'pluginOptions' => [ 'tags' => true,
-                                   'tokenSeparators' => [ ',', ' '],
-                                   'maximumInputLength' => 15,
-                                   'allowClear' => true],
-            ]); ?>
+
+          <?= $form->field($model, 'documents')->widget(\trntv\filekit\widget\Upload::class,
+              [
+                  'url' => ['upload-document'],
+                  'maxNumberOfFiles' => 5,
+              ]
+            ) ?>
+
+          <?= $form->field($model, 'tags')->widget(Select2::classname(),
+              [
+                  'theme' => Select2::THEME_MATERIAL,
+                  'data' => $model->getCommonTags(),
+                  'showToggleAll' => false,
+                  'options' => [
+                      'placeholder' => 'Select common tags or add your own ...',
+                      'multiple' => true,
+                  ],
+                  'pluginOptions' => [ 'tags' => true,
+                                       'tokenSeparators' => [ ',', ' ' ],
+                                       'maximumInputLength' => 15,
+                                       'allowClear' => true ],
+              ]
+            ); ?>
         </div>
 
         <div class="card-footer">

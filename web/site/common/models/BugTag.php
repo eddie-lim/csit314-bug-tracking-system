@@ -71,6 +71,11 @@ class BugTag extends \common\components\MyCustomActiveRecord
         ];
     }
 
+    public function getBug()
+    {
+        return $this->hasOne(Bug::className(), [ 'id' => 'bug_id' ]);
+    }
+
     /**
      * {@inheritdoc}
      * @return \common\models\query\BugTagQuery the active query used by this AR class.

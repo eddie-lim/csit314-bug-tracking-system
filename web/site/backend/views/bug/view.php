@@ -54,13 +54,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'updated_by',
                     [
                         'label' => 'Documents [WIP: need to prettify]',
-                        'value' => array_reduce($documents, function($a, $b) {
+                        'value' => array_reduce($model->documents, function($a, $b) {
                             return $a . (empty($a) ? '' : ', ') . $b->attributes['path'];
                         }, '')
                     ],
                     [
                         'label' => 'Tags [WIP: need to prettify]',
-                        'value' => array_reduce($tags, function($a, $b) {
+                        'value' => array_reduce($model->tags, function($a, $b) {
                             return $a . (empty($a) ? '' : ', ') . $b->attributes['name'];
                         }, '')
                     ],
