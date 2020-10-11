@@ -5,15 +5,15 @@ namespace backend\controllers;
 use Yii;
 use common\models\Bug;
 use common\models\BugComment;
-use common\models\BugDocument;
 use common\models\search\BugSearch;
 use backend\models\BugCreationForm;
 use yii\web\Controller;
-use yii\web\UploadedFile;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 use yii\data\ArrayDataProvider;
+use trntv\filekit\actions\UploadAction;
+use trntv\filekit\actions\DeleteAction;
 
 /**
  * BugController implements the CRUD actions for Bug model.
@@ -34,21 +34,36 @@ class BugController extends Controller
         ];
     }
 
-    public function actionTasks() {
-      $searchModel = new BugSearch();
+    public function actions()
+    {
+        return [
+            'upload-document' => [
+                'class' => UploadAction::class,
+                'multiple' => true,
+                'deleteRoute' => 'delete-document',
+            ],
+            'delete-document' => [
+                'class' => DeleteAction::class,
+            ],
+        ];
+    }
 
-      //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
-      if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
-      if (Yii::$app->user->can('triager')) $searchModel->setFilterBy([Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_REOPEN, Bug::BUG_STATUS_REJECTED]);
-      if (Yii::$app->user->can('developer')) $searchModel->setAssignedTo(Yii::$app->user->getID());;
+    public function actionTasks()
+    {
+        $searchModel = new BugSearch();
 
-      $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
+        if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
+        if (Yii::$app->user->can('triager')) $searchModel->setFilterBy([Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_REOPEN, Bug::BUG_STATUS_REJECTED]);
+        if (Yii::$app->user->can('developer')) $searchModel->setAssignedTo(Yii::$app->user->getID());;
 
-      return $this->render('index', [
-          'searchModel' => $searchModel,
-          'dataProvider' => $dataProvider,
-          'page'=>'tasks',
-      ]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'page'=>'tasks',
+        ]);
     }
 
     public function actionClosed() {
@@ -101,7 +116,6 @@ class BugController extends Controller
                 'model' => $this->findModel($id),
                 'dataProvider' => $provider,
                 'comment' => $newComment,
-                'documents' => BugDocument::findAll([ 'bug_id' => $id ]),
             ]);
     }
 
@@ -114,11 +128,8 @@ class BugController extends Controller
     {
         $model = new BugCreationForm();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->documents = UploadedFile::getInstances($model, 'documents');
-            if ($model->createBug()) {
-                return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
-            }
+        if ($model->load($_POST) && $model->createBug()) {
+            return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
         }
 
         return $this->render('create', [ 'model' => $model ]);

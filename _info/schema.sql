@@ -142,7 +142,7 @@ DROP TABLE IF EXISTS `bug_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bug_tag` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `bug_id` int(11) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   `delete_status` enum('enabled','disabled') NOT NULL DEFAULT 'enabled',

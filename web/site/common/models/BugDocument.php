@@ -83,6 +83,11 @@ class BugDocument extends \common\components\MyCustomActiveRecord
         ];
     }
 
+    public function getBug()
+    {
+        return $this->hasOne(Bug::className(), [ 'id' => 'bug_id' ]);
+    }
+
     /**
      * {@inheritdoc}
      * @return \common\models\query\BugDocumentQuery the active query used by this AR class.
