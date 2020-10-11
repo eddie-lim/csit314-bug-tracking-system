@@ -1,13 +1,15 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\grid\GridView;
+use yii\grid\GridView;
 use kartik\export\ExportMenu;
 use dosamigos\chartjs\ChartJs;
 use common\models\Bug;
 use common\models\User;
 
-use kartik\grid\GridView;
+use kartik\daterange\DateRangePicker;
+use yii\data\ArrayDataProvider;
+use kartik\form\ActiveForm;
 
 $this->title = 'Statistics';
 $this->params['breadcrumbs'][] = $this->title;
@@ -274,25 +276,69 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <hr class="w-100"/>
-    <h3>Exporting</h3>
+    <?php $form = ActiveForm::begin(['id' => 'export-form']) ?>
+    <div class='d-flex flex-row justify-content-around' style="height: 400px;">
     <?php
-        // echo ExportMenu::widget([
-        //     'dataProvider' => $dataProvider,
-        // ]);
-        echo ExportMenu::widget([
-          'dataProvider' => $dataProvider,
-          'columns' => $gridColumns,
-          'dropdownOptions' => [
-            'label' => 'Export All',
-            'class' => 'btn btn-outline-secondary',
-          ]
-        ]) . "<hr>\n".
-        GridView::widget([
-        'dataProvider' => $dataProviderPagination,
-        //'dataProvider' => $dataProvider,
-        'columns' => $gridColumns,
-        'toolbar'=>['{toggleData}'],
+        echo $form->field($exportModel, 'date_range', [
+            'addon'=>['prepend'=>['content'=>'<i class="fas fa-calendar-alt"></i>']],
+            'options'=>['class'=>'drp-container form-group']
+        ])->widget(DateRangePicker::classname(),[
+            'value'=> $exportModel->date_range, 
+            'pluginOptions' => ['locale'=>['format'=>'YYYY-MM-DD']],
+            'useWithAddon'=>true,
         ]);
-        Yii::warning("am here");
     ?>
+    <div class='d-flex flex-column'>
+    
+    <div class='card p-5'>
+    <?php 
+        // if top reporters/developers is pressed
+        if($result instanceof ArrayDataProvider){ 
+            $header1 = $selection === 'topr' ? 'Bugs reported' : 'Bugs resolved';
+            $header2 = $selection === 'topr' ? 'Reported by' : 'Resolved by';
+            $attrb = $selection === 'topr' ? 'created_by' : 'developer_user_id';
+
+            echo Html::tag('h2', Html::encode(
+                $selection === 'topr' ? "Top reporters" : "Top developers"
+            ));
+
+            echo GridView::widget([
+                'dataProvider'=>$result,
+                'layout' => '{items}',
+                'columns' => [
+                    [
+                        'header' => $header1,
+                        'attribute' => 'counter',
+                    ],
+                    [
+                        'header' => $header2,
+                        'attribute' => $attrb,
+                        // using Closure to use outer variable
+                        'value' => function($res) use ($attrb){
+                            return User::findIdentity($res[$attrb])->username;
+                        }
+                    ],
+                ],
+            ]);
+        } else {
+            if($selection != "")
+                echo Html::tag('h2', Html::encode(
+                    $selection === 'repb' ? "Total no. of reported bugs"
+                                        : "Total no. of resolved bugs"
+                ));
+
+                echo Html::tag('h1', Html::encode($result));
+        }
+    ?>
+        </div>
+    </div>
+    </div>
+    <div class='d-flex flex-row justify-content-center'>
+    <?php echo Html::submitButton('Get no. of Reported Bugs', ['name' => 'repb', 'class' => 'btn btn-primary m-3'])?>
+    <?php echo Html::submitButton('Get no. of Resolved Bugs', ['name' => 'resb', 'class' => 'btn btn-primary m-3'])?>
+    <?php echo Html::submitButton('Get top Reporters', ['name' => 'topr', 'class' => 'btn btn-primary m-3'])?>
+    <?php echo Html::submitButton('Get top Developers', ['name' => 'topd', 'class' => 'btn btn-primary m-3'])?>
+    </div>
+    <?php ActiveForm::end() ?>
+ 
 </div>

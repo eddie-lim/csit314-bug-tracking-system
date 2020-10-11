@@ -59,7 +59,8 @@
     "rmrevin/yii2-fontawesome": "^3.4",
     "kartik-v/yii2-widgets": "^3.4",
     "2amigos/yii2-chartjs-widget" : "~2.0",
-    "kartik-v/yii2-export": "@dev"
+    "kartik-v/yii2-export": "@dev",
+    "kartik-v/yii2-date-range": "dev-master"
   },
   "require-dev": {
     "yiisoft/yii2-gii": "^2.0.0",

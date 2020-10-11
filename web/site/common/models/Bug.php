@@ -132,6 +132,19 @@ class Bug extends \common\components\MyCustomActiveRecord
                         ->all();
     }
 
+
+    public static function getTopReporterData($st, $et){
+        return SELF::find()->select(['COUNT(*) AS counter', 'created_by'])
+                           ->where('bug_status NOT IN ("Rejected")')
+                           ->andWhere(['>=', 'created_at', $st])
+                           ->andWhere(['<=', 'created_at', $et])
+                           ->groupBy('created_by')
+                           ->orderBy(['counter'=>SORT_DESC])
+                           ->asArray()
+                           ->limit(3)
+                           ->all(); 
+    }
+
     public static function getBugStatusData(){
         return SELF::find()->select(['COUNT(*) AS counter', 'bug_status'])
                          ->groupBy('bug_status')
@@ -173,4 +186,20 @@ class Bug extends \common\components\MyCustomActiveRecord
                 ->all();
     }
 
+    public static function getReportedBugs($start_at, $end_at){
+        return SELF::find()
+                ->select(['created_at', 'COUNT(id) AS counter'])
+                ->where(['>=', 'created_at', $start_at])
+                ->andWhere(['<=', 'created_at', $end_at])
+                ->count(); 
+    }
+
+    public static function getResolvedBugs($start_at, $end_at){
+        return SELF::find()
+                ->select(['updated_at', 'COUNT(id) AS counter'])
+                ->where(['>=', 'updated_at', $start_at])
+                ->andWhere(['<=', 'updated_at', $end_at])
+                ->andWhere(['bug_status'=>'Completed'])
+                ->count(); 
+    }
 }

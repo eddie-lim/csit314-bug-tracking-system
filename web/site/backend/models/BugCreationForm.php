@@ -8,6 +8,19 @@ use common\models\Bug;
 use common\models\BugDocument;
 use common\models\BugTag;
 
+        $base = SELF::find()->select(['COUNT(*) AS counter', 'developer_user_id'])
+                            ->where(['bug_status'=>'Completed']); 
+        if(sizeof($date_range)!==0){
+            $base->andWhere(['>=', 'updated_at', $date_range[0]])
+                 ->andWhere(['<=', 'updated_at', $date_range[1]]);
+        }
+        $base->groupBy('developer_user_id') 
+             ->orderBy(['counter'=>SORT_DESC])
+             ->asArray()
+             ->limit(3)
+             ->all();
+
+        Yii::warning($base);
 class BugCreationForm extends Model
 {
     public $title;
