@@ -107,4 +107,70 @@ class Bug extends \common\components\MyCustomActiveRecord
           SELF::BUG_STATUS_REOPEN => "status_reopen",
       ];
     }
+
+    public static function getActiveBugsData() {
+        return SELF::find()
+            ->where('bug_status NOT IN ("pending_review", "Rejected", "Completed")')
+            ->all();
+    }
+
+    public static function getResolvedBugsData() {
+        return SELF::find()->where(['bug_status'=>'Completed'])->all();
+    }
+
+    public static function getPendingBugsData() { 
+        return SELF::find()->where(['bug_status'=>'pending_review'])->all();
+    }
+
+    public static function getTopDeveloperData() {
+        return SELF::find()->select(['COUNT(*) AS counter', 'developer_user_id'])
+                        ->where(['bug_status'=>'Completed'])
+                        ->groupBy('developer_user_id')
+                        ->orderBy(['counter'=>SORT_DESC])
+                        ->asArray()
+                        ->limit(3)
+                        ->all();
+    }
+
+    public static function getBugStatusData(){
+        return SELF::find()->select(['COUNT(*) AS counter', 'bug_status'])
+                         ->groupBy('bug_status')
+                         ->asArray()
+                         ->all();
+    }
+    public static function getCurBugStatusData(){
+        return SELF::find()
+                 ->select(['bug_status', 'created_at', 'COUNT(id) AS counter'])
+                 ->where(['FROM_UNIXTIME(created_at, "%m-%Y")' => date('m-Y')])
+                 ->groupBy('bug_status')
+                 ->asArray()
+                 ->all();
+    }
+
+    public static function getPriorityLevelData(){
+        return SELF::find()->select(['COUNT(*) AS counter', 'priority_level'])
+                         ->where('bug_status NOT IN ("Rejected", "Completed")')
+                         ->groupBy('priority_level')
+                         ->asArray()
+                         ->all();
+    }
+
+    public static function getReportedBugsByMonth(){
+        return SELF::find()
+                ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
+                ->where('bug_status NOT IN ("Rejected", "Completed")')
+                ->groupBy('m_date')
+                ->asArray()
+                ->all();
+    }
+
+    public static function getResolvedBugsByMonth(){
+        return SELF::find()
+                ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
+                ->where(['bug_status'=>'Completed'])
+                ->groupBy('m_date')
+                ->asArray()
+                ->all();
+    }
+
 }

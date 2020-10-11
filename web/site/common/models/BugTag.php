@@ -84,4 +84,14 @@ class BugTag extends \common\components\MyCustomActiveRecord
     {
         return new \common\models\query\BugTagQuery(get_called_class());
     }
+
+    public static function getTopBugTags(){
+        return SELF::find()
+                ->select(['name', 'COUNT(id) AS counter'])
+                ->groupBy('name')
+                ->orderBy(['counter'=>SORT_DESC])
+                ->limit(3)
+                ->asArray()
+                ->all();
+    }
 }

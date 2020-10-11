@@ -232,6 +232,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <b>Popular bug tags</b>
                 </div>
                 <div class="card-text">
+                    <?php foreach($bugTags as $tag): ?>
+                    <?= $tag['name'] ?>
+                    <span class="badge badge-secondary">
+                        <?= $tag['counter'] ?>
+                    </span><br>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
