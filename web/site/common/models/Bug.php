@@ -96,6 +96,16 @@ class Bug extends \common\components\MyCustomActiveRecord
         return new \common\models\query\BugQuery(get_called_class());
     }
 
+    public static function makeModel($title, $description)
+    {
+        $bug = new Bug();
+        $bug->title = $title;
+        $bug->description = $description;
+        $bug->bug_status = SELF::BUG_STATUS_NEW;
+        $bug->priority_level = SELF::PRIORITY_LOW;
+        return $bug;
+    }
+
     public static function getAllBugStatus() {
       return [
           SELF::BUG_STATUS_NEW => "status: new",
@@ -118,7 +128,7 @@ class Bug extends \common\components\MyCustomActiveRecord
         return SELF::find()->where(['bug_status'=>'Completed'])->all();
     }
 
-    public static function getPendingBugsData() { 
+    public static function getPendingBugsData() {
         return SELF::find()->where(['bug_status'=>'pending_review'])->all();
     }
 
@@ -142,7 +152,7 @@ class Bug extends \common\components\MyCustomActiveRecord
                            ->orderBy(['counter'=>SORT_DESC])
                            ->asArray()
                            ->limit(3)
-                           ->all(); 
+                           ->all();
     }
 
     public static function getBugStatusData(){
@@ -191,7 +201,7 @@ class Bug extends \common\components\MyCustomActiveRecord
                 ->select(['created_at', 'COUNT(id) AS counter'])
                 ->where(['>=', 'created_at', $start_at])
                 ->andWhere(['<=', 'created_at', $end_at])
-                ->count(); 
+                ->count();
     }
 
     public static function getResolvedBugs($start_at, $end_at){
@@ -200,6 +210,6 @@ class Bug extends \common\components\MyCustomActiveRecord
                 ->where(['>=', 'updated_at', $start_at])
                 ->andWhere(['<=', 'updated_at', $end_at])
                 ->andWhere(['bug_status'=>'Completed'])
-                ->count(); 
+                ->count();
     }
 }

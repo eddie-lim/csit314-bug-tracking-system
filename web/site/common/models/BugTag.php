@@ -94,4 +94,12 @@ class BugTag extends \common\components\MyCustomActiveRecord
                 ->asArray()
                 ->all();
     }
+
+    public static function makeModel($bugId, $name)
+    {
+        $bugTag = new BugTag();
+        $bugTag->bug_id = $bugId;
+        $bugTag->name = strtolower($name);
+        return $bugTag;
+    }
 }

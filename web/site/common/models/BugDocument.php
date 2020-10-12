@@ -96,4 +96,13 @@ class BugDocument extends \common\components\MyCustomActiveRecord
     {
         return new \common\models\query\BugDocumentQuery(get_called_class());
     }
+
+    public static function makeModel($bugId, $path, $baseUrl)
+    {
+        $bugDoc = new BugDocument();
+        $bugDoc->bug_id = $bugId;
+        $bugDoc->path = $path;
+        $bugDoc->base_url = $baseUrl;
+        return $bugDoc;
+    }
 }
