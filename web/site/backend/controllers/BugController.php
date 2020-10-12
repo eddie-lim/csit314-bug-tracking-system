@@ -129,6 +129,10 @@ class BugController extends Controller
         $model = new BugCreationForm();
 
         if ($model->load($_POST) && $model->createBug()) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Bug created successfully!'
+            ]);
             return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
         }
 

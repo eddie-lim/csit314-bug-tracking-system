@@ -7,25 +7,12 @@ use yii\base\Model;
 use common\models\Bug;
 use common\models\BugDocument;
 use common\models\BugTag;
+use Exception;
 
-        $base = SELF::find()->select(['COUNT(*) AS counter', 'developer_user_id'])
-                            ->where(['bug_status'=>'Completed']); 
-        if(sizeof($date_range)!==0){
-            $base->andWhere(['>=', 'updated_at', $date_range[0]])
-                 ->andWhere(['<=', 'updated_at', $date_range[1]]);
-        }
-        $base->groupBy('developer_user_id') 
-             ->orderBy(['counter'=>SORT_DESC])
-             ->asArray()
-             ->limit(3)
-             ->all();
-
-        Yii::warning($base);
 class BugCreationForm extends Model
 {
     public $title;
     public $description;
-    public $notes;
     public $documents;
     public $tags;
 
@@ -49,7 +36,6 @@ class BugCreationForm extends Model
             [ ['title'], 'string', 'max' => 128 ],
             [ ['description'], 'required' ],
             [ ['description'], 'string' ],
-            [ ['notes'], 'string', 'max' => 1028 ],
             [ ['documents'], 'safe' ],
             [ ['tags'], 'each', 'rule' => [ 'string', 'max' => 15 ] ],
         ];
@@ -60,7 +46,6 @@ class BugCreationForm extends Model
         return [
             'title' => 'Title',
             'description' => 'Description',
-            'notes' => 'Notes',
             'documents' => 'Upload Supporting Documents',
             'tags' => 'Tags',
         ];
@@ -68,32 +53,46 @@ class BugCreationForm extends Model
 
     public function createBug()
     {
-        $bug = $this->buildNewBug();
+        $transaction = Yii::$app->db->beginTransaction();
 
-        if ($bug->save()) {
-            $this->newBugId = $bug->id;
+        try {
+            $err = new Exception('An error occurred while saving bug.');
+            $bug = Bug::makeModel($this->title, $this->description);
 
-            if (!empty($this->documents)) {
-                foreach ($this->documents as $doc) {
-                    $filepath = $this->copyToUploadsDir($doc);
-                    $bugDocument = $this->buildNewBugDocument($filepath);
-                    $bugDocument->save();
+            if ($bug->save()) {
+                $this->newBugId = $bug->id;
+
+                if (!empty($this->documents)) {
+                    foreach ($this->documents as $doc) {
+                        $filepath = $this->copyToUploadsDir($doc);
+                        $bugDocument = BugDocument::makeModel(
+                            $bug->id, $filepath['path'], $filepath['base_url']
+                        );
+                        if (!$bugDocument->save()) throw $err;
+                    }
                 }
-            }
 
-            if (!empty($this->tags)) {
-                foreach ($this->tags as $idx => $name) {
-                    $bugTag = new BugTag();
-                    $bugTag->bug_id = $bug->id;
-                    $bugTag->name = $name;
-                    $bugTag->save();
+                if (!empty($this->tags)) {
+                    foreach ($this->tags as $idx => $name) {
+                        $bugTag = BugTag::makeModel($bug->id, strtolower($name));
+                        if (!$bugTag->save()) throw $err;
+                    }
                 }
-            }
 
-            return true;
-        } else {
+            } else {
+                throw $err;
+            }
+        } catch (Exception $e) {
+            $transaction->rollback();
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => $e->getMessage()
+            ]);
             return false;
         }
+
+        $transaction->commit();
+        return true;
     }
 
     public function getNewBugId()
@@ -109,26 +108,6 @@ class BugCreationForm extends Model
                       ->orderBy([ 'count' => SORT_DESC, 'name' => SORT_ASC ])
                       ->limit(10)->column();
         return array_combine($tags, $tags);
-    }
-
-    private function buildNewBug()
-    {
-        $bug = new Bug();
-        $bug->title = $this->title;
-        $bug->description = $this->description;
-        $bug->notes = $this->notes;
-        $bug->bug_status = Bug::BUG_STATUS_NEW;
-        $bug->priority_level = Bug::PRIORITY_LOW;
-        return $bug;
-    }
-
-    private function buildNewBugDocument($filepath)
-    {
-        $bugDoc = new BugDocument();
-        $bugDoc->bug_id = $this->getNewBugId();
-        $bugDoc->path = $filepath['path'];
-        $bugDoc->base_url = $filepath['base_url'];
-        return $bugDoc;
     }
 
     private function copyToUploadsDir($doc)
