@@ -152,6 +152,8 @@ CREATE TABLE `bug_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+CREATE INDEX bug_tag_name_idx ON bug_tag (name);
+
 --
 -- Dumping data for table `bug_tag`
 --
