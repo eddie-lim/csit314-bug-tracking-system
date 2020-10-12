@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use common\components\MyCustomActiveRecord;
 use kartik\select2\Select2;
+use yii\web\JsExpression;
 
 /**
  * @var yii\web\View $this
@@ -24,7 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
           <?= $form->errorSummary($model); ?>
           <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
           <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-          <?= $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
 
           <?= $form->field($model, 'documents')->widget(\trntv\filekit\widget\Upload::class,
               [
@@ -42,10 +42,15 @@ $this->params['breadcrumbs'][] = $this->title;
                       'placeholder' => 'Select common tags or add your own ...',
                       'multiple' => true,
                   ],
-                  'pluginOptions' => [ 'tags' => true,
-                                       'tokenSeparators' => [ ',', ' ' ],
-                                       'maximumInputLength' => 15,
-                                       'allowClear' => true ],
+                  'pluginOptions' => [
+                      'tags' => true,
+                      'tokenSeparators' => [ ',', ' ' ],
+                      'maximumInputLength' => 15,
+                      'allowClear' => true,
+                      'createTag' => new JsExpression("function({ term, data }) {
+                           return { id: term.toLowerCase(), text: term.toLowerCase() };
+                       }")
+                  ],
               ]
             ); ?>
         </div>
