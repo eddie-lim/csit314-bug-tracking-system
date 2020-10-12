@@ -278,77 +278,73 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <hr class="w-100"/>
     <h4> Statistics by date range </h4>
-    <div class='flex-row'>
-    <?php $form = ActiveForm::begin(['id' => 'export-form']) ?>
-    <div class='d-flex flex-row justify-content-around'>
-      <div class='flex-column w-25'>
-      <?php
-      echo $form->field($exportModel, 'date_range', [
-        'addon'=>['prepend'=>['content'=>'<i class="fas fa-calendar-alt"></i>']],
-        'options'=>['class'=>'drp-container form-group']
-        ])->widget(DateRangePicker::classname(),[
-          'value'=> $exportModel->date_range,
-          'pluginOptions' => ['locale'=>['format'=>'YYYY-MM-DD']],
-          'useWithAddon'=>true,
-          'readonly' => true,
-        ]);
-        ?>
-      </div>
-        <div class='justify-content-center pt-2' style="padding-right:6%">
-          <?php echo Html::submitButton('Get no. of Reported Bugs', ['name' => 'repb', 'class' => 'btn btn-primary m-4'])?>
-          <?php echo Html::submitButton('Get no. of Resolved Bugs', ['name' => 'resb', 'class' => 'btn btn-primary m-4'])?>
-          <?php echo Html::submitButton('Get top Reporters', ['name' => 'topr', 'class' => 'btn btn-primary m-4'])?>
-          <?php echo Html::submitButton('Get top Developers', ['name' => 'topd', 'class' => 'btn btn-primary m-4'])?>
-        </div>
-      </div>
-        <!-- jon: im sorry eddie -->
-        <div class='d-flex flex-row' style="margin-left:37.5%">
-          <div class='card p-3' style='height:300px;width:82%'>
-            <?php
-            // if top reporters/developers is pressed
-            if($result instanceof ArrayDataProvider){
-              $header1 = $selection === 'topr' ? 'Bugs reported' : 'Bugs resolved';
-              $header2 = $selection === 'topr' ? 'Reported by' : 'Resolved by';
-              $attrb = $selection === 'topr' ? 'created_by' : 'developer_user_id';
+    <div class="d-flex flex-row justify-content-center">
+      <?php $form = ActiveForm::begin(['id' => 'export-form']) ?>
+      <div class='col-md-12'>
+        <?php
+        echo $form->field($exportModel, 'date_range', [
+          'addon'=>['prepend'=>['content'=>'<i class="fas fa-calendar-alt"></i>']],
+          'options'=>['class'=>'drp-container form-group']
+          ])->widget(DateRangePicker::classname(),[
+            'value'=> $exportModel->date_range,
+            'pluginOptions' => ['locale'=>['format'=>'YYYY-MM-DD']],
+            'useWithAddon'=>true,
+            'readonly' => true,
+          ]);
+          ?>
+          <div class='card p-3'>
+            <div class='d-flex flex-row'>
+              <div class='btn-group-vertical mr-2'>
+                <?php echo Html::submitButton('Get no. of Reported Bugs', ['name' => 'repb', 'class' => 'btn btn-light btn-md'])?>
+                <?php echo Html::submitButton('Get no. of Resolved Bugs', ['name' => 'resb', 'class' => 'btn btn-light btn-md'])?>
+                <?php echo Html::submitButton('Get top Reporters', ['name' => 'topr', 'class' => 'btn btn-light btn-md'])?>
+                <?php echo Html::submitButton('Get top Developers', ['name' => 'topd', 'class' => 'btn btn-light btn-md'])?>
+              </div>
+              <div class='d-flex flex-column justify-content-center'>
+                <?php
+                // if top reporters/developers is pressed
+                if($result instanceof ArrayDataProvider){
+                  $header1 = $selection === 'topr' ? 'Bugs reported' : 'Bugs resolved';
+                  $header2 = $selection === 'topr' ? 'Reported by' : 'Resolved by';
+                  $attrb = $selection === 'topr' ? 'created_by' : 'developer_user_id';
 
-              echo Html::tag('h2', Html::encode(
-                $selection === 'topr' ? "Top reporters" : "Top developers"
-              ), ['class' => 'text-center']);
+                  echo Html::tag('h2', Html::encode(
+                    $selection === 'topr' ? "Top reporters" : "Top developers"
+                  ), ['class' => 'text-center']);
 
-              echo GridView::widget([
-                'dataProvider'=>$result,
-                'layout' => '{items}',
-                'columns' => [
-                  [
-                    'header' => $header1,
-                    'attribute' => 'counter',
-                  ],
-                  [
-                    'header' => $header2,
-                    'attribute' => $attrb,
-                    // using Closure to use outer variable
-                    'value' => function($res) use ($attrb){
-                      return User::findIdentity($res[$attrb])->username;
-                    }
-                  ],
-                ],
-              ]);
-            } else {
-              if($selection != "")
-              echo Html::tag('h2', Html::encode(
-                $selection === 'repb' ? "Total no. of reported bugs"
-                : "Total no. of resolved bugs"
-              ), ['class' => 'text-center']);
+                  echo GridView::widget([
+                    'dataProvider'=>$result,
+                    'layout' => '{items}',
+                    'columns' => [
+                      [
+                        'header' => $header1,
+                        'attribute' => 'counter',
+                      ],
+                      [
+                        'header' => $header2,
+                        'attribute' => $attrb,
+                        // using Closure to use outer variable
+                        'value' => function($res) use ($attrb){
+                          return User::findIdentity($res[$attrb])->username;
+                        }
+                      ],
+                    ],
+                  ]);
+                } else {
+                  if($selection != "")
+                  echo Html::tag('h2', Html::encode(
+                    $selection === 'repb' ? "Total no. of reported bugs"
+                    : "Total no. of resolved bugs"
+                  ), ['class' => 'text-center']);
 
-              echo Html::tag('h1', Html::encode($result),
-              ['class' => 'display-1 text-center pt-4']);
-            }
-            ?>
+                  echo Html::tag('h1', Html::encode($result),
+                  ['class' => 'display-1 text-center pt-4']);
+                }
+                ?>
+              </div>
+            </div>
           </div>
         </div>
+        <?php ActiveForm::end() ?>
+
       </div>
-
-
-      <?php ActiveForm::end() ?>
-
-    </div>
