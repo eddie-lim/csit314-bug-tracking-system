@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use common\models\Bug;
+use common\models\User;
 
 /**
  * @var yii\web\View $this
@@ -14,7 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bug-index">
     <div class="card">
-        <?= \backend\widgets\TabMenuBugWidget::widget(['page'=>$page]); ?>
+        <?php
+            if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
+                echo \backend\widgets\TabMenuBugWithTaskWidget::widget(['page'=>$page]);
+            } else {   
+                echo \backend\widgets\TabMenuBugWidget::widget(['page'=>$page]);
+            }
+        ?>
         <div class="card-header">
             <?php echo Html::a('Create Bug', ['create'], ['class' => 'btn btn-success']) ?>
             <!-- <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?> -->
