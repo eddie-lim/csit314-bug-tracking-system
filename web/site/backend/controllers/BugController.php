@@ -6,12 +6,15 @@ use Yii;
 use common\models\Bug;
 use common\models\BugComment;
 use common\models\search\BugSearch;
+
 use backend\models\BugCreationForm;
+use backend\models\BugTaskForm;
+
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 
-use yii\data\ArrayDataProvider;
 use trntv\filekit\actions\UploadAction;
 use trntv\filekit\actions\DeleteAction;
 
@@ -53,9 +56,16 @@ class BugController extends Controller
         $searchModel = new BugSearch();
 
         //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
-        if (Yii::$app->user->can('reviewer')) $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
-        if (Yii::$app->user->can('triager')) $searchModel->setFilterBy([Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_REOPEN, Bug::BUG_STATUS_REJECTED]);
-        if (Yii::$app->user->can('developer')) $searchModel->setAssignedTo(Yii::$app->user->getID());;
+        if (Yii::$app->user->can(User::ROLE_REVIEWER)){
+          $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
+        } 
+        if (Yii::$app->user->can(User::ROLE_TRIAGER)){
+          $searchModel->setFilterBy([Bug::BUG_STATUS_NEW]);
+        }
+        if (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
+          $searchModel->setFilterBy([Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REOPEN]);
+          $searchModel->setAssignedTo(Yii::$app->user->getID());
+        }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -165,9 +175,38 @@ class BugController extends Controller
      */
     public function actionDelete($id)
     {
+      // TODO:: soft delete
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionAcknowledge($id)
+    {
+        $model = new BugTaskForm($id);
+        $model->scenario = BugTaskForm::SCENARIO_DEVELOPER;
+        return $this->render('task', [
+          'model'=>$model,
+          'title'=>"Acknowledge",
+        ]);
+    }
+    public function actionAssign($id)
+    {
+        $model = new BugTaskForm($id);
+        $model->scenario = BugTaskForm::SCENARIO_TRIAGER;
+        return $this->render('task', [
+          'model'=>$model,
+          'title'=>"Assign",
+        ]);
+    }
+    public function actionFeedback($id)
+    {
+        $model = new BugTaskForm($id);
+        $model->scenario = BugTaskForm::SCENARIO_REVIEWER;
+        return $this->render('task', [
+          'model'=>$model,
+          'title'=>"Feedback",
+        ]);
     }
 
     /**
