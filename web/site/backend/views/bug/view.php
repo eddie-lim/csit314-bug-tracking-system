@@ -9,6 +9,7 @@ use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
 
+use common\models\Bug;
 use common\models\User;
 
 use kartik\select2\Select2;
@@ -29,10 +30,36 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="bug-view">
-   <?php $form = ActiveForm::begin(['id' => '']); ?>
    <div class="row m-1 mb-2">
       <!-- tag -->
       <?php
+
+         if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+            if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
+               echo Html::a(
+                  "Acknowledge this ticket",
+                  Url::to(['acknowledge', 'id'=>$model->id]),
+                  ['class'=>'btn btn-success']
+               );
+            }
+         } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+            if($model->bug_status == Bug::BUG_STATUS_NEW){
+               echo Html::a(
+                  "Assign to a Developer",
+                  Url::to(['assign', 'id'=>$model->id]),
+                  ['class'=>'btn btn-success']
+               );
+            }
+         } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
+            if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
+               echo Html::a(
+                  "Review this",
+                  Url::to(['review', 'id'=>$model->id]),
+                  ['class'=>'btn btn-success']
+               );
+            }
+         }
+
          foreach ($model->tags as $tag) {
             echo Html::tag('button', Html::encode($tag->attributes['name']) . '&nbsp;&nbsp;x',
             [
@@ -56,6 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
                <?= Html::tag('span', Html::encode(Yii::$app->formatter->asDateTime($model->created_at)),
                ['class' => 'text-uppercase font-weight-normal badge badge-light']); ?>
             </span>
+            <!-- TODO:: show list view for the ticket's lifecycle -->
             <span class="h6 p-2">
                Updated by
                <?= Html::tag('span', Html::encode(User::findIdentity($model->updated_by)->publicIdentity),
@@ -70,6 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="text-left h-100">
                <div class="h2 pt-2">
                   Status
+                  <!-- TODO:: use const for the case -->
                   <?php
                   switch ($model->bug_status) {
                      case "fixing":
@@ -156,12 +185,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
       <!-- if got special role gimme notes if not dun show -->
       <!-- add a button to go to form for them to edit / do anything according to role -->
-      <div class="flex-row ml-1 mr-1 mt-4 bg-blue">
+      <div class="flex-row ml-1 mr-1 mt-4">
          <?php
-            if (Yii::$app->user->can('triager')) {
-               echo Html::tag('div', 'Placeholder for notes, for anyone not user', [
-                  'class' => 'bg-red jumbotron',
-               ]);
+            if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
+               if($model->notes){
+                  echo "<h2>Notes</h2>";
+                  echo Html::tag('div', $model->notes, [
+                     'class' => 'jumbotron',
+                  ]);
+               }
                // note segment here
             };
           ?>
@@ -191,13 +223,10 @@ $this->params['breadcrumbs'][] = $this->title;
        </div>
        <div class="flex-row ml-1 mr-1 mt-2 p-1" style="background:none">
          <?php $form = ActiveForm::begin(); ?>
-         <?php echo $form->field($comment, 'bug_id')->hiddenInput(['value'=>$model->id])->label(false);?>
-         <?php echo $form->field($comment, 'created_at')->hiddenInput(['value'=>123])->label(false);?>
-         <?php echo $form->field($comment, 'created_by')->hiddenInput(['value'=>Yii::$app->user->identity->id])->label(false);?>
+         <?php echo $form->field($comment, 'bug_id')->hiddenInput(['value'=>$model->id])->label(false);?>   
          <?php echo $form->field($comment, 'comment')->textArea(['rows'=>6]) ?>
          <?php echo Html::submitButton('Post', ['class'=> 'btn btn-primary'])?>
          <?php ActiveForm::end();?>
       </div>
    </div>
-   <?php ActiveForm::end(); ?>
 </div>
