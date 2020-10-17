@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     // 'updated_at',
                     // 'updated_by',
 
-                    ['class' => \common\widgets\ActionColumn::class],
+                    //['class' => \common\widgets\ActionColumn::class],
                 ],
             ]); ?>
 
