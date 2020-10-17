@@ -53,8 +53,8 @@ $this->params['breadcrumbs'][] = $this->title;
          } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
             if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
                echo Html::a(
-                  "Review this",
-                  Url::to(['review', 'id'=>$model->id]),
+                  "Feedback to this ticket",
+                  Url::to(['feedback', 'id'=>$model->id]),
                   ['class'=>'btn btn-success']
                );
             }

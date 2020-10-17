@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Bug;
@@ -43,19 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+                    // ['class' => 'yii\grid\SerialColumn'],
 
-                    // 'id',
+                    'id',
                     [
                         'attribute'=>'title',
                         'format'=>'raw',
                         'value'=> function($model){
-                            return Html::a(
-                                $model->title,
-                                ['bug/view', 'id'=>$model->id],
-                                ['bugcomment/view', 'id'=>$model->id],
-                                ['bug'=>'View', 'class'=>'no-pjax']
-                            );
+                            return Html::a($model->title, Url::to(['view','id'=>$model->id]));
                         }
                     ],
                     //'description:ntext',
