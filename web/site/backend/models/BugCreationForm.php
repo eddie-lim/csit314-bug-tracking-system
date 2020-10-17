@@ -11,23 +11,14 @@ use Exception;
 
 class BugCreationForm extends Model
 {
+    const USER_UPLOAD_BASEPATH = "uploads/temp/user_";
+
     public $title;
     public $description;
     public $documents;
     public $tags;
 
     private $newBugId;
-
-    public function behaviours()
-    {
-        return [
-            'document' => [
-                'class' => 'trntv\filekit\behaviors\UploadBehavior',
-                'multiple' => true,
-                'attribute' => 'documents',
-            ]
-        ];
-    }
 
     public function rules()
     {
@@ -53,6 +44,7 @@ class BugCreationForm extends Model
 
     public function createBug()
     {
+        $dir = SELF::getUserUploadDir();
         $transaction = Yii::$app->db->beginTransaction();
 
         try {
@@ -62,12 +54,10 @@ class BugCreationForm extends Model
             if ($bug->save()) {
                 $this->newBugId = $bug->id;
 
-                if (!empty($this->documents)) {
-                    foreach ($this->documents as $doc) {
-                        $filepath = $this->copyToUploadsDir($doc);
-                        $bugDocument = BugDocument::makeModel(
-                            $bug->id, $filepath['path'], $filepath['base_url']
-                        );
+                exec("ls $dir", $files);
+                if (!empty($files)) {
+                    foreach ($files as $filename) {
+                        $bugDocument = $this->addBugDocument($bug->id, $dir, $filename);
                         if (!$bugDocument->save()) throw $err;
                     }
                 }
@@ -78,17 +68,21 @@ class BugCreationForm extends Model
                         if (!$bugTag->save()) throw $err;
                     }
                 }
-
             } else {
                 throw $err;
             }
+
         } catch (Exception $e) {
             $transaction->rollback();
+            exec("rm -rf uploads/bug_" . strval($this->newBugId));
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
                 'body' => $e->getMessage()
             ]);
             return false;
+
+        } finally {
+            exec("rm -rf $dir");
         }
 
         $transaction->commit();
@@ -110,30 +104,23 @@ class BugCreationForm extends Model
         return array_combine($tags, $tags);
     }
 
-    private function copyToUploadsDir($doc)
+    public static function mkUserUploadDir()
     {
-        $dir = 'uploads/bug_' . strval($this->getNewBugId());
-        if (!file_exists($dir)) {
-            exec("mkdir -p $dir");
-        }
-
-        $src = Yii::getAlias('@storage/web/source') . '/' . $doc['path'];
-        $dest = $this->getFilename($dir, $doc['name']);
-        exec("mv -f $src $dir/$dest");
-
-        return [ 'path' => $dest, 'base_url' => $dir ];
+        $dir = BugCreationForm::USER_UPLOAD_BASEPATH . strval(Yii::$app->user->getId());
+        exec("rm -rf $dir; mkdir -p $dir");
     }
 
-    private function getFilename($dir, $name)
+    public static function getUserUploadDir()
     {
-        $tokens = explode('.', $name);
-        $ext = array_pop($tokens);
-        $base = implode($tokens);
-        $N = "";
-
-        while (file_exists("$dir/$base$N.$ext")) {
-            $N = strval(intval($N) + 1);
-        }
-        return "$base$N.$ext";
+        return BugCreationForm::USER_UPLOAD_BASEPATH . strval(Yii::$app->user->getId());
     }
+
+    private function addBugDocument($bugId, $sourceDir, $filename)
+    {
+        $targetDir = 'uploads/bug_' . strval($bugId);
+        exec("mkdir -p $targetDir");
+        exec("mv $sourceDir/$filename $targetDir/$filename");
+        return BugDocument::makeModel($bugId, $filename, $targetDir);
+    }
+
 }

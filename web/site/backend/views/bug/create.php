@@ -1,8 +1,10 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap4\ActiveForm;
 use common\components\MyCustomActiveRecord;
+use kartik\widgets\FileInput;
 use kartik\select2\Select2;
 use yii\web\JsExpression;
 
@@ -14,6 +16,8 @@ use yii\web\JsExpression;
 $this->title = 'Create Bug';
 $this->params['breadcrumbs'][] = ['label' => 'Bugs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$user =  "user_" . strval(Yii::$app->user->getId());
 ?>
 
 <div class="bug-create">
@@ -26,12 +30,48 @@ $this->params['breadcrumbs'][] = $this->title;
           <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
           <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-          <?= $form->field($model, 'documents')->widget(\trntv\filekit\widget\Upload::class,
-              [
-                  'url' => ['upload-document'],
-                  'maxNumberOfFiles' => 5,
-              ]
-            ) ?>
+          <?= $form->field($model, 'documents[]')->widget(FileInput::classname(), [
+              'options' => [
+                  'multiple' => true
+              ],
+              'pluginOptions' => [
+                  'allowedFileExtensions' => [
+                      'jpg', 'jpeg', 'png', 'txt', 'csv', 'pdf', 'json'
+                  ],
+                  'uploadUrl' => Url::to('/bug/upload-file'),
+                  'maxFileCount' => 5,
+                  'showCancel' => false,
+                  'showCaption' => false,
+                  'showRemove' => false,
+                  'showUpload' => false,
+                  'dropZoneEnabled' => false,
+              ],
+              'pluginEvents' => [
+                  'filebatchselected' => "function(event) {
+                      $(this).fileinput('upload');
+                  }",
+                  'fileremoved' => "function(event, id, index) {
+                       $.ajax({
+                           type: 'POST',
+                           url: '/bug/remove-file',
+                           data: {
+                             filename: id.split('_').pop(),
+                             user: '$user'
+                           }
+                       });
+                   }",
+                  'fileclear' => "function(event) {
+                      $.ajax({
+                          type: 'POST',
+                          url: '/bug/remove-file',
+                          data: {
+                              delete_all: true,
+                              user: '$user'
+                          }
+                      });
+                  }",
+              ],
+          ]) ?>
 
           <?= $form->field($model, 'tags')->widget(Select2::classname(),
               [

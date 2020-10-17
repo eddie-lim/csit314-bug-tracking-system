@@ -15,9 +15,6 @@ use yii\web\NotFoundHttpException;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 
-use trntv\filekit\actions\UploadAction;
-use trntv\filekit\actions\DeleteAction;
-
 /**
  * BugController implements the CRUD actions for Bug model.
  */
@@ -37,20 +34,6 @@ class BugController extends Controller
         ];
     }
 
-    public function actions()
-    {
-        return [
-            'upload-document' => [
-                'class' => UploadAction::class,
-                'multiple' => true,
-                'deleteRoute' => 'delete-document',
-            ],
-            'delete-document' => [
-                'class' => DeleteAction::class,
-            ],
-        ];
-    }
-
     public function actionTasks()
     {
         $searchModel = new BugSearch();
@@ -58,7 +41,7 @@ class BugController extends Controller
         //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
         if (Yii::$app->user->can(User::ROLE_REVIEWER)){
           $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
-        } 
+        }
         if (Yii::$app->user->can(User::ROLE_TRIAGER)){
           $searchModel->setFilterBy([Bug::BUG_STATUS_NEW]);
         }
@@ -146,6 +129,7 @@ class BugController extends Controller
             return $this->redirect([ 'view', 'id' => $model->getNewBugId() ]);
         }
 
+        BugCreationForm::mkUserUploadDir();
         return $this->render('create', [ 'model' => $model ]);
     }
 
@@ -190,6 +174,7 @@ class BugController extends Controller
           'title'=>"Acknowledge",
         ]);
     }
+
     public function actionAssign($id)
     {
         $model = new BugTaskForm($id);
@@ -199,6 +184,7 @@ class BugController extends Controller
           'title'=>"Assign",
         ]);
     }
+
     public function actionFeedback($id)
     {
         $model = new BugTaskForm($id);
@@ -207,6 +193,57 @@ class BugController extends Controller
           'model'=>$model,
           'title'=>"Feedback",
         ]);
+    }
+
+    /**
+     * Handles ajax request for uploading bug documents
+     */
+    public function actionUploadFile()
+    {
+        if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
+        if (empty($_FILES['BugCreationForm'])) return [
+            'error' => 'File not loaded'
+        ];
+
+        $details = $_FILES['BugCreationForm'];
+        foreach ($details as $key => $value) {
+            if ($key == 'name') {
+                $name = $value['documents'][0];
+            } else if ($key == 'tmp_name') {
+                $src = $value['documents'][0];
+            }
+        }
+
+        $dir = BugCreationForm::getUserUploadDir();
+        if (move_uploaded_file($src, "$dir/$name")) {
+            return json_encode([ 'success' => "Uploaded $name" ]);
+        } else {
+            return json_encode([
+                'error' => 'An error occurred while saving file'
+            ]);
+        };
+    }
+
+    /**
+     * Handles ajax request for removing bug documents
+     */
+    public function actionRemoveFile()
+    {
+        if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
+
+        $dir = BugCreationForm::getUserUploadDir();
+        if (isset($_POST['delete_all'])) {
+            exec("rm -rf $dir/*");
+            return json_encode([ 'status' => 'delete complete' ]);
+
+        } else {
+            $filename = $_POST['filename'];
+            if (file_exists("$dir/$filename")) {
+                unlink("$dir/$filename");
+            }
+        }
+
+        return json_encode([ 'status' => 'delete complete' ]);
     }
 
     /**
