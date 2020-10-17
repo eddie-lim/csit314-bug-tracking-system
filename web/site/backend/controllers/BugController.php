@@ -14,6 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\helpers\FileHelper;
 
 /**
  * BugController implements the CRUD actions for Bug model.
@@ -233,14 +234,12 @@ class BugController extends Controller
 
         $dir = BugCreationForm::getUserUploadDir();
         if (isset($_POST['delete_all'])) {
-            exec("rm -rf $dir/*");
-            return json_encode([ 'status' => 'delete complete' ]);
-
-        } else {
-            $filename = $_POST['filename'];
-            if (file_exists("$dir/$filename")) {
-                unlink("$dir/$filename");
+            foreach(FileHelper::findFiles($dir) as $file) {
+                FileHelper::unlink($file);
             }
+            return json_encode([ 'status' => $files ]);
+        } else {
+            FileHelper::unlink("$dir/" . $_POST['filename']);
         }
 
         return json_encode([ 'status' => 'delete complete' ]);

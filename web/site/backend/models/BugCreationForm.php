@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\FileHelper;
 use common\models\Bug;
 use common\models\BugDocument;
 use common\models\BugTag;
@@ -54,12 +55,10 @@ class BugCreationForm extends Model
             if ($bug->save()) {
                 $this->newBugId = $bug->id;
 
-                exec("ls $dir", $files);
-                if (!empty($files)) {
-                    foreach ($files as $filename) {
-                        $bugDocument = $this->addBugDocument($bug->id, $dir, $filename);
-                        if (!$bugDocument->save()) throw $err;
-                    }
+                foreach (FileHelper::findFiles($dir) as $path) {
+                    $filename = str_replace("$dir/", "", $path);
+                    $bugDocument = $this->addBugDocument($bug->id, $dir, $filename);
+                    if (!$bugDocument->save()) throw $err;
                 }
 
                 if (!empty($this->tags)) {
@@ -74,7 +73,7 @@ class BugCreationForm extends Model
 
         } catch (Exception $e) {
             $transaction->rollback();
-            exec("rm -rf uploads/bug_" . strval($this->newBugId));
+            FileHelper::removeDirectory("uploads/bug_" . strval($this->newBugId));
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
                 'body' => $e->getMessage()
@@ -82,7 +81,7 @@ class BugCreationForm extends Model
             return false;
 
         } finally {
-            exec("rm -rf $dir");
+            FileHelper::removeDirectory($dir);
         }
 
         $transaction->commit();
@@ -107,7 +106,8 @@ class BugCreationForm extends Model
     public static function mkUserUploadDir()
     {
         $dir = BugCreationForm::USER_UPLOAD_BASEPATH . strval(Yii::$app->user->getId());
-        exec("rm -rf $dir; mkdir -p $dir");
+        FileHelper::removeDirectory($dir);
+        FileHelper::createDirectory($dir);
     }
 
     public static function getUserUploadDir()
@@ -118,8 +118,8 @@ class BugCreationForm extends Model
     private function addBugDocument($bugId, $sourceDir, $filename)
     {
         $targetDir = 'uploads/bug_' . strval($bugId);
-        exec("mkdir -p $targetDir");
-        exec("mv $sourceDir/$filename $targetDir/$filename");
+        FileHelper::createDirectory($targetDir);
+        rename("$sourceDir/$filename", "$targetDir/$filename");
         return BugDocument::makeModel($bugId, $filename, $targetDir);
     }
 
