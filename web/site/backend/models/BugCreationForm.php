@@ -12,7 +12,8 @@ use Exception;
 
 class BugCreationForm extends Model
 {
-    const USER_UPLOAD_BASEPATH = "uploads\\temp\\user_";
+    const USER_UPLOAD_BASEPATH =
+        "uploads" . DIRECTORY_SEPARATOR . "temp" . DIRECTORY_SEPARATOR . "user_";
 
     public $title;
     public $description;
@@ -56,7 +57,7 @@ class BugCreationForm extends Model
                 $this->newBugId = $bug->id;
 
                 foreach (FileHelper::findFiles($dir) as $path) {
-                    $filename = str_replace("$dir\\", "", $path);
+                    $filename = str_replace($dir . DIRECTORY_SEPARATOR, "", $path);
                     $bugDocument = $this->addBugDocument($bug->id, $dir, $filename);
                     if (!$bugDocument->save()) throw $err;
                 }
@@ -73,7 +74,9 @@ class BugCreationForm extends Model
 
         } catch (Exception $e) {
             $transaction->rollback();
-            FileHelper::removeDirectory("uploads\\bug_" . strval($this->newBugId));
+            FileHelper::removeDirectory(
+                "uploads" . DIRECTORY_SEPARATOR . "bug_" . strval($this->newBugId)
+            );
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
                 'body' => $e->getMessage()
@@ -117,9 +120,10 @@ class BugCreationForm extends Model
 
     private function addBugDocument($bugId, $sourceDir, $filename)
     {
-        $targetDir = 'uploads/bug_' . strval($bugId);
+        $targetDir = "uploads" . DIRECTORY_SEPARATOR . "bug_" . strval($bugId);
         FileHelper::createDirectory($targetDir);
-        rename("$sourceDir/$filename", "$targetDir/$filename");
+        rename("$sourceDir" . DIRECTORY_SEPARATOR . "$filename",
+               "$targetDir" . DIRECTORY_SEPARATOR . "$filename");
         return BugDocument::makeModel($bugId, $filename, $targetDir);
     }
 

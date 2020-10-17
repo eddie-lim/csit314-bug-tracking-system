@@ -216,7 +216,7 @@ class BugController extends Controller
         }
 
         $dir = BugCreationForm::getUserUploadDir();
-        if (move_uploaded_file($src, "$dir/$name")) {
+        if (move_uploaded_file($src, $dir . DIRECTORY_SEPARATOR . $name)) {
             return json_encode([ 'success' => "Uploaded $name" ]);
         } else {
             return json_encode([
@@ -239,7 +239,7 @@ class BugController extends Controller
             }
             return json_encode([ 'status' => $files ]);
         } else {
-            FileHelper::unlink("$dir/" . $_POST['filename']);
+            FileHelper::unlink($dir . DIRECTORY_SEPARATOR . $_POST['filename']);
         }
 
         return json_encode([ 'status' => 'delete complete' ]);
