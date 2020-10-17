@@ -12,7 +12,7 @@ use Exception;
 
 class BugCreationForm extends Model
 {
-    const USER_UPLOAD_BASEPATH = "uploads/temp/user_";
+    const USER_UPLOAD_BASEPATH = "uploads\\temp\\user_";
 
     public $title;
     public $description;
@@ -56,7 +56,7 @@ class BugCreationForm extends Model
                 $this->newBugId = $bug->id;
 
                 foreach (FileHelper::findFiles($dir) as $path) {
-                    $filename = str_replace("$dir/", "", $path);
+                    $filename = str_replace("$dir\\", "", $path);
                     $bugDocument = $this->addBugDocument($bug->id, $dir, $filename);
                     if (!$bugDocument->save()) throw $err;
                 }
@@ -73,7 +73,7 @@ class BugCreationForm extends Model
 
         } catch (Exception $e) {
             $transaction->rollback();
-            FileHelper::removeDirectory("uploads/bug_" . strval($this->newBugId));
+            FileHelper::removeDirectory("uploads\\bug_" . strval($this->newBugId));
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
                 'body' => $e->getMessage()
