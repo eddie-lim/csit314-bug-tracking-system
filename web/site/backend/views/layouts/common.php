@@ -175,7 +175,7 @@ $logEntries[] = [
                     <a href="#" class="d-block"><?php echo Yii::$app->user->identity->publicIdentity ?></a>
                 </div>
             </div>
-            <div class="text-white badge badge-info">
+            <div class="text-white badge badge-pill badge-info">
                 <?php
                     $role = User::ROLE_USER;
                     if (Yii::$app->user->can(User::ROLE_REVIEWER)){

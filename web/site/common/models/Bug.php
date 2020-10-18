@@ -106,110 +106,126 @@ class Bug extends \common\components\MyCustomActiveRecord
         return $bug;
     }
 
+    public static function getAllPriorityLevel() {
+      return [
+          SELF::PRIORITY_LOW => "Info",
+          SELF::PRIORITY_MED => "Warning",
+          SELF::PRIORITY_HIGH => "Danger",
+      ];
+    }
+
     public static function getAllBugStatus() {
       return [
-          SELF::BUG_STATUS_NEW => "status: new",
-          SELF::BUG_STATUS_ASSIGNED => "status: assigned",
-          SELF::BUG_STATUS_FIXING => "status: fixing",
-          SELF::BUG_STATUS_PENDING_REVIEW => "status: pending_review",
-          SELF::BUG_STATUS_COMPLETED => "status: completed",
-          SELF::BUG_STATUS_REJECTED => "status: rejected",
-          SELF::BUG_STATUS_REOPEN => "status_reopen",
+          SELF::BUG_STATUS_NEW => "New",
+          SELF::BUG_STATUS_ASSIGNED => "Assigned",
+          SELF::BUG_STATUS_FIXING => "Fixing",
+          SELF::BUG_STATUS_PENDING_REVIEW => "Pending Review",
+          SELF::BUG_STATUS_COMPLETED => "Completed",
+          SELF::BUG_STATUS_REJECTED => "Rejected",
+          SELF::BUG_STATUS_REOPEN => "Re-Open",
       ];
     }
 
     public static function getActiveBugsData() {
         return SELF::find()
-            ->where('bug_status NOT IN ("pending_review", "Rejected", "Completed")')
-            ->all();
+          ->where(['not in', 'bug_status', [SELF::BUG_STATUS_PENDING_REVIEW, SELF::BUG_STATUS_REJECTED, SELF::BUG_STATUS_COMPLETED]])
+          ->all();
     }
 
     public static function getResolvedBugsData() {
-        return SELF::find()->where(['bug_status'=>'Completed'])->all();
+        return SELF::find()
+          ->where(['bug_status'=>SELF::BUG_STATUS_COMPLETED])
+          ->all();
     }
 
     public static function getPendingBugsData() {
-        return SELF::find()->where(['bug_status'=>'pending_review'])->all();
+        return SELF::find()
+          ->where(['bug_status'=>SELF::BUG_STATUS_PENDING_REVIEW])
+          ->all();
     }
 
     public static function getTopDeveloperData() {
-        return SELF::find()->select(['COUNT(*) AS counter', 'developer_user_id'])
-                        ->where(['bug_status'=>'Completed'])
-                        ->groupBy('developer_user_id')
-                        ->orderBy(['counter'=>SORT_DESC])
-                        ->asArray()
-                        ->limit(3)
-                        ->all();
+        return SELF::find()
+          ->select(['COUNT(*) AS counter', 'developer_user_id'])
+          ->where(['bug_status'=>SELF::BUG_STATUS_COMPLETED])
+          ->groupBy('developer_user_id')
+          ->orderBy(['counter'=>SORT_DESC])
+          ->asArray()
+          ->limit(3)
+          ->all();
     }
 
 
     public static function getTopReporterData($st, $et){
-        return SELF::find()->select(['COUNT(*) AS counter', 'created_by'])
-                           ->where('bug_status NOT IN ("Rejected")')
-                           ->andWhere(['>=', 'created_at', $st])
-                           ->andWhere(['<=', 'created_at', $et])
-                           ->groupBy('created_by')
-                           ->orderBy(['counter'=>SORT_DESC])
-                           ->asArray()
-                           ->limit(3)
-                           ->all();
+        return SELF::find()
+          ->select(['COUNT(*) AS counter', 'created_by'])
+          ->where(['not in', 'bug_status', SELF::BUG_STATUS_REJECTED])
+          ->andWhere(['>=', 'created_at', $st])
+          ->andWhere(['<=', 'created_at', $et])
+          ->groupBy('created_by')
+          ->orderBy(['counter'=>SORT_DESC])
+          ->asArray()
+          ->limit(3)
+          ->all();
     }
 
     public static function getBugStatusData(){
-        return SELF::find()->select(['COUNT(*) AS counter', 'bug_status'])
-                         ->groupBy('bug_status')
-                         ->asArray()
-                         ->all();
+        return SELF::find()
+          ->select(['COUNT(*) AS counter', 'bug_status'])
+          ->groupBy('bug_status')
+          ->asArray()
+          ->all();
     }
     public static function getCurBugStatusData(){
         return SELF::find()
-                 ->select(['bug_status', 'created_at', 'COUNT(id) AS counter'])
-                 ->where(['FROM_UNIXTIME(created_at, "%m-%Y")' => date('m-Y')])
-                 ->groupBy('bug_status')
-                 ->asArray()
-                 ->all();
+          ->select(['bug_status', 'created_at', 'COUNT(id) AS counter'])
+          ->where(['FROM_UNIXTIME(created_at, "%m-%Y")' => date('m-Y')])
+          ->groupBy('bug_status')
+          ->asArray()
+          ->all();
     }
 
     public static function getPriorityLevelData(){
-        return SELF::find()->select(['COUNT(*) AS counter', 'priority_level'])
-                         ->where('bug_status NOT IN ("Rejected", "Completed")')
-                         ->groupBy('priority_level')
-                         ->asArray()
-                         ->all();
+        return SELF::find()
+          ->select(['COUNT(*) AS counter', 'priority_level'])
+          ->where(['not in', 'bug_status', [SELF::BUG_STATUS_REJECTED, SELF::BUG_STATUS_COMPLETED]])
+          ->groupBy('priority_level')
+          ->asArray()
+          ->all();
     }
 
     public static function getReportedBugsByMonth(){
         return SELF::find()
-                ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
-                ->where('bug_status NOT IN ("Rejected", "Completed")')
-                ->groupBy('m_date')
-                ->asArray()
-                ->all();
+          ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
+          ->where(['not in', 'bug_status', [SELF::BUG_STATUS_REJECTED, SELF::BUG_STATUS_COMPLETED]])
+          ->groupBy('m_date')
+          ->asArray()
+          ->all();
     }
 
     public static function getResolvedBugsByMonth(){
         return SELF::find()
-                ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
-                ->where(['bug_status'=>'Completed'])
-                ->groupBy('m_date')
-                ->asArray()
-                ->all();
+          ->select(['FROM_UNIXTIME(created_at, "%m-%Y") AS m_date', 'COUNT(id) AS counter'])
+          ->where(['bug_status'=>SELF::BUG_STATUS_COMPLETED])
+          ->groupBy('m_date')
+          ->asArray()
+          ->all();
     }
 
     public static function getReportedBugs($start_at, $end_at){
         return SELF::find()
-                ->select(['created_at', 'COUNT(id) AS counter'])
-                ->where(['>=', 'created_at', $start_at])
-                ->andWhere(['<=', 'created_at', $end_at])
-                ->count();
+          ->select(['created_at', 'COUNT(id) AS counter'])
+          ->where(['>=', 'created_at', $start_at])
+          ->andWhere(['<=', 'created_at', $end_at])
+          ->count();
     }
 
     public static function getResolvedBugs($start_at, $end_at){
         return SELF::find()
-                ->select(['updated_at', 'COUNT(id) AS counter'])
-                ->where(['>=', 'updated_at', $start_at])
-                ->andWhere(['<=', 'updated_at', $end_at])
-                ->andWhere(['bug_status'=>'Completed'])
-                ->count();
+          ->select(['updated_at', 'COUNT(id) AS counter'])
+          ->where(['>=', 'updated_at', $start_at])
+          ->andWhere(['<=', 'updated_at', $end_at])
+          ->andWhere(['bug_status'=>SELF::BUG_STATUS_COMPLETED])
+          ->count();
     }
 }

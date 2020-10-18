@@ -106,13 +106,13 @@ $this->params['breadcrumbs'][] = $this->title;
                   <!-- TODO:: use const for the case -->
                   <?php
                   switch ($model->bug_status) {
-                     case "fixing":
+                     case Bug::BUG_STATUS_FIXING:
                         $badge_type = "badge-warning";
                         break;
-                     case "completed":
+                     case Bug::BUG_STATUS_COMPLETED:
                         $badge_type = "badge-success";
                         break;
-                     case "assigned":
+                     case Bug::BUG_STATUS_ASSIGNED:
                         $badge_type = "badge-info";
                         break;
                      default:
@@ -127,13 +127,13 @@ $this->params['breadcrumbs'][] = $this->title;
                   Priority
                   <?php
                      switch ($model->priority_level) {
-                        case 1:
+                        case Bug::PRIORITY_LOW:
                            $badge_type = "badge-info";
                            break;
-                        case 2:
+                        case Bug::PRIORITY_MED:
                            $badge_type = "badge-warning";
                            break;
-                        case 3:
+                        case Bug::PRIORITY_HIGH:
                            $badge_type = "badge-danger";
                            break;
                         default:
@@ -174,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
             maybe another jumbotron or something here-->
             <p class="text-right h2 pr-2">Attachments</p>
             <div class="jumbotron bg-white text-right">
-                  <?php
+               <?php
                   foreach ($model->documents as $doc) {
                      echo Html::a(Html::encode($doc->attributes['path']), Url::to('', true), // need to add in path here
                      [
@@ -183,7 +183,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'src' => ".",
                      ]);
                   }
-                ?>
+               ?>
             </div>
          </div>
       </div>
