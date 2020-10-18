@@ -16,8 +16,6 @@ use yii\web\JsExpression;
 $this->title = 'Create Bug';
 $this->params['breadcrumbs'][] = ['label' => 'Bugs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$user =  "user_" . strval(Yii::$app->user->getId());
 ?>
 
 <div class="bug-create">
@@ -36,7 +34,7 @@ $user =  "user_" . strval(Yii::$app->user->getId());
               ],
               'pluginOptions' => [
                   'allowedFileExtensions' => [
-                      'jpg', 'jpeg', 'png', 'txt', 'csv', 'pdf', 'json'
+                      'jpg', 'jpeg', 'png', 'txt', 'csv', 'json', 'pdf'
                   ],
                   'uploadUrl' => Url::to('/bug/upload-file'),
                   'maxFileCount' => 5,
@@ -54,20 +52,14 @@ $user =  "user_" . strval(Yii::$app->user->getId());
                        $.ajax({
                            type: 'POST',
                            url: '/bug/remove-file',
-                           data: {
-                             filename: id.split('_').pop(),
-                             user: '$user'
-                           }
+                           data: { filename: id.split('_').pop() }
                        });
                    }",
                   'fileclear' => "function(event) {
                       $.ajax({
                           type: 'POST',
                           url: '/bug/remove-file',
-                          data: {
-                              delete_all: true,
-                              user: '$user'
-                          }
+                          data: { delete_all: true }
                       });
                   }",
               ],

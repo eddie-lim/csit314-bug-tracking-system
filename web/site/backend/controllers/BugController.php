@@ -7,6 +7,7 @@ use common\models\User;
 use common\models\Bug;
 use common\models\BugTag;
 use common\models\BugComment;
+use common\models\BugDocument;
 use common\models\search\BugSearch;
 use common\models\search\BugCommentSearch;
 
@@ -113,9 +114,10 @@ class BugController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $taskModel = new BugTaskForm($id);
-        
+
         $availableDevelopers = User::getAvailableDevelopers();
 
+        BugCreationForm::mkUserUploadDir();
         return $this->render('view',[
           'model' => $this->findModel($id),
           'dataProvider' => $dataProvider,
@@ -176,7 +178,7 @@ class BugController extends Controller
         'errors'=> $errors,
       ];
     }
-    
+
     public function actionProcessInteraction($id = null){
       // check for id ！= null and isAjax
       if(is_null($id) || !Yii::$app->request->isAjax){
@@ -251,6 +253,7 @@ class BugController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -276,27 +279,18 @@ class BugController extends Controller
     public function actionUploadFile()
     {
         if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
-        if (empty($_FILES['BugCreationForm'])) return [
-            'error' => 'File not loaded'
-        ];
-
-        $details = $_FILES['BugCreationForm'];
-        foreach ($details as $key => $value) {
-            if ($key == 'name') {
-                $name = $value['documents'][0];
-            } else if ($key == 'tmp_name') {
-                $src = $value['documents'][0];
-            }
+        if (empty($_FILES['BugCreationForm'])) {
+            return json_encode([ 'error' => 'No file loaded' ]);
         }
 
-        $dir = BugCreationForm::getUserUploadDir();
-        if (move_uploaded_file($src, $dir . DIRECTORY_SEPARATOR . $name)) {
-            return json_encode([ 'success' => "Uploaded $name" ]);
+        $details = $_FILES['BugCreationForm'];
+        if (isset($_POST['immediate'])) {
+            return json_encode(
+                BugDocument::handleAjaxImmediateUpload($details, $_POST)
+            );
         } else {
-            return json_encode([
-                'error' => 'An error occurred while saving file'
-            ]);
-        };
+            return json_encode(BugDocument::handleAjaxUpload($details));
+        }
     }
 
     /**
@@ -305,18 +299,17 @@ class BugController extends Controller
     public function actionRemoveFile()
     {
         if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
-
-        $dir = BugCreationForm::getUserUploadDir();
-        if (isset($_POST['delete_all'])) {
-            foreach(FileHelper::findFiles($dir) as $file) {
-                FileHelper::unlink($file);
-            }
-            return json_encode([ 'status' => $files ]);
-        } else {
-            FileHelper::unlink($dir . DIRECTORY_SEPARATOR . $_POST['filename']);
+        if (isset($_POST['has_error']) && $_POST['has_error'] === "true") {
+            // do nothing; if POST has error, file was not uploaded to filesystem
+            return json_encode([]);
         }
 
-        return json_encode([ 'status' => 'delete complete' ]);
+        $dir = BugCreationForm::getUserUploadDir();
+        if (isset($_POST['key']) || isset($_POST['immediate'])) {
+            return json_encode(BugDocument::handleAjaxImmediateRemove($_POST));
+        } else {
+            return json_encode(BugDocument::handleAjaxRemove($dir, $_POST));
+        }
     }
 
     /**
@@ -332,5 +325,13 @@ class BugController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionTest($id)
+    {
+        $model = $this->findModel($id);
+
+        BugCreationForm::mkUserUploadDir();
+        return $this->render('test', [ 'model' => $model ]);
     }
 }

@@ -122,8 +122,8 @@ class BugCreationForm extends Model
     {
         $targetDir = "uploads" . DIRECTORY_SEPARATOR . "bug_" . strval($bugId);
         FileHelper::createDirectory($targetDir);
-        rename("$sourceDir" . DIRECTORY_SEPARATOR . "$filename",
-               "$targetDir" . DIRECTORY_SEPARATOR . "$filename");
+        rename($sourceDir . DIRECTORY_SEPARATOR . $filename,
+               $targetDir . DIRECTORY_SEPARATOR . $filename);
         return BugDocument::makeModel($bugId, $filename, $targetDir);
     }
 

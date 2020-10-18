@@ -94,6 +94,28 @@ class Bug extends MyCustomActiveRecord
         return $this->hasOne(User::className(), [ 'id' => 'developer_user_id' ]);
     }
 
+    public function getDocumentPreviews()
+    {
+        return [
+            'data' => $this->getDocumentPreviewData(),
+            'config' => $this->getDocumentPreviewConfig(),
+        ];
+    }
+
+    private function getDocumentPreviewData()
+    {
+        return array_map(function($doc) {
+            return $doc->getPreviewData();
+        }, $this->documents);
+    }
+
+    private function getDocumentPreviewConfig()
+    {
+        return array_map(function($doc) {
+            return $doc->getPreviewConfig();
+        }, $this->documents);
+    }
+
     /**
      * {@inheritdoc}
      * @return \common\models\query\BugQuery the active query used by this AR class.

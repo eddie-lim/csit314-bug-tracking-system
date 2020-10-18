@@ -50,11 +50,11 @@ $this->params['breadcrumbs'][] = $this->title;
          <?php foreach ($model->tags as $tag) : ?>
             <div id="tag-<?= $tag->id ?>" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
          <?php endforeach; ?>
-      </div>      
+      </div>
       <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
       <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
    </div>
-   
+
 
    <div class='card d-flex' style="background:none">
       <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                               if($model->bug_status == Bug::BUG_STATUS_NEW){
                                  echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
                                     'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
-                                    'options' => ['placeholder' => 'Select Developer ...'],                        
+                                    'options' => ['placeholder' => 'Select Developer ...'],
                                     'pluginOptions' => [
                                         'allowClear' => true
                                     ],
@@ -110,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
                          <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
                      </div>
                   </div>
-                     
+
                </div>
             <?php ActiveForm::end(); ?>
          </div>
@@ -166,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
       <!-- bug description -->
       <div class="flex-row ml-1 d-flex mr-1 mt-4">
-         <div class="col-8 d-flex flex-column">
+         <div class="col-12 d-flex flex-column">
             <h2>Description</h2>
             <div class="jumbotron bg-white">
                <?php
@@ -174,26 +174,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
          </div>
-         <div class="col-4 d-flex flex-column"> <!-- put below -->
-            <!-- insert documents here a tag, src doc loc
-            maybe another jumbotron or something here-->
-            <p class="text-right h2 pr-2">Attachments</p>
-            <div class="jumbotron bg-white text-right">
-               <?php
-                  foreach ($model->documents as $doc) {
-                      $uploadPath = Yii::getAlias('@webroot') . '/uploads/bug_' . $doc->bug_id . '/' . $doc->path;
-                      echo Html::a(
-                          $doc->path, 
-                          [
-                              'download',
-                              'fpath' => $uploadPath,
-                          ],
-                          [
-                              'class' => 'btn'
-                          ]
-                      );
-                  }
-               ?>
+      </div>
+
+      <div class="flex-row ml-1 d-flex mr-1 mt-4">
+         <div class="col-12 d-flex flex-column">
+           <h2>Attachments</h2>
+            <div class="jumbotron bg-white">
+                <?= $this->render('_documentUpdate', [ 'model' => $model ]); ?>
             </div>
          </div>
       </div>
@@ -238,7 +225,7 @@ $this->params['breadcrumbs'][] = $this->title;
        </div>
        <div class="flex-row ml-1 mr-1 mt-2 p-1" style="background:none">
          <?php $form = ActiveForm::begin(); ?>
-         <?php echo $form->field($comment, 'bug_id')->hiddenInput(['value'=>$model->id])->label(false);?>   
+         <?php echo $form->field($comment, 'bug_id')->hiddenInput(['value'=>$model->id])->label(false);?>
          <?php echo $form->field($comment, 'comment')->textArea(['rows'=>6]) ?>
          <?php echo Html::submitButton('Post', ['class'=> 'btn btn-primary'])?>
          <?php ActiveForm::end();?>
