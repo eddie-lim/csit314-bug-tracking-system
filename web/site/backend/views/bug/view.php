@@ -45,11 +45,16 @@ $this->params['breadcrumbs'][] = $this->title;
        ?>
    </div>
 
-   <?php foreach ($model->tags as $tag) : ?>
-      <div class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
-   <?php endforeach; ?>
-   <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
-   <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
+   <div id="tag-wrapper">
+      <div id="tag-badge-wrapper">
+         <?php foreach ($model->tags as $tag) : ?>
+            <div id="tag-<?= $tag->id ?>" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
+         <?php endforeach; ?>
+      </div>      
+      <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
+      <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
+   </div>
+   
 
    <div class='card d-flex' style="background:none">
       <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
@@ -281,8 +286,10 @@ $script = <<< JS
       console.log(this)
       var new_tag_name = $("#create-tag-input").val()
       var data = {
-         "bug_id" : $model->id,
-         "name" : new_tag_name
+         "BugTag": {
+            "bug_id" : $model->id,
+            "name" : new_tag_name
+         }
       }
       console.log(data)
       $.ajax({
@@ -296,7 +303,12 @@ $script = <<< JS
             let model = data.model;
             let errors = data.errors;
             if(success){
+               const tag_id = model.id;
+               const tag_name = model.name;
 
+               const html = '<div id="tag-'+tag_id+'" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary">'+tag_name+'&nbsp;<a class="delete-tag" data-tagid="'+tag_id+'" href="#"><i class="text-white fas fa-times"></i></a></div>';
+               $('#tag-badge-wrapper').append(html);
+               $("#create-tag-input").val("")
             } else {
                processErrorResponse(errors)
             }
