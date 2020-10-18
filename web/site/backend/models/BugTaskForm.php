@@ -37,7 +37,7 @@ class BugTaskForm extends Model
             ['notes', 'string'],
 			['accept', 'boolean', 'on'=>SELF::SCENARIO_DEVELOPER],
 			[['developer_user_id', 'priority_level'], 'integer', 'on'=>SELF::SCENARIO_TRIAGER],
-			['status', 'in', 'range'=> array(Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REJECTED), 'on'=>SELF::SCENARIO_TRIAGER],
+			['status', 'in', 'range'=> array(Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REJECTED), 'on'=>SELF::SCENARIO_TRIAGER],
 			['status', 'in', 'range'=> array(Bug::BUG_STATUS_COMPLETED, Bug::BUG_STATUS_REOPEN), 'on'=>SELF::SCENARIO_REVIEWER],
             [['id'], 'exist', 'skipOnError' => false, 'targetClass' => Bug::className(), 'targetAttribute' => ['id' => 'id']],
         ];
@@ -57,6 +57,7 @@ class BugTaskForm extends Model
 
     public static function getStatusTriager(){
         return [
+            Bug::BUG_STATUS_NEW => "New",
             Bug::BUG_STATUS_ASSIGNED => "Assign",
             Bug::BUG_STATUS_REJECTED => "Reject",
         ];

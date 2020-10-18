@@ -114,9 +114,9 @@ class Bug extends \common\components\MyCustomActiveRecord
 
     public static function getAllPriorityLevel() {
       return [
-          SELF::PRIORITY_LOW => "Info",
-          SELF::PRIORITY_MED => "Warning",
-          SELF::PRIORITY_HIGH => "Danger",
+          SELF::PRIORITY_LOW => "Low",
+          SELF::PRIORITY_MED => "Med",
+          SELF::PRIORITY_HIGH => "High",
       ];
     }
 

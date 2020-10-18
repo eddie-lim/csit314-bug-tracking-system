@@ -46,56 +46,58 @@ $this->params['breadcrumbs'][] = $this->title;
    </div>
 
    <div class='card d-flex' style="background:none">
-      <div class="col-12">
-         <?php $taskForm = ActiveForm::begin([
-                    'id' => 'taskForm',
-                    'action' => 'process-interaction?id='.$model->id,
-                ]); ?>
-            <div class="card mt-2">
-               <div class="card-body">
-                  <?php echo $taskForm->errorSummary($taskModel); ?>
-                  <?php
-                     if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
-                        if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
-                              echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
-                                  'value' => true,
-                                  'pluginOptions' => [
-                                      'size' => 'medium',
-                                      'onColor' => 'success',
-                                      'offColor' => 'danger',
-                                      'onText' => 'Yes',
-                                      'offText' => 'No',
-                                  ]
+      <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
+         <div class="col-12">
+            <?php $taskForm = ActiveForm::begin([
+                       'id' => 'taskForm',
+                       'action' => 'process-interaction?id='.$model->id,
+                   ]); ?>
+               <div class="card mt-2">
+                  <div class="card-body">
+                     <?php echo $taskForm->errorSummary($taskModel); ?>
+                     <?php
+                        if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+                           if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
+                                 echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
+                                     'value' => true,
+                                     'pluginOptions' => [
+                                         'size' => 'medium',
+                                         'onColor' => 'success',
+                                         'offColor' => 'danger',
+                                         'onText' => 'Yes',
+                                         'offText' => 'No',
+                                     ]
+                                 ]);
+                           }
+                          echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                        } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+                           if($model->bug_status == Bug::BUG_STATUS_NEW){
+                              echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
+                                 'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
+                                 'options' => ['placeholder' => 'Select Developer ...'],                        
+                                 'pluginOptions' => [
+                                     'allowClear' => true
+                                 ],
                               ]);
-                        }
-                       echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                     } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-                        if($model->bug_status == Bug::BUG_STATUS_NEW){
+                           }
                            echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
-                           echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
-                              'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
-                              'options' => ['placeholder' => 'Select Developer ...'],                        
-                              'pluginOptions' => [
-                                  'allowClear' => true
-                              ],
-                           ]);
-                        }
-                        echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
-                        echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                     } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
-                        if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
+                           echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
                            echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                        } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
+                           if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
+                              echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
+                              echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                           }
                         }
-                     }
-                  ?>
+                     ?>
+                  </div>
+                  <div class="card-footer">
+                      <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
+                  </div>
                </div>
-               <div class="card-footer">
-                   <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
-               </div>
-            </div>
-         <?php ActiveForm::end(); ?>
-      </div>
+            <?php ActiveForm::end(); ?>
+         </div>
+      <?php endif; ?>
       <div class="d-flex mr-1 mt-1 justify-content-center" style="margin-left:0.7%;width:98.5%"> <!-- no background cuz covered , this row is for assigned to and status-->
          <div class="col-8 d-flex align-items-start flex-column rounded" style="background:white">
             <span class="h6 p-2">
