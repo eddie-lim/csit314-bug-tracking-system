@@ -110,7 +110,7 @@ class BugController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $taskModel = new BugTaskForm($id);
-        
+
         $availableDevelopers = User::getAvailableDevelopers();
 
         return $this->render('view',[
@@ -120,6 +120,25 @@ class BugController extends Controller
           'taskModel' => $taskModel,
           'availableDevelopers' => $availableDevelopers,
         ]);
+    }
+
+    public function actionCreateTag() {
+      $model = new BugTag();
+      if ($model->load($_POST) && $model->save()) {
+        print_r("success");
+        exit();
+      }
+      if ($model->hasErrors()) {
+        print_r($model->getErrors());
+        exit();
+      }
+    }
+
+    public function actionDeleteTag() {
+      $tag = BugTag::findOne($_POST['id']);
+      if($tag){
+        $tag->updateAttributes(['delete_status'=>'disabled']);
+      }
     }
     public function actionProcessInteraction($id = null){
       // check for id ！= null and isAjax
