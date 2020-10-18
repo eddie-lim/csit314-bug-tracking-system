@@ -40,6 +40,18 @@ class BugTaskForm extends Model
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'status' => 'Bug Ticket Status',
+            'priority_level' => 'Priority Level',
+            'developer_user_id' => 'Developer',
+            'id' => 'ID',
+            'accept' => 'Acknowledge',
+            'notes' => 'Notes',
+        ];
+    }
+
     public function __construct($id){
     	$this->id = $id;
     }

@@ -104,6 +104,18 @@ class BugController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $taskModel = new BugTaskForm($id);
+        $developers = User::find()
+        ->join('LEFT JOIN','bug','bug.developer_user_id = user.id')
+        ->andWhere(['is', 'developer_user_id', null])
+        ->groupBy('user.id')
+        ->all();
+        $availableDevelopers = [];
+        foreach ($developers as $developer) {
+          $d = array('id' => $developer->id, 'publicIdentity' => $developer->publicIdentity);
+          $availableDevelopers[] = $d;
+        }
+        // print_r($availableDevelopers);
+        // exit();
 
         return $this->render('view',
             [
@@ -111,6 +123,7 @@ class BugController extends Controller
                 'dataProvider' => $dataProvider,
                 'comment' => $newComment,
                 'taskModel' => $taskModel,
+                'availableDevelopers' => $availableDevelopers,
             ]);
     }
 

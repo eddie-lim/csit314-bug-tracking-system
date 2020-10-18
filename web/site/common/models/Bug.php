@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\User;
 
 /**
  * This is the model class for table "bug".
@@ -67,7 +68,7 @@ class Bug extends \common\components\MyCustomActiveRecord
             'description' => 'Description',
             'bug_status' => 'Bug Status',
             'priority_level' => 'Priority Level',
-            'developer_user_id' => 'Developer User ID',
+            'developer_user_id' => 'Developer',
             'notes' => 'Notes',
             'delete_status' => 'Delete Status',
             'created_at' => 'Created At',
@@ -85,6 +86,11 @@ class Bug extends \common\components\MyCustomActiveRecord
     public function getTags()
     {
         return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id' ]);
+    }
+
+    public function getDeveloperUser()
+    {
+        return $this->hasOne(User::className(), [ 'id' => 'developer_user_id' ]);
     }
 
     /**

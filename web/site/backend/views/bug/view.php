@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Accordion;
@@ -13,6 +14,7 @@ use common\models\Bug;
 use common\models\User;
 
 use kartik\select2\Select2;
+use kartik\widgets\SwitchInput;
 use yii\web\JsExpression;
 
 use rmrevin\yii\fontawesome\FAS;
@@ -52,20 +54,35 @@ $this->params['breadcrumbs'][] = $this->title;
                   <?php
                      if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
                         if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
-                           echo $taskForm->field($taskModel, 'accept')->textInput(['maxlength' => true]);
+                              echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
+                                  'value' => true,
+                                  'pluginOptions' => [
+                                      'size' => 'medium',
+                                      'onColor' => 'success',
+                                      'offColor' => 'danger',
+                                      'onText' => 'Yes',
+                                      'offText' => 'No',
+                                  ]
+                              ]);
                         }
-                       echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                       echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                      } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
                         if($model->bug_status == Bug::BUG_STATUS_NEW){
-                           echo $taskForm->field($taskModel, 'developer_user_id')->textInput(['maxlength' => true]);
+                           echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
+                              'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
+                              'options' => ['placeholder' => 'Select Developer ...'],                        
+                              'pluginOptions' => [
+                                  'allowClear' => true
+                              ],
+                           ]);
                         }
-                        echo $taskForm->field($taskModel, 'priority_level')->textarea(['rows' => 6]);
-                        echo $taskForm->field($taskModel, 'status')->textarea(['rows' => 6]);
-                        echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                        echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
+                        echo $taskForm->field($taskModel, 'status')->dropDownList(Bug::getAllBugStatus());
+                        echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                      } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
                         if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-                           echo $taskForm->field($taskModel, 'status')->textarea(['rows' => 6]);
-                           echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                           echo $taskForm->field($taskModel, 'status')->dropDownList(Bug::getAllBugStatus());
+                           echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                         }
                      }
                   ?>
