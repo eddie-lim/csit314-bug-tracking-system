@@ -262,7 +262,7 @@ $script = <<< JS
             let model = data.model;
             let errors = data.errors;
             if(success){
-               $('#taskForm').slideUp();
+               $('#task-form-body').slideUp();
                $('#updated_by').text(model.updated_by);
                $('#updated_at').text(model.updated_at);
                $('#bug_status').removeClass('badge-warning').removeClass('badge-success').removeClass('badge-info').removeClass('badge-light').addClass(model.bug_status_badge).text(model.bug_status);
