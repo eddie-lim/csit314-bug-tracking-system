@@ -92,6 +92,13 @@ class BugController extends Controller
      * @param integer $id
      * @return mixed
      */
+
+    public function actionDownload($fpath){
+        if(file_exists($fpath)){
+            Yii::$app->response->sendFile($fpath);
+        }
+    }
+
     public function actionView($id)
     {
         $newComment = new BugComment();

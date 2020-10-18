@@ -193,12 +193,17 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="jumbotron bg-white text-right">
                <?php
                   foreach ($model->documents as $doc) {
-                     echo Html::a(Html::encode($doc->attributes['path']), Url::to('', true), // need to add in path here
-                     [
-                        'class' => 'text-uppercase font-weight-normal ml-1',
-                        'onclick' => "", // remove self here and delete from db??
-                        'src' => ".",
-                     ]);
+                      $uploadPath = Yii::getAlias('@webroot') . '/uploads/bug_' . $doc->bug_id . '/' . $doc->path;
+                      echo Html::a(
+                          $doc->path, 
+                          [
+                              'download',
+                              'fpath' => $uploadPath,
+                          ],
+                          [
+                              'class' => 'btn'
+                          ]
+                      );
                   }
                ?>
             </div>
