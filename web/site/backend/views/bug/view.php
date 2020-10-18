@@ -71,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                        echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                      } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
                         if($model->bug_status == Bug::BUG_STATUS_NEW){
+                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
                            echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
                               'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
                               'options' => ['placeholder' => 'Select Developer ...'],                        
@@ -78,7 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                   'allowClear' => true
                               ],
                            ]);
-                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
                         }
                         echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
                         echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
@@ -112,10 +112,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <span class="h6 p-2">
                Updated by
                <?= Html::tag('span', Html::encode(User::findIdentity($model->updated_by)->publicIdentity),
-               ['class' => 'text-uppercase font-weight-normal badge badge-light']); ?>
+               ['class' => 'text-uppercase font-weight-normal badge badge-light', 'id'=>'updated_by']); ?>
                on
                <?= Html::tag('span', Html::encode(Yii::$app->formatter->asDateTime($model->updated_at)),
-               ['class' => 'text-uppercase font-weight-normal badge badge-light']); ?>
+               ['class' => 'text-uppercase font-weight-normal badge badge-light', 'id'=>'updated_at']); ?>
             </span>
          </div>
 
@@ -123,57 +123,23 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="text-left h-100">
                <div class="h2 pt-2">
                   Status
-                  <!-- TODO:: use const for the case -->
                   <?php
-                  switch ($model->bug_status) {
-                     case Bug::BUG_STATUS_FIXING:
-                        $badge_type = "badge-warning";
-                        break;
-                     case Bug::BUG_STATUS_COMPLETED:
-                        $badge_type = "badge-success";
-                        break;
-                     case Bug::BUG_STATUS_ASSIGNED:
-                        $badge_type = "badge-info";
-                        break;
-                     default:
-                        $badge_type = "badge-light";
-                     // more cases here
-                  }
                   echo Html::tag('span', Html::encode($model->bug_status),
-                  ['class' => 'text-uppercase font-weight-normal badge '.$badge_type]);
+                  ['class' => 'text-uppercase font-weight-normal badge badge-pill '.$model->bugStatusBadgeColor, 'id'=>'bug_status']);
                   ?>
                </div>
                <div class="h5 p-0">
                   Priority
                   <?php
-                     switch ($model->priority_level) {
-                        case Bug::PRIORITY_LOW:
-                           $badge_type = "badge-info";
-                           break;
-                        case Bug::PRIORITY_MED:
-                           $badge_type = "badge-warning";
-                           break;
-                        case Bug::PRIORITY_HIGH:
-                           $badge_type = "badge-danger";
-                           break;
-                        default:
-                           $badge_type = "badge-light";
-                           break;
-                     }
                      echo Html::tag('span', Html::encode($model->priority_level),
-                     ['class' => 'badge pl-4 pr-4 badge-pill '.$badge_type])
+                     ['class' => 'badge pl-4 pr-4 badge-pill '.$model->priorityLevelBadgeColor, 'id'=>'priority_level'])
                    ?>
                </div>
                <div class="h5 p-0">
                   Assigned
                   <?php
-                  if ($model->developer_user_id == null) {
-                     echo Html::tag('span', "Unassigned",
-                     ['class' => 'badge badge-light']);
-                  } else {
-                     echo Html::tag('span', Html::encode(User::findIdentity($model->updated_by)->publicIdentity),
-                     ['class' => 'badge badge-light']);
-                  }
+                     echo Html::tag('span', $model->developer_user_id == null ? "Unassigned" : Html::encode(User::findIdentity($model->developer_user_id)->publicIdentity),
+                     ['class' => 'badge badge-light', 'id'=>'developer_user']);
                   ?>
                </div>
              </div>
@@ -219,7 +185,7 @@ $this->params['breadcrumbs'][] = $this->title;
          <?php
             if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
                if($model->notes){
-                  echo "<h2>Notes</h2>";
+                  echo "<h2>Internal Notes</h2>";
                   echo Html::tag('div', $model->notes, [
                      'class' => 'jumbotron',
                   ]);
@@ -260,3 +226,55 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
    </div>
 </div>
+
+<?php
+
+$script = <<< JS
+   $('#taskForm').on('beforeSubmit', function() {
+      var data = $('#taskForm').serialize();
+      $.ajax({
+         url: $('#taskForm').attr('action'),
+         type: 'POST',
+         data: data,
+         success: function (data) {
+            // Implement successful
+            console.log(data)
+            let success = data.success;
+            let model = data.model;
+            let errors = data.errors;
+            if(success){
+               $('#taskForm').slideUp();
+               $('#updated_by').text(model.updated_by);
+               $('#updated_at').text(model.updated_at);
+               $('#bug_status').removeClass('badge-warning').removeClass('badge-success').removeClass('badge-info').removeClass('badge-light').addClass(model.bug_status_badge).text(model.bug_status);
+               $('#priority_level').removeClass('badge-info').removeClass('badge-warning').removeClass('badge-danger').removeClass('badge-light').addClass(model.priority_level_badge).text(model.priority_level);
+               $('#developer_user').text(model.developer_user);
+            } else {
+               console.log("error!")
+               var errorMsg = "";
+               for (i = 0; i < Object.keys(errors).length; i++) {
+                  const attr = Object.keys(errors)[i];
+                  const msg = Object.values(errors)[i];
+                  console.log(attr)
+                  console.log(msg)
+                  var err = attr + ": " + msg;
+                  errorMsg += err;
+                  console.log(errorMsg)
+               }
+               alert(errorMsg)
+            }
+         },
+         error: function(jqXHR, errMsg) {
+            // alert(errMsg);
+            console.log(jqXHR);
+            console.log(errMsg);
+            alert("Please try again.");
+         }
+      });
+      return false; // prevent default submit
+   });
+
+JS;
+$this->registerJs($script);
+
+?>

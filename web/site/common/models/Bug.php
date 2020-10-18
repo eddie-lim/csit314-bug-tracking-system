@@ -49,7 +49,7 @@ class Bug extends \common\components\MyCustomActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'bug_status', 'priority_level'], 'required'],
+            [['title', 'description', 'priority_level'], 'required'],
             [['description', 'bug_status', 'priority_level', 'delete_status'], 'string'],
             [['developer_user_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['title'], 'string', 'max' => 128],
@@ -132,6 +132,65 @@ class Bug extends \common\components\MyCustomActiveRecord
       ];
     }
 
+    public function toObject() {
+        $m = $this;
+
+        $o = (object) [];
+        $o->id = $m->id;
+        $o->title = $m->title;
+        $o->description = $m->description;
+        $o->bug_status = $m->bug_status;
+        $o->priority_level = $m->priority_level;
+        $o->developer = empty($m->developer_user_id) ? "" : User::findIdentity($m->developer_user_id)->publicIdentity;
+        $o->notes = $m->notes;
+        $o->delete_status = $m->delete_status;
+        $o->created_at = Yii::$app->formatter->asDateTime($m->created_at);
+        $o->created_by = User::findIdentity($m->created_by)->publicIdentity;
+        $o->updated_at = Yii::$app->formatter->asDateTime($m->updated_at);
+        $o->updated_by = User::findIdentity($m->updated_by)->publicIdentity;
+        $o->bug_status_badge = $m->bugStatusBadgeColor;
+        $o->priority_level_badge = $m->priorityLevelBadgeColor;
+        return $o;
+    }
+
+    public function getBugStatusBadgeColor(){
+      $badge_type = "badge-light";
+      switch ($this->bug_status) {
+        case Bug::BUG_STATUS_FIXING:
+          $badge_type = "badge-warning";
+          break;
+        case Bug::BUG_STATUS_COMPLETED:
+          $badge_type = "badge-success";
+          break;
+        case Bug::BUG_STATUS_ASSIGNED:
+          $badge_type = "badge-info";
+          break;
+        default:
+          $badge_type = "badge-light";
+          break;
+      }
+      return $badge_type;
+    }
+
+    public function getPriorityLevelBadgeColor(){
+      $badge_type = "badge-light";
+      switch ($this->priority_level) {
+        case SELF::PRIORITY_LOW:
+          $badge_type = "badge-info";
+          break;
+        case SELF::PRIORITY_MED:
+          $badge_type = "badge-warning";
+          break;
+        case SELF::PRIORITY_HIGH:
+          $badge_type = "badge-danger";
+          break;
+        default:
+          $badge_type = "badge-light";
+          break;
+      }
+      return $badge_type;
+    }
+
     public static function getActiveBugsData() {
         return SELF::find()
           ->where(['not in', 'bug_status', [SELF::BUG_STATUS_PENDING_REVIEW, SELF::BUG_STATUS_REJECTED, SELF::BUG_STATUS_COMPLETED]])
@@ -165,7 +224,7 @@ class Bug extends \common\components\MyCustomActiveRecord
     public static function getTopReporterData($st, $et){
         return SELF::find()
           ->select(['COUNT(*) AS counter', 'created_by'])
-          ->where(['not in', 'bug_status', SELF::BUG_STATUS_REJECTED])
+          ->where(['!=', 'bug_status', SELF::BUG_STATUS_REJECTED])
           ->andWhere(['>=', 'created_at', $st])
           ->andWhere(['<=', 'created_at', $et])
           ->groupBy('created_by')

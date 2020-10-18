@@ -185,7 +185,7 @@ $logEntries[] = [
                     } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
                         $role = User::ROLE_DEVELOPER;
                     }
-                    echo $role;
+                    echo strtoupper($role);
                 ?>
             </div>
             <!-- /sidebar user panel -->

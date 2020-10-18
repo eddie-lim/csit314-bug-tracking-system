@@ -15,6 +15,8 @@ class BugCommentSearch extends BugComment
     /**
      * @inheritdoc
      */
+    public $filter_bug_id;
+
     public function rules()
     {
         return [
@@ -33,7 +35,7 @@ class BugCommentSearch extends BugComment
     }
 
     public function setBugId($id){
-        $this->bug_id = $id;
+        $this->filter_bug_id = $id;
     }
 
     /**
@@ -46,6 +48,10 @@ class BugCommentSearch extends BugComment
     public function search($params)
     {
         $query = BugComment::find();
+
+        if($this->filter_bug_id){
+            $query->andWhere(['bug_id'=>$this->filter_bug_id]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

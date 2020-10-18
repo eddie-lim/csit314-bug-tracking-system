@@ -71,10 +71,13 @@ class BugTaskForm extends Model
     
     public function __construct($id){
     	$this->id = $id;
+        $this->model = $this->findModel();
+        if($this->model){
+            $this->notes = $this->model->notes;
+        }
     }
 
     public function process(){
-        $this->model = $this->findModel();
         if ($this->scenario == User::ROLE_REVIEWER){
             return $this->feedback();
         } elseif ($this->scenario == User::ROLE_TRIAGER){
@@ -91,9 +94,12 @@ class BugTaskForm extends Model
     }
 
     private function assign(){
-        $this->model->developer_user_id = $this->developer_user_id;
-        $this->model->priority_level = $this->priority_level;
+        if($this->status != Bug::BUG_STATUS_REJECTED){
+            $this->model->developer_user_id = $this->developer_user_id;
+            $this->model->priority_level = $this->priority_level;
+        }
         $this->model->notes = $this->notes;
+        $this->model->bug_status = $this->status;
         return $this->model->save();
     }
 

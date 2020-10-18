@@ -41,11 +41,10 @@ class BugController extends Controller
     {
         $searchModel = new BugSearch();
 
-        //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
         if (Yii::$app->user->can(User::ROLE_REVIEWER)){
           $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
         } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-          $searchModel->setFilterBy([Bug::BUG_STATUS_NEW]);
+          $searchModel->setFilterByNewUnassigned(true);
         } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
           $searchModel->setFilterBy([Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REOPEN]);
           $searchModel->setAssignedTo(Yii::$app->user->getID());
@@ -111,32 +110,26 @@ class BugController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $taskModel = new BugTaskForm($id);
-        $developers = User::find()
-        ->join('LEFT JOIN','bug','bug.developer_user_id = user.id')
-        ->andWhere(['is', 'developer_user_id', null])
-        ->groupBy('user.id')
-        ->all();
-        $availableDevelopers = [];
-        foreach ($developers as $developer) {
-          $d = array('id' => $developer->id, 'publicIdentity' => $developer->publicIdentity);
-          $availableDevelopers[] = $d;
-        }
+        
+        $availableDevelopers = User::getAvailableDevelopers();
 
-        return $this->render('view',
-            [
-                'model' => $this->findModel($id),
-                'dataProvider' => $dataProvider,
-                'comment' => $newComment,
-                'taskModel' => $taskModel,
-                'availableDevelopers' => $availableDevelopers,
-            ]);
+        return $this->render('view',[
+          'model' => $this->findModel($id),
+          'dataProvider' => $dataProvider,
+          'comment' => $newComment,
+          'taskModel' => $taskModel,
+          'availableDevelopers' => $availableDevelopers,
+        ]);
     }
     public function actionProcessInteraction($id = null){
-      // check for id == null and isAjax
-      // || !Yii::$app->request->isAjax
-      if(is_null($id)){
-        return $this->goBack();
+      // check for id ！= null and isAjax
+      if(is_null($id) || !Yii::$app->request->isAjax){
+        // return $this->goBack();
       }
+      $success = false;
+      $model = null;
+      $errors = [];
+
       $taskModel = new BugTaskForm($id);
       if (Yii::$app->user->can(User::ROLE_REVIEWER)){
         $taskModel->scenario = User::ROLE_REVIEWER;
@@ -147,10 +140,25 @@ class BugController extends Controller
       }
       if($taskModel->load(Yii::$app->request->post()) && $taskModel->validate()){
         if($taskModel->process()){
-          print_r("success");
+          $model = $taskModel->model->toObject();
+          $success = true;
         }
       }
-      print_r($taskModel->errors);
+      if($taskModel->model){
+        if($taskModel->model->hasErrors()){
+          $taskModel->addErrors($taskModel->model->getErrors());
+        }
+      }
+      if($taskModel->hasErrors()){
+        $errors = $taskModel->errors;
+      }
+
+      \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+      return [
+        'success' => (bool)$success,
+        'model' => $model,
+        'errors'=> $errors,
+      ];
     }
 
     /**
