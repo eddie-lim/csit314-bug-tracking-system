@@ -10,6 +10,7 @@ use backend\assets\BackendAsset;
 use backend\modules\system\models\SystemLog;
 use backend\widgets\MainSidebarMenu;
 use common\models\Bug;
+use common\models\User;
 use common\models\TimelineEvent;
 use yii\bootstrap4\Alert;
 use yii\helpers\ArrayHelper;
@@ -173,6 +174,19 @@ $logEntries[] = [
                 <div class="info">
                     <a href="#" class="d-block"><?php echo Yii::$app->user->identity->publicIdentity ?></a>
                 </div>
+            </div>
+            <div class="text-white badge badge-info">
+                <?php
+                    $role = User::ROLE_USER;
+                    if (Yii::$app->user->can(User::ROLE_REVIEWER)){
+                        $role = User::ROLE_REVIEWER;
+                    } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+                        $role = User::ROLE_TRIAGER;
+                    } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
+                        $role = User::ROLE_DEVELOPER;
+                    }
+                    echo $role;
+                ?>
             </div>
             <!-- /sidebar user panel -->
 

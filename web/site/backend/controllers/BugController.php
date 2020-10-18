@@ -3,9 +3,11 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
 use common\models\Bug;
 use common\models\BugComment;
 use common\models\search\BugSearch;
+use common\models\search\BugCommentSearch;
 
 use backend\models\BugCreationForm;
 use backend\models\BugTaskForm;
@@ -42,11 +44,9 @@ class BugController extends Controller
         //$userRole = array_keys(Yii::$app->authManager->getRolesByUser(Yii::$app->user->getID()))[0];
         if (Yii::$app->user->can(User::ROLE_REVIEWER)){
           $searchModel->setFilterBy([Bug::BUG_STATUS_PENDING_REVIEW]);
-        }
-        if (Yii::$app->user->can(User::ROLE_TRIAGER)){
+        } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
           $searchModel->setFilterBy([Bug::BUG_STATUS_NEW]);
-        }
-        if (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
+        } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
           $searchModel->setFilterBy([Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REOPEN]);
           $searchModel->setAssignedTo(Yii::$app->user->getID());
         }
@@ -95,21 +95,22 @@ class BugController extends Controller
     public function actionView($id)
     {
         $newComment = new BugComment();
-
         if ($newComment->load(Yii::$app->request->post()) && $newComment->save()){
-            $newComment = new BugComment();
+          $newComment = new BugComment();
         }
 
-        $commentData = BugComment::findAll(['bug_id'=>$id]);
-        $provider = new ArrayDataProvider([
-            'allModels' => $commentData,
-        ]);
+        $searchModel = new BugCommentSearch();
+        $searchModel->setBugId($id);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $taskModel = new BugTaskForm($id);
 
         return $this->render('view',
             [
                 'model' => $this->findModel($id),
-                'dataProvider' => $provider,
+                'dataProvider' => $dataProvider,
                 'comment' => $newComment,
+                'taskModel' => $taskModel,
             ]);
     }
 
@@ -164,36 +165,6 @@ class BugController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    public function actionAcknowledge($id)
-    {
-        $model = new BugTaskForm($id);
-        $model->scenario = BugTaskForm::SCENARIO_DEVELOPER;
-        return $this->render('task', [
-          'model'=>$model,
-          'title'=>"Acknowledge",
-        ]);
-    }
-
-    public function actionAssign($id)
-    {
-        $model = new BugTaskForm($id);
-        $model->scenario = BugTaskForm::SCENARIO_TRIAGER;
-        return $this->render('task', [
-          'model'=>$model,
-          'title'=>"Assign",
-        ]);
-    }
-
-    public function actionFeedback($id)
-    {
-        $model = new BugTaskForm($id);
-        $model->scenario = BugTaskForm::SCENARIO_REVIEWER;
-        return $this->render('task', [
-          'model'=>$model,
-          'title'=>"Feedback",
-        ]);
     }
 
     /**

@@ -32,6 +32,10 @@ class BugCommentSearch extends BugComment
         return Model::scenarios();
     }
 
+    public function setBugId($id){
+        $this->bug_id = $id;
+    }
+
     /**
      * Creates data provider instance with search query applied
      *

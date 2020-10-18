@@ -33,33 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
    <div class="row m-1 mb-2">
       <!-- tag -->
       <?php
-
-         if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
-            if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
-               echo Html::a(
-                  "Acknowledge this ticket",
-                  Url::to(['acknowledge', 'id'=>$model->id]),
-                  ['class'=>'btn btn-success']
-               );
-            }
-         } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-            if($model->bug_status == Bug::BUG_STATUS_NEW){
-               echo Html::a(
-                  "Assign to a Developer",
-                  Url::to(['assign', 'id'=>$model->id]),
-                  ['class'=>'btn btn-success']
-               );
-            }
-         } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
-            if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-               echo Html::a(
-                  "Feedback to this ticket",
-                  Url::to(['feedback', 'id'=>$model->id]),
-                  ['class'=>'btn btn-success']
-               );
-            }
-         }
-
          foreach ($model->tags as $tag) {
             echo Html::tag('button', Html::encode($tag->attributes['name']) . '&nbsp;&nbsp;x',
             [
@@ -71,6 +44,38 @@ $this->params['breadcrumbs'][] = $this->title;
    </div>
 
    <div class='card d-flex' style="background:none">
+      <div class="col-12">
+         <?php $taskForm = ActiveForm::begin(); ?>
+            <div class="card mt-2">
+               <div class="card-body">
+                  <?php echo $taskForm->errorSummary($taskModel); ?>
+                  <?php
+                     if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+                        if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
+                           echo $taskForm->field($taskModel, 'accept')->textInput(['maxlength' => true]);
+                        }
+                       echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                     } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+                        if($model->bug_status == Bug::BUG_STATUS_NEW){
+                           echo $taskForm->field($taskModel, 'developer_user_id')->textInput(['maxlength' => true]);
+                        }
+                        echo $taskForm->field($taskModel, 'priority_level')->textarea(['rows' => 6]);
+                        echo $taskForm->field($taskModel, 'status')->textarea(['rows' => 6]);
+                        echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                     } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
+                        if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
+                           echo $taskForm->field($taskModel, 'status')->textarea(['rows' => 6]);
+                           echo $taskForm->field($taskModel, 'notes')->textInput(['maxlength' => true]);
+                        }
+                     }
+                  ?>
+               </div>
+               <div class="card-footer">
+                   <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
+               </div>
+            </div>
+         <?php ActiveForm::end(); ?>
+      </div>
       <div class="d-flex mr-1 mt-1 justify-content-center" style="margin-left:0.7%;width:98.5%"> <!-- no background cuz covered , this row is for assigned to and status-->
          <div class="col-8 d-flex align-items-start flex-column rounded" style="background:white">
             <span class="h6 p-2">
