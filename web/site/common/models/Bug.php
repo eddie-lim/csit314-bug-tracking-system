@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\User;
+use common\components\MyCustomActiveRecord;
 
 /**
  * This is the model class for table "bug".
@@ -21,7 +22,7 @@ use common\models\User;
  * @property int|null $updated_at
  * @property int|null $updated_by
  */
-class Bug extends \common\components\MyCustomActiveRecord
+class Bug extends MyCustomActiveRecord
 {
     const BUG_STATUS_NEW = "new";
     const BUG_STATUS_ASSIGNED = "assigned";
@@ -85,7 +86,7 @@ class Bug extends \common\components\MyCustomActiveRecord
 
     public function getTags()
     {
-        return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id' ]);
+        return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id'])->andWhere(['delete_status'=>MyCustomActiveRecord::DELETE_STATUS_ENABLED ]);
     }
 
     public function getDeveloperUser()

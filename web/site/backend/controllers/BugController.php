@@ -5,9 +5,12 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\Bug;
+use common\models\BugTag;
 use common\models\BugComment;
 use common\models\search\BugSearch;
 use common\models\search\BugCommentSearch;
+
+use common\components\MyCustomActiveRecord;
 
 use backend\models\BugCreationForm;
 use backend\models\BugTaskForm;
@@ -110,7 +113,7 @@ class BugController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $taskModel = new BugTaskForm($id);
-
+        
         $availableDevelopers = User::getAvailableDevelopers();
 
         return $this->render('view',[
@@ -122,28 +125,62 @@ class BugController extends Controller
         ]);
     }
 
-    public function actionCreateTag() {
+    public function actionCreateTag(){
+      // check for isAjax
+      if(!Yii::$app->request->isAjax){
+        return $this->goBack();
+      }
+      $success = false;
+      $model = null;
+      $errors = [];
+
       $model = new BugTag();
-      if ($model->load($_POST) && $model->save()) {
-        print_r("success");
-        exit();
+
+      if ($model->load(Yii::$app->request->post())) {
+        $success = $model->save();
       }
       if ($model->hasErrors()) {
-        print_r($model->getErrors());
-        exit();
+        $errors = $model->errors;
       }
+      \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+      return [
+        'success' => (bool)$success,
+        'model' => $model->attributes,
+        'errors'=> $errors,
+      ];
     }
 
-    public function actionDeleteTag() {
-      $tag = BugTag::findOne($_POST['id']);
-      if($tag){
-        $tag->updateAttributes(['delete_status'=>'disabled']);
+    public function actionDeleteTag(){
+      // check for isAjax
+      if(!Yii::$app->request->isAjax){
+        return $this->goBack();
       }
+      $success = false;
+      $model = null;
+      $errors = [];
+
+      if(isset(Yii::$app->request->post()['id'])){
+        $model = BugTag::findOne(Yii::$app->request->post()['id']);
+        if($model){
+          $model->delete_status = MyCustomActiveRecord::DELETE_STATUS_DISABLED;
+          $success = $model->save();
+        }
+      } else {
+        $errors = array('id' => 'id cannot be empty');
+      }
+
+      \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+      return [
+        'success' => (bool)$success,
+        'model' => $model,
+        'errors'=> $errors,
+      ];
     }
+    
     public function actionProcessInteraction($id = null){
       // check for id ！= null and isAjax
       if(is_null($id) || !Yii::$app->request->isAjax){
-        // return $this->goBack();
+        return $this->goBack();
       }
       $success = false;
       $model = null;

@@ -306,11 +306,14 @@ $script = <<< JS
                const tag_id = model.id;
                const tag_name = model.name;
 
-               const html = '<div id="tag-'+tag_id+'" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary">'+tag_name+'&nbsp;<a class="delete-tag" data-tagid="'+tag_id+'" href="#"><i class="text-white fas fa-times"></i></a></div>';
+               const html = '<div style="display:none;" id="tag-'+tag_id+'" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary">'+tag_name+'&nbsp;<a class="delete-tag" data-tagid="'+tag_id+'" href="#"><i class="text-white fas fa-times"></i></a></div>';
                $('#tag-badge-wrapper').append(html);
-               $("#create-tag-input").val("")
+               $("#create-tag-input").val("");
+               $('#tag-'+tag_id).fadeIn();
+               $('.delete-tag').off();
+               addOnClickEventListenerForDeleteTag();
             } else {
-               processErrorResponse(errors)
+               processErrorResponse(errors);
             }
          },
          error: function(jqXHR, errMsg) {
@@ -323,35 +326,44 @@ $script = <<< JS
       return false; // prevent default submit
    });
 
-   $('.delete-tag').on('click', function(e) {
-      var data = {
-         "id" : $(this).data().tagid
-      }
-      $.ajax({
-         url: 'delete-tag',
-         type: 'POST',
-         data: data,
-         success: function (data) {
-            // Implement successful
-            console.log(data)
-            let success = data.success;
-            let model = data.model;
-            let errors = data.errors;
-            if(success){
-
-            } else {
-               processErrorResponse(errors)
-            }
-         },
-         error: function(jqXHR, errMsg) {
-            // alert(errMsg);
-            console.log(jqXHR);
-            console.log(errMsg);
-            alert("Please try again.");
+   addOnClickEventListenerForDeleteTag();
+   function addOnClickEventListenerForDeleteTag(){
+      $('.delete-tag').on('click', function(e) {
+         var data = {
+            "id" : $(this).data().tagid
          }
+         $.ajax({
+            url: 'delete-tag',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+               // Implement successful
+               console.log(data)
+               let success = data.success;
+               let model = data.model;
+               let errors = data.errors;
+               if(success){
+                  if(model.delete_status == "disabled"){
+                     $('#tag-'+model.id).fadeOut(function(){
+                        $('#tag-'+model.id).remove();
+                     });
+                  } else {
+                     alert("Failed to delete");
+                  }
+               } else {
+                  processErrorResponse(errors);
+               }
+            },
+            error: function(jqXHR, errMsg) {
+               // alert(errMsg);
+               console.log(jqXHR);
+               console.log(errMsg);
+               alert("Please try again.");
+            }
+         });
+         return false; // prevent default submit
       });
-      return false; // prevent default submit
-   });
+   }
 
    function processErrorResponse(errors){
       console.log("error!")
@@ -359,18 +371,18 @@ $script = <<< JS
       for (i = 0; i < Object.keys(errors).length; i++) {
          const attr = Object.keys(errors)[i];
          const msg = Object.values(errors)[i];
-         console.log(attr)
-         console.log(msg)
+         console.log(attr);
+         console.log(msg);
          var err = attr + ": " + msg;
          errorMsg += err;
-         console.log(errorMsg)
+         console.log(errorMsg);
       }
       alert(errorMsg)
    }
 
    $('#task-form-header').on('click', function(e) {
       e.preventDefault();
-      $('#task-form-body').slideToggle()
+      $('#task-form-body').slideToggle();
    })
 
 JS;

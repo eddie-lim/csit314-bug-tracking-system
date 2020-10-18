@@ -47,7 +47,7 @@ class BugCommentSearch extends BugComment
      */
     public function search($params)
     {
-        $query = BugComment::find();
+        $query = BugComment::find()->andWhere(['delete_status'=>\common\components\MyCustomActiveRecord::DELETE_STATUS_ENABLED]);
 
         if($this->filter_bug_id){
             $query->andWhere(['bug_id'=>$this->filter_bug_id]);
