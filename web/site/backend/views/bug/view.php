@@ -47,7 +47,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
    <div class='card d-flex' style="background:none">
       <div class="col-12">
-         <?php $taskForm = ActiveForm::begin(); ?>
+         <?php $taskForm = ActiveForm::begin([
+                    'id' => 'taskForm',
+                    'action' => 'process-interaction?id='.$model->id,
+                ]); ?>
             <div class="card mt-2">
                <div class="card-body">
                   <?php echo $taskForm->errorSummary($taskModel); ?>
@@ -75,13 +78,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                   'allowClear' => true
                               ],
                            ]);
+                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
                         }
                         echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
-                        echo $taskForm->field($taskModel, 'status')->dropDownList(Bug::getAllBugStatus());
                         echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                      } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
                         if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-                           echo $taskForm->field($taskModel, 'status')->dropDownList(Bug::getAllBugStatus());
+                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
                            echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                         }
                      }

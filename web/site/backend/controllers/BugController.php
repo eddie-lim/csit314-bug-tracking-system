@@ -121,8 +121,6 @@ class BugController extends Controller
           $d = array('id' => $developer->id, 'publicIdentity' => $developer->publicIdentity);
           $availableDevelopers[] = $d;
         }
-        // print_r($availableDevelopers);
-        // exit();
 
         return $this->render('view',
             [
@@ -132,6 +130,27 @@ class BugController extends Controller
                 'taskModel' => $taskModel,
                 'availableDevelopers' => $availableDevelopers,
             ]);
+    }
+    public function actionProcessInteraction($id = null){
+      // check for id == null and isAjax
+      // || !Yii::$app->request->isAjax
+      if(is_null($id)){
+        return $this->goBack();
+      }
+      $taskModel = new BugTaskForm($id);
+      if (Yii::$app->user->can(User::ROLE_REVIEWER)){
+        $taskModel->scenario = User::ROLE_REVIEWER;
+      } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+        $taskModel->scenario = User::ROLE_TRIAGER;
+      } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+        $taskModel->scenario = User::ROLE_DEVELOPER;
+      }
+      if($taskModel->load(Yii::$app->request->post()) && $taskModel->validate()){
+        if($taskModel->process()){
+          print_r("success");
+        }
+      }
+      print_r($taskModel->errors);
     }
 
     /**
