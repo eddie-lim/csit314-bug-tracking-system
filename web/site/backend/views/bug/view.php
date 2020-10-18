@@ -286,7 +286,7 @@ $script = <<< JS
       }
       console.log(data)
       $.ajax({
-         url: 'test',
+         url: 'create-tag',
          type: 'POST',
          data: data,
          success: function (data) {
@@ -316,7 +316,7 @@ $script = <<< JS
          "id" : $(this).data().tagid
       }
       $.ajax({
-         url: 'test',
+         url: 'delete-tag',
          type: 'POST',
          data: data,
          success: function (data) {
