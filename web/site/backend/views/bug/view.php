@@ -45,6 +45,12 @@ $this->params['breadcrumbs'][] = $this->title;
        ?>
    </div>
 
+   <?php foreach ($model->tags as $tag) : ?>
+      <div class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
+   <?php endforeach; ?>
+   <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
+   <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
+
    <div class='card d-flex' style="background:none">
       <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
          <div class="col-12">
@@ -53,47 +59,53 @@ $this->params['breadcrumbs'][] = $this->title;
                        'action' => 'process-interaction?id='.$model->id,
                    ]); ?>
                <div class="card mt-2">
-                  <div class="card-body">
-                     <?php echo $taskForm->errorSummary($taskModel); ?>
-                     <?php
-                        if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
-                           if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
-                                 echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
-                                     'value' => true,
-                                     'pluginOptions' => [
-                                         'size' => 'medium',
-                                         'onColor' => 'success',
-                                         'offColor' => 'danger',
-                                         'onText' => 'Yes',
-                                         'offText' => 'No',
-                                     ]
+                  <div class="card-header">
+                     <a id="task-form-header" class="btn btn-sm btn-outline-primary" href="#">Update Bug Ticket Status Form</a>
+                  </div>
+                  <div id="task-form-body">
+                     <div class="card-body">
+                        <?php echo $taskForm->errorSummary($taskModel); ?>
+                        <?php
+                           if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+                              if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
+                                    echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
+                                        'value' => true,
+                                        'pluginOptions' => [
+                                            'size' => 'medium',
+                                            'onColor' => 'success',
+                                            'offColor' => 'danger',
+                                            'onText' => 'Yes',
+                                            'offText' => 'No',
+                                        ]
+                                    ]);
+                              }
+                             echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                           } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+                              if($model->bug_status == Bug::BUG_STATUS_NEW){
+                                 echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
+                                    'options' => ['placeholder' => 'Select Developer ...'],                        
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
                                  ]);
-                           }
-                          echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                        } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-                           if($model->bug_status == Bug::BUG_STATUS_NEW){
-                              echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
-                                 'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
-                                 'options' => ['placeholder' => 'Select Developer ...'],                        
-                                 'pluginOptions' => [
-                                     'allowClear' => true
-                                 ],
-                              ]);
-                           }
-                           echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
-                           echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
-                           echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                        } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
-                           if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-                              echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
+                              }
+                              echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
+                              echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
                               echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                           } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
+                              if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
+                                 echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
+                                 echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                              }
                            }
-                        }
-                     ?>
+                        ?>
+                     </div>
+                     <div class="card-footer">
+                         <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
+                     </div>
                   </div>
-                  <div class="card-footer">
-                      <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
-                  </div>
+                     
                </div>
             <?php ActiveForm::end(); ?>
          </div>
@@ -252,18 +264,7 @@ $script = <<< JS
                $('#priority_level').removeClass('badge-info').removeClass('badge-warning').removeClass('badge-danger').removeClass('badge-light').addClass(model.priority_level_badge).text(model.priority_level);
                $('#developer_user').text(model.developer_user);
             } else {
-               console.log("error!")
-               var errorMsg = "";
-               for (i = 0; i < Object.keys(errors).length; i++) {
-                  const attr = Object.keys(errors)[i];
-                  const msg = Object.values(errors)[i];
-                  console.log(attr)
-                  console.log(msg)
-                  var err = attr + ": " + msg;
-                  errorMsg += err;
-                  console.log(errorMsg)
-               }
-               alert(errorMsg)
+               processErrorResponse(errors)
             }
          },
          error: function(jqXHR, errMsg) {
@@ -275,6 +276,90 @@ $script = <<< JS
       });
       return false; // prevent default submit
    });
+
+   $('#create-tag').on('click', function(e) {
+      console.log(this)
+      var new_tag_name = $("#create-tag-input").val()
+      var data = {
+         "bug_id" : $model->id,
+         "name" : new_tag_name
+      }
+      console.log(data)
+      $.ajax({
+         url: 'test',
+         type: 'POST',
+         data: data,
+         success: function (data) {
+            // Implement successful
+            console.log(data)
+            let success = data.success;
+            let model = data.model;
+            let errors = data.errors;
+            if(success){
+
+            } else {
+               processErrorResponse(errors)
+            }
+         },
+         error: function(jqXHR, errMsg) {
+            // alert(errMsg);
+            console.log(jqXHR);
+            console.log(errMsg);
+            alert("Please try again.");
+         }
+      });
+      return false; // prevent default submit
+   });
+
+   $('.delete-tag').on('click', function(e) {
+      var data = {
+         "id" : $(this).data().tagid
+      }
+      $.ajax({
+         url: 'test',
+         type: 'POST',
+         data: data,
+         success: function (data) {
+            // Implement successful
+            console.log(data)
+            let success = data.success;
+            let model = data.model;
+            let errors = data.errors;
+            if(success){
+
+            } else {
+               processErrorResponse(errors)
+            }
+         },
+         error: function(jqXHR, errMsg) {
+            // alert(errMsg);
+            console.log(jqXHR);
+            console.log(errMsg);
+            alert("Please try again.");
+         }
+      });
+      return false; // prevent default submit
+   });
+
+   function processErrorResponse(errors){
+      console.log("error!")
+      var errorMsg = "";
+      for (i = 0; i < Object.keys(errors).length; i++) {
+         const attr = Object.keys(errors)[i];
+         const msg = Object.values(errors)[i];
+         console.log(attr)
+         console.log(msg)
+         var err = attr + ": " + msg;
+         errorMsg += err;
+         console.log(errorMsg)
+      }
+      alert(errorMsg)
+   }
+
+   $('#task-form-header').on('click', function(e) {
+      e.preventDefault();
+      $('#task-form-body').slideToggle()
+   })
 
 JS;
 $this->registerJs($script);
