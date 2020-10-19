@@ -34,90 +34,16 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="bug-view">
    <div class="row m-1 mb-2">
       <!-- tag -->
-      <?php
-         foreach ($model->tags as $tag) {
-            echo Html::tag('button', Html::encode($tag->attributes['name']) . '&nbsp;&nbsp;x',
-            [
-               'class' => 'btn pl-2 pr-2 text-uppercase font-weight-normal badge badge-success ml-1',
-               'onclick' => "", // remove self here and delete from db??
-            ]);
-         }
-       ?>
-   </div>
-
-   <div id="tag-wrapper">
-      <div id="tag-badge-wrapper">
-         <?php foreach ($model->tags as $tag) : ?>
-            <div id="tag-<?= $tag->id ?>" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
-         <?php endforeach; ?>
-      </div>
-      <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
-      <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
-   </div>
-
-
-   <div class='card d-flex' style="background:none">
-      <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
-         <div class="col-12">
-            <?php $taskForm = ActiveForm::begin([
-                       'id' => 'taskForm',
-                       'action' => 'process-interaction?id='.$model->id,
-                   ]); ?>
-               <div class="card mt-2">
-                  <div class="card-header">
-                     <a id="task-form-header" class="btn btn-sm btn-outline-primary" href="#">Update Bug Ticket Status Form</a>
-                  </div>
-                  <div id="task-form-body">
-                     <div class="card-body">
-                        <?php echo $taskForm->errorSummary($taskModel); ?>
-                        <?php
-                           if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
-                              if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
-                                    echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
-                                        'value' => true,
-                                        'pluginOptions' => [
-                                            'size' => 'medium',
-                                            'onColor' => 'success',
-                                            'offColor' => 'danger',
-                                            'onText' => 'Yes',
-                                            'offText' => 'No',
-                                        ]
-                                    ]);
-                              }
-                             echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                           } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-                              if($model->bug_status == Bug::BUG_STATUS_NEW){
-                                 echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
-                                    'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
-                                    'options' => ['placeholder' => 'Select Developer ...'],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                 ]);
-                              }
-                              echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
-                              echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
-                              echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                           } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
-                              if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
-                                 echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
-                                 echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
-                              }
-                           }
-                        ?>
-                     </div>
-                     <div class="card-footer">
-                         <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
-                     </div>
-                  </div>
-
-               </div>
-            <?php ActiveForm::end(); ?>
+         <div id="tag-badge-wrapper-top" class="ml-3 mr-4 pb-2">
+            <?php foreach ($model->tags as $tag) : ?>
+               <div id="top-tag-<?= $tag->id ?>" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-success"><?= $tag->name ?>&nbsp;</div>
+            <?php endforeach; ?>
          </div>
-      <?php endif; ?>
+   </div>
+
       <div class="d-flex mr-1 mt-1 justify-content-center" style="margin-left:0.7%;width:98.5%"> <!-- no background cuz covered , this row is for assigned to and status-->
          <div class="col-8 d-flex align-items-start flex-column rounded" style="background:white">
-            <span class="h6 p-2">
+            <span class="h6 pt-2 pl-2">
                Submitted by
                <?php
                echo Html::tag('span', Html::encode(User::findIdentity($model->created_by)->publicIdentity),
@@ -128,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                ['class' => 'text-uppercase font-weight-normal badge badge-light']); ?>
             </span>
             <!-- TODO:: show list view for the ticket's lifecycle -->
-            <span class="h6 p-2">
+            <span class="h6 pt-2 pl-2">
                Updated by
                <?= Html::tag('span', Html::encode(User::findIdentity($model->updated_by)->publicIdentity),
                ['class' => 'text-uppercase font-weight-normal badge badge-light', 'id'=>'updated_by']); ?>
@@ -175,6 +101,79 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
          </div>
       </div>
+         <div class='card d-flex' style="background:none">
+            <?php if(Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)): ?>
+               <div class="col-12">
+                  <?php $taskForm = ActiveForm::begin([
+                             'id' => 'taskForm',
+                             'action' => 'process-interaction?id='.$model->id,
+                         ]); ?>
+                     <div class="card mt-2">
+                        <div class="card-header">
+                           <a id="task-form-header" class="btn btn-sm btn-outline-primary" href="#">Update Bug Ticket Status Form</a>
+                        </div>
+                        <div id="task-form-body">
+                           <div class="card-body">
+                              <?php echo $taskForm->errorSummary($taskModel); ?>
+                              <?php
+                                 if (Yii::$app->user->can(User::ROLE_DEVELOPER)){
+                                    if(($model->bug_status == Bug::BUG_STATUS_ASSIGNED || $model->bug_status == Bug::BUG_STATUS_REOPEN) && $model->developer_user_id && $model->developer_user_id == Yii::$app->user->id){
+                                          echo $taskForm->field($taskModel, 'accept')->widget(SwitchInput::classname(), [
+                                              'value' => true,
+                                              'pluginOptions' => [
+                                                  'size' => 'medium',
+                                                  'onColor' => 'success',
+                                                  'offColor' => 'danger',
+                                                  'onText' => 'Yes',
+                                                  'offText' => 'No',
+                                              ]
+                                          ]);
+                                    }
+                                    if ($model->bug_status == Bug::BUG_STATUS_FIXING && $model->developer_user_id == Yii::$app->user->id) {
+                                       echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusDeveloper());
+                                    }
+                                    echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                                 } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+                                    if($model->bug_status == Bug::BUG_STATUS_NEW || $model->bug_status == Bug::BUG_STATUS_REOPEN){
+                                       echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
+                                          'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
+                                          'options' => ['placeholder' => 'Select Developer ...'],
+                                          'pluginOptions' => [
+                                              'allowClear' => true
+                                          ],
+                                       ]);
+                                       echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
+                                    }
+                                    echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
+                                    echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                                 } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
+                                    if($model->bug_status == Bug::BUG_STATUS_PENDING_REVIEW){
+                                       echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusReviewer());
+                                       echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                                    }
+                                 }
+                              ?>
+                           </div>
+                           <span class="h5 ml-3 mb-2">Update Tags</span>
+                           <div id="tag-wrapper" class="row m-1 mb-2">
+                              <div id="tag-badge-wrapper" class="ml-3 mr-4">
+                                 <?php foreach ($model->tags as $tag) : ?>
+                                    <div id="tag-<?= $tag->id ?>" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary"><?= $tag->name ?>&nbsp;<a class="delete-tag" data-tagid="<?= $tag->id ?>" href="#"><i class="text-white fas fa-times"></i></a></div>
+                                 <?php endforeach; ?>
+                              </div>
+
+                              <input id="create-tag-input" type="text" name="create-tag" placeholder="e.g. copywriting">
+                              <a id="create-tag" class="btn btn-primary text-white">Create Tag</a>
+                           </div>
+                           <div class="card-footer">
+                               <?php echo Html::submitButton('Update', ['class' => 'btn btn-primary']) ?>
+                           </div>
+                        </div>
+
+                     </div>
+                  <?php ActiveForm::end(); ?>
+               </div>
+            <?php endif; ?>
 
       <div class="flex-row ml-1 d-flex mr-1 mt-4">
          <div class="col-12 d-flex flex-column">
@@ -183,22 +182,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $this->render('_documentUpdate', [ 'model' => $model ]); ?>
             </div>
          </div>
-      </div>
-
-      <!-- if got special role gimme notes if not dun show -->
-      <!-- add a button to go to form for them to edit / do anything according to role -->
-      <div class="flex-row ml-1 mr-1 mt-4">
-         <?php
-            if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
-               if($model->notes){
-                  echo "<h2>Internal Notes</h2>";
-                  echo Html::tag('div', $model->notes, [
-                     'class' => 'jumbotron',
-                  ]);
-               }
-               // note segment here
-            };
-          ?>
       </div>
 
       <!-- comment begins here -->
@@ -294,6 +277,11 @@ $script = <<< JS
                const tag_name = model.name;
 
                const html = '<div style="display:none;" id="tag-'+tag_id+'" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-secondary">'+tag_name+'&nbsp;<a class="delete-tag" data-tagid="'+tag_id+'" href="#"><i class="text-white fas fa-times"></i></a></div>';
+               // for tag on top
+               const html2 = '<div style="" id="top-tag-'+tag_id+'" class="py-1 px-2 font-weight-normal text-uppercase badge badge-pill badge-success">'+tag_name+'&nbsp;</div>';
+
+               $('#tag-badge-wrapper-top').append(html2);
+               $('#top-tag'+tag_id).fadeIn();
                $('#tag-badge-wrapper').append(html);
                $("#create-tag-input").val("");
                $('#tag-'+tag_id).fadeIn();
@@ -334,6 +322,9 @@ $script = <<< JS
                      $('#tag-'+model.id).fadeOut(function(){
                         $('#tag-'+model.id).remove();
                      });
+                     $('#top-tag-'+model.id).fadeOut(function() {
+                        $('#top-tag-'+model.id).remove();
+                     })
                   } else {
                      alert("Failed to delete");
                   }

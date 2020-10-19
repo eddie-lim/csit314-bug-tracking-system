@@ -39,6 +39,7 @@ class BugTaskForm extends Model
 			[['developer_user_id', 'priority_level'], 'integer', 'on'=>SELF::SCENARIO_TRIAGER],
 			['status', 'in', 'range'=> array(Bug::BUG_STATUS_NEW, Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REJECTED), 'on'=>SELF::SCENARIO_TRIAGER],
 			['status', 'in', 'range'=> array(Bug::BUG_STATUS_COMPLETED, Bug::BUG_STATUS_REOPEN), 'on'=>SELF::SCENARIO_REVIEWER],
+			['status', 'in', 'range'=> array(Bug::BUG_STATUS_FIXING, Bug::BUG_STATUS_PENDING_REVIEW), 'on'=>SELF::SCENARIO_DEVELOPER],
             [['id'], 'exist', 'skipOnError' => false, 'targetClass' => Bug::className(), 'targetAttribute' => ['id' => 'id']],
         ];
     }
@@ -69,7 +70,14 @@ class BugTaskForm extends Model
             Bug::BUG_STATUS_REOPEN => "Re-open",
         ];
     }
-    
+
+		public static function getStatusDeveloper(){
+			return [
+				Bug::BUG_STATUS_FIXING => "Fixing",
+				Bug::BUG_STATUS_PENDING_REVIEW => "Pending Review",
+			];
+		}
+
     public function __construct($id){
     	$this->id = $id;
         $this->model = $this->findModel();
@@ -89,7 +97,18 @@ class BugTaskForm extends Model
     }
 
     private function acknowledge(){
-        $this->model->bug_status = Bug::BUG_STATUS_FIXING;
+			if ($this->status == Bug::BUG_STATUS_FIXING || $this->status == Bug::BUG_STATUS_PENDING_REVIEW) {
+				$this->model->bug_status = $this->status;
+			} else {
+				if ($this->accept == true) {
+					$this->model->bug_status = Bug::BUG_STATUS_FIXING;
+				// } else if ($this->accept == false){
+				// 	$this->model->bug_status = Bug::BUG_STATUS_REOPEN;
+				// }
+				}
+			}
+				//$this->model->bug_status = $this->status;
+				//$this->model->bug_status = Bug::BUG_STATUS_FIXING;
         $this->model->notes = $this->notes;
         return $this->model->save();
     }
