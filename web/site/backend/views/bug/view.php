@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }
                                     echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                                  } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-                                    if($model->bug_status == Bug::BUG_STATUS_NEW){
+                                    if($model->bug_status == Bug::BUG_STATUS_NEW || $model->bug_status == Bug::BUG_STATUS_REOPEN){
                                        echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
                                           'data' => ArrayHelper::map($availableDevelopers, 'id', 'publicIdentity'),
                                           'options' => ['placeholder' => 'Select Developer ...'],
@@ -142,8 +142,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                               'allowClear' => true
                                           ],
                                        ]);
+                                       echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
                                     }
-                                    echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusTriager());
                                     echo $taskForm->field($taskModel, 'priority_level')->dropDownList(Bug::getAllPriorityLevel());
                                     echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                                  } elseif (Yii::$app->user->can(User::ROLE_REVIEWER)){
@@ -182,22 +182,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $this->render('_documentUpdate', [ 'model' => $model ]); ?>
             </div>
          </div>
-      </div>
-
-      <!-- if got special role gimme notes if not dun show -->
-      <!-- add a button to go to form for them to edit / do anything according to role -->
-      <div class="flex-row ml-1 mr-1 mt-4">
-         <?php
-            if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
-               if($model->notes){
-                  echo "<h2>Internal Notes</h2>";
-                  echo Html::tag('div', $model->notes, [
-                     'class' => 'jumbotron',
-                  ]);
-               }
-               // note segment here
-            };
-          ?>
       </div>
 
       <!-- comment begins here -->
