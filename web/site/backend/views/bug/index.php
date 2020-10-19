@@ -26,6 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         <div class="card-header">
             <?php echo Html::a('Create Bug', ['create'], ['class' => 'btn btn-success']) ?>
+            <?php echo Html::a(
+                'My Bugs',
+                [ 'bug/index?BugSearch[created_by]=' . strval(Yii::$app->user->id) ],
+                [ 'class' => 'btn btn-primary' ]
+            ) ?>
+
             <!-- <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?> -->
             <!-- <?php echo Html::a('My Tasks', ['tasks'], ['class' => 'btn btn-success']) ?> -->
         </div>
