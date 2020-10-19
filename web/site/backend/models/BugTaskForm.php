@@ -105,6 +105,7 @@ class BugTaskForm extends Model
 				// } else if ($this->accept == false){
 				// 	$this->model->bug_status = Bug::BUG_STATUS_REOPEN;
 				// }
+				}
 			}
 				//$this->model->bug_status = $this->status;
 				//$this->model->bug_status = Bug::BUG_STATUS_FIXING;
