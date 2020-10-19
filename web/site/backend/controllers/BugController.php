@@ -284,8 +284,15 @@ class BugController extends Controller
      */
     public function actionDelete($id)
     {
-      // TODO:: soft delete
-        $this->findModel($id)->delete();
+        $bug =  $this->findModel($id);
+        $bug->delete_status = 'disabled';
+        $bug->save();
+
+        $tokens = explode('/', Yii::$app->request->getReferrer());
+        $slug = end($tokens);
+        if ($slug === 'user-submissions') {
+            return $this->redirect([ $slug ]);
+        }
 
         return $this->redirect(['index']);
     }

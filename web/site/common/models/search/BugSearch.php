@@ -67,6 +67,8 @@ class BugSearch extends Bug
         //$this->filterBy = array_keys(parent::getAllBugStatus());
 
         $query = Bug::find();
+        $query->andWhere([ 'delete_status' => 'enabled' ]);
+
         if ($this->filterBy) {
           $query->andWhere(["bug_status" => $this->filterBy]);
         }
