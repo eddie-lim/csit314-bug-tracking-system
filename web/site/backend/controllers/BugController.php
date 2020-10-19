@@ -91,6 +91,23 @@ class BugController extends Controller
     }
 
     /**
+     * Lists bugs submitted by current user
+     * @return mixed
+     */
+    public function actionUserSubmissions()
+    {
+        $searchModel = new BugSearch();
+        $searchModel->setSubmittedBy(Yii::$app->user->id);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'page' => 'user-submissions',
+        ]);
+    }
+
+    /**
      * Displays a single Bug model.
      * @param integer $id
      * @return mixed

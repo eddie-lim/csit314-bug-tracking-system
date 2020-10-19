@@ -26,12 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         <div class="card-header">
             <?php echo Html::a('Create Bug', ['create'], ['class' => 'btn btn-success']) ?>
-            <?php echo Html::a(
-                'My Bugs',
-                [ 'bug/index?BugSearch[created_by]=' . strval(Yii::$app->user->id) ],
-                [ 'class' => 'btn btn-primary' ]
-            ) ?>
-
             <!-- <?php echo Html::a('All Bugs', ['index'], ['class' => 'btn btn-success']) ?> -->
             <!-- <?php echo Html::a('My Tasks', ['tasks'], ['class' => 'btn btn-success']) ?> -->
         </div>
@@ -82,7 +76,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'template' => '{delete}',
                         'visibleButtons' => [
                             'delete' => function($model, $key, $index) {
-                                return $model->created_by === Yii::$app->user->id;
+                                return $model->created_by === Yii::$app->user->id &&
+                                       $model->bug_status === Bug::BUG_STATUS_NEW;
                             }
                         ],
                     ],

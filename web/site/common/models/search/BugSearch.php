@@ -16,6 +16,7 @@ class BugSearch extends Bug
     public $filterBy;
     public $assignedTo;
     public $filterByNewUnassigned = false;
+    public $submittedBy;
 
     public function setFilterBy($byWhat) {
       $this->filterBy = $byWhat;
@@ -27,6 +28,11 @@ class BugSearch extends Bug
 
     public function setFilterByNewUnassigned($flag){
       $this->filterByNewUnassigned = $flag;
+    }
+
+    public function setSubmittedBy($userId)
+    {
+        $this->submittedBy = $userId;
     }
 
     /**
@@ -64,13 +70,17 @@ class BugSearch extends Bug
         if ($this->filterBy) {
           $query->andWhere(["bug_status" => $this->filterBy]);
         }
-        
+
         if ($this->developer_user_id) {
           $query->andWhere(["developer_user_id" => $this->developer_user_id]);
         }
         if ($this->filterByNewUnassigned) {
           $query->andWhere(["bug_status" => Bug::BUG_STATUS_NEW]);
           $query->andWhere(["is","developer_user_id", null]);
+        }
+
+        if ($this->submittedBy) {
+            $query->andWhere([ 'created_by' => $this->submittedBy ]);
         }
 
         $query->orderBy(['updated_at'=>SORT_DESC]);
