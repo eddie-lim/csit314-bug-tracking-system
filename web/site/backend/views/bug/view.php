@@ -129,7 +129,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                               ]
                                           ]);
                                     }
-                                   echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
+                                    if ($model->bug_status == Bug::BUG_STATUS_FIXING && $model->developer_user_id == Yii::$app->user->id) {
+                                       echo $taskForm->field($taskModel, 'status')->dropDownList($taskModel::getStatusDeveloper());
+                                    }
+                                    echo $taskForm->field($taskModel, 'notes')->textarea(['rows' => 3]);
                                  } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
                                     if($model->bug_status == Bug::BUG_STATUS_NEW){
                                        echo $taskForm->field($taskModel, 'developer_user_id')->widget(Select2::classname(), [
