@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
             if (Yii::$app->user->can(User::ROLE_DEVELOPER) || Yii::$app->user->can(User::ROLE_TRIAGER) || Yii::$app->user->can(User::ROLE_REVIEWER)){
                 echo \backend\widgets\TabMenuBugWithTaskWidget::widget(['page'=>$page]);
-            } else {   
+            } else {
                 echo \backend\widgets\TabMenuBugWidget::widget(['page'=>$page]);
             }
         ?>
@@ -71,8 +71,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     // 'created_by',
                     // 'updated_at',
                     // 'updated_by',
-
-                    //['class' => \common\widgets\ActionColumn::class],
+                    [
+                        'class' => \common\widgets\ActionColumn::class,
+                        'template' => '{delete}',
+                        'visibleButtons' => [
+                            'delete' => function($model, $key, $index) {
+                                return $model->created_by === Yii::$app->user->id;
+                            }
+                        ],
+                    ],
                 ],
             ]); ?>
 
