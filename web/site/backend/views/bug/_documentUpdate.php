@@ -48,7 +48,7 @@ $previews = $model->getDocumentPreviews();
                   $(this).fileinput('upload');
              }",
             'filepreremove' => "function(event, id, index) {
-                removeFile($model->id, event, id, index);
+                removeFile($model->id, event, id);
             }",
             'filepredelete' => "function(event) {
                 return !confirm(`Are you sure you want to delete this file?`);
@@ -58,8 +58,10 @@ $previews = $model->getDocumentPreviews();
 </div>
 
 <script type="text/javascript">
-    function removeFile(bugId, event, fileId, thumbId) {
-        let error = uploadHasError(thumbId);
+    function removeFile(bugId, event, fileId) {
+        let thumbId = fileId.split('-').pop();
+
+        let error = hasUploadError(thumbId);
         if (error || confirm(`Are you sure you want to delete this file?`)) {
             $.ajax({
                 type: 'POST',
@@ -68,7 +70,7 @@ $previews = $model->getDocumentPreviews();
                     filename: fileId.split('_').pop(),
                     immediate: true,
                     bug_id: `${bugId}`,
-                    has_error: uploadHasError(thumbId),
+                    has_error: error,
                 }
             });
         } else {
@@ -76,7 +78,7 @@ $previews = $model->getDocumentPreviews();
         }
     }
 
-    function uploadHasError(thumbId) {
-        return $(`[data-fileid='${thumbId}']`).hasClass('file-preview-error');
+    function hasUploadError(id) {
+        return $(`[data-fileid='${id}']`).hasClass('file-preview-error');
     }
 </script>
