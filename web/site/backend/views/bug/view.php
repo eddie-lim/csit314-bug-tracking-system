@@ -237,7 +237,7 @@ $script = <<< JS
                $('#updated_at').text(model.updated_at);
                $('#bug_status').removeClass('badge-warning').removeClass('badge-success').removeClass('badge-info').removeClass('badge-light').addClass(model.bug_status_badge).text(model.bug_status);
                $('#priority_level').removeClass('badge-info').removeClass('badge-warning').removeClass('badge-danger').removeClass('badge-light').addClass(model.priority_level_badge).text(model.priority_level);
-               $('#developer_user').text(model.developer_user);
+               $('#developer_user').text(model.developer);
             } else {
                processErrorResponse(errors)
             }
