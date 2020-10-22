@@ -3,7 +3,7 @@ modules:
     enabled:
       - Filesystem
       - Yii2
-      - tests\common\_support\FixtureHelper
+      # - tests\common\_support\FixtureHelper
     config:
       Yii2:
          configFile: '../config/backend/functional.php'

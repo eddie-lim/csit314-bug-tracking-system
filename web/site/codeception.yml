@@ -1,17 +1,14 @@
 include:
-  - tests/common
-  - tests/console
   - tests/backend
-  - tests/frontend
-  - tests/api
 
 paths:
   log: tests/_output
+  env: tests/_env
 
 settings:
   colors: true
 
 db:
-  dsn:
-  username:
+  dsn: 'mysql:host=127.0.0.1;port=3306;dbname=csit314'
+  username: 'root'
   password:

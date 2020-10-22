@@ -1,12 +1,19 @@
 class_name: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser:
-            url: http://127.0.0.1:8080/backend/web/index-test.php
-            browser: firefox
+        - WebDriver:
+            url: 'http://admin.bts.localhost'
+            clear_cookies: false
+            window_size: false # disabled in ChromeDriver
+            port: 9515
+            browser: chrome
         - Yii2:
             part: orm
-            entryScript: index-test.php
+            # entryScript: index-test.php
+            entryScript: index.php
             cleanup: false
             configFile: '../config/backend/acceptance.php'
-        - tests\common\_support\FixtureHelper
+        #- PhpBrowser:
+        #    url: http://admin.bts.localhost
+        #    browser: firefox
+        #- tests\common\_support\FixtureHelper

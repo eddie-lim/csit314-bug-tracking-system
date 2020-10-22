@@ -63,10 +63,20 @@
     "kartik-v/yii2-date-range": "dev-master"
   },
   "require-dev": {
-    "yiisoft/yii2-gii": "^2.0.0",
-    "yiisoft/yii2-faker": "^2.0.0",
-    "codeception/codeception": "2.4.0",
-    "codeception/verify": "^0.3.1"
+    "yiisoft/yii2-debug": "~2.1.0",
+    "yiisoft/yii2-gii": "~2.1.0",
+    "yiisoft/yii2-faker": "~2.0.0",
+    "phpunit/phpunit": "~6.5.5",
+    "symfony/browser-kit": ">=2.7 <=4.2.4",
+    "codeception/codeception": "^4.0",
+    "codeception/module-filesystem": "^1.0.0",
+    "codeception/verify": "~1.0.0",
+    "codeception/module-yii2": "dev-master",
+    "codeception/module-asserts": "^1.0.0",
+    "codeception/module-db": "dev-master",
+    "codeception/module-phpbrowser": "dev-master",
+    "codeception/module-rest": "dev-master",
+    "codeception/module-webdriver": "dev-master"
   },
   "autoload-dev": {
     "psr-4": {
