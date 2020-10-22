@@ -11,7 +11,7 @@ use yii\helpers\Url;
 class LoginPage
 {
     /** @var string */
-    public $route = '/sign-in/login';
+    public $route = '/login';
     /** @var AcceptanceTester */
     protected $actor;
 
