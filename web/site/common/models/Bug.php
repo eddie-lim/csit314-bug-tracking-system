@@ -4,6 +4,8 @@ namespace common\models;
 
 use Yii;
 use common\models\User;
+use common\models\BugAction;
+use yii\db\ActiveRecord;
 use common\components\MyCustomActiveRecord;
 
 /**
@@ -43,6 +45,20 @@ class Bug extends MyCustomActiveRecord
     {
         return 'bug';
     }
+    public function init(){
+        $this->on(ActiveRecord::EVENT_AFTER_INSERT, [$this, 'saveAction']);
+        $this->on(ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'saveAction']);
+        parent::init();
+    }
+
+    public function saveAction($event){
+        $latestAction = BugAction::find()->andWhere(['bug_id'=>$this->id])->active()->orderBy(['created_at'=>SORT_DESC])->one();
+        if(is_null($latestAction) || ($latestAction && $latestAction->action_type != $this->bug_status)){
+          $m = BugAction::makeModel($this->id, $this->bug_status);
+          return $m->save(false);
+        }
+    }
+
 
     /**
      * {@inheritdoc}

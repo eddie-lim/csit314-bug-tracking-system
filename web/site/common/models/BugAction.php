@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bug_action".
@@ -29,18 +30,18 @@ class BugAction extends \common\components\MyCustomActiveRecord
     {
         return [
             "timestamp" => [
-                'class' => yii\behaviors\TimestampBehavior::className(),
+                'class' => \yii\behaviors\TimestampBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                 ],
             ],
             "blame" => [
-                'class' => yii\behaviors\BlameableBehavior::className(),
+                'class' => \yii\behaviors\BlameableBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_by'],
                 ],
             ],
-            "auditTrail" => common\behaviors\MyAuditTrailBehavior::className(),  
+            "auditTrail" => \common\behaviors\MyAuditTrailBehavior::className(),  
         ];
     }
 
@@ -78,5 +79,13 @@ class BugAction extends \common\components\MyCustomActiveRecord
     public static function find()
     {
         return new \common\models\query\BugActionQuery(get_called_class());
+    }
+
+    public static function makeModel($bug_id, $action_type){
+        $m = new SELF();
+        $m->bug_id = $bug_id;
+        $m->action_type = $action_type;
+
+        return $m;
     }
 }
