@@ -17,3 +17,9 @@ return yii\helpers\ArrayHelper::merge(
         ]
     ]
 );
+
+// return yii\helpers\ArrayHelper::merge(
+//     require(YII_APP_BASE_PATH . '/common/config/base.php'),
+//     require(dirname(__DIR__) . '/base.php'),
+
+// );

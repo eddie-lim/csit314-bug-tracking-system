@@ -10,39 +10,12 @@ use yii\helpers\Url;
  */
 class LoginPage
 {
-    /** @var string */
-    public $route = '/login';
-    /** @var AcceptanceTester */
-    protected $actor;
-
-    /**
-     * LoginPage constructor.
-     * @param $actor
-     */
-    public function __construct($actor)
+    
+    public function login($actor, $mobile_calling_code = '65', $mobile_number)
     {
-        $this->actor = $actor;
-        $this->actor->amOnPage(Url::to($this->route));
-    }
-
-    /**
-     * @param $actor
-     * @return LoginPage
-     */
-    public static function openBy($actor)
-    {
-        return new self($actor);
-    }
-
-
-    /**
-     * @param string $username
-     * @param string $password
-     */
-    public function login($username, $password)
-    {
-        $this->actor->fillField('input[name="LoginForm[username]"]', $username);
-        $this->actor->fillField('input[name="LoginForm[password]"]', $password);
-        $this->actor->click('login-button');
+        // $this->actor->fillField('input[name="OtpForm[region_id]"]', $region_id);
+        $actor->fillField('#otpform-mobile_number',$mobile_calling_code);
+        $actor->fillField('input[name="OtpForm[mobile_number]"]', $mobile_number);
+        $actor->click('login-button');
     }
 }

@@ -14,9 +14,9 @@ defined('YII_APP_BASE_PATH') or define('YII_APP_BASE_PATH', dirname(__DIR__, 2))
 // Environment
 $dotenv = new \Dotenv\Dotenv(YII_APP_BASE_PATH);
 $dotenv->load();
-$dotenv->required('TEST_DB_DSN');
-$dotenv->required('TEST_DB_USERNAME');
-$dotenv->required('TEST_DB_PASSWORD');
+// $dotenv->required('TEST_DB_DSN');
+// $dotenv->required('TEST_DB_USERNAME');
+// $dotenv->required('TEST_DB_PASSWORD');
 
 // fcgi doesn't have STDIN and STDOUT defined by default
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'rb'));
