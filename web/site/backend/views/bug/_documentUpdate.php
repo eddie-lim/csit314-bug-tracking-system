@@ -47,11 +47,15 @@ $previews = $model->getDocumentPreviews();
             'filebatchselected' => "function(event, files) {
                   $(this).fileinput('upload');
              }",
+            'filepredelete' => "function(event) {
+                return !confirm(`Are you sure you want to delete this file?`);
+            }",
+            // implemented to patch over buggy behaviour
             'filepreremove' => "function(event, id, index) {
                 removeFile($model->id, event, id);
             }",
-            'filepredelete' => "function(event) {
-                return !confirm(`Are you sure you want to delete this file?`);
+            'filesuccessremove' => "function(event, id) {
+                removeFile($model->id, event, id);
             }",
         ],
     ]) ?>
@@ -69,7 +73,7 @@ $previews = $model->getDocumentPreviews();
                 data: {
                     filename: fileId.split('_').pop(),
                     immediate: true,
-                    bug_id: `${bugId}`,
+                    bug_id: bugId,
                     has_error: error,
                 }
             });
