@@ -184,6 +184,19 @@ $this->params['breadcrumbs'][] = $this->title;
          </div>
       </div>
 
+      <div class="card m-2">
+         <div class="card-header">
+            Lifecycle
+         </div>
+         <div class="card-body">
+            <?php foreach ($lifecycle as $action) : ?>
+               <div class="lifecycle-row">
+                  <span class="badge badge-light"><?= $action->action_type ?></span> on <?= Yii::$app->formatter->asDateTime($action->created_at) ?> by <span class="badge badge-light"><?= User::findOne($action->created_by)->publicIdentity ?> (<?= strtoupper(Yii::$app->user->identity->systemRole) ?>)</span>
+               </div>
+            <?php endforeach; ?>
+         </div>
+      </div>
+
       <!-- comment begins here -->
       <div class="flex-row ml-1 mr-1 mt-4 p-1" style="background:none">
             <!-- if no comment do something -->
