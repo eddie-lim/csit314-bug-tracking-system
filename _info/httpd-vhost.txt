@@ -9,19 +9,3 @@
     ErrorLog "logs/admin-bts-error.log"
     CustomLog "logs/dummy-host2.example.com-access.log" common
 </VirtualHost>
-
-<VirtualHost *:80>
-    ServerAdmin webmaster@bts.com
-    DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\api\web"
-    ServerName api.bts.localhost
-    ErrorLog "logs/api-bts-error.log"
-    CustomLog "logs/dummy-host2.example.com-access.log" common
-</VirtualHost>
-
-<VirtualHost *:80>
-    ServerAdmin webmaster@bts.com
-    DocumentRoot "D:\www\csit314-bug-tracking-system\web\site\frontend\web"
-    ServerName bts.localhost
-    ErrorLog "logs/api-bts-error.log"
-    CustomLog "logs/dummy-host2.example.com-access.log" common
-</VirtualHost>

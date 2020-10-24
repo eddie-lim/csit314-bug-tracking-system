@@ -1,5 +1,21 @@
-vendor\bin\codecept run -c D:\www\csit314-bug-tracking-system\web\site
+*  execute the commands at (csit314-bug-tracking-system\web\site) *
 
+
+
+WINDOWS
+--------------------
+vendor\bin\codecept run -c D:\www\csit314-bug-tracking-system\web\site\test\backend
 vendor\bin\codecept run acceptance --config D:\www\csit314-bug-tracking-system\web\site\tests\backend
 vendor\bin\codecept run functional--config D:\www\csit314-bug-tracking-system\web\site\tests\backend
 vendor\bin\codecept run unit --config D:\www\csit314-bug-tracking-system\web\site\tests\backend
+--------------------
+
+
+
+MAC
+--------------------
+vendor/bin/codecept run -c /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/test/backend
+vendor/bin/codecept run acceptance --config /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/tests/backend
+vendor/bin/codecept run functional--config /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/tests/backend
+vendor/bin/codecept run unit --config /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/tests/backend
+--------------------
