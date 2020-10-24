@@ -323,10 +323,6 @@ class BugController extends Controller
     public function actionRemoveFile()
     {
         if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
-        if (isset($_POST['has_error']) && $_POST['has_error'] === "true") {
-            // do nothing; if POST has error, file was not uploaded to filesystem
-            return json_encode([]);
-        }
 
         $dir = BugCreationForm::getUserUploadDir();
         if (isset($_POST['key']) || isset($_POST['immediate'])) {

@@ -64,9 +64,9 @@ $previews = $model->getDocumentPreviews();
 <script type="text/javascript">
     function removeFile(bugId, event, fileId) {
         let thumbId = fileId.split('-').pop();
+        if (hasUploadError(thumbId)) return;
 
-        let error = hasUploadError(thumbId);
-        if (error || confirm(`Are you sure you want to delete this file?`)) {
+        if (confirm(`Are you sure you want to delete this file?`)) {
             $.ajax({
                 type: 'POST',
                 url: '/bug/remove-file',
@@ -74,7 +74,6 @@ $previews = $model->getDocumentPreviews();
                     filename: fileId.split('_').pop(),
                     immediate: true,
                     bug_id: bugId,
-                    has_error: error,
                 }
             });
         } else {
