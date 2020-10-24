@@ -6,6 +6,7 @@ use Yii;
 use common\models\User;
 use common\models\Bug;
 use common\models\BugTag;
+use common\models\BugAction;
 use common\models\BugComment;
 use common\models\BugDocument;
 use common\models\search\BugSearch;
@@ -134,6 +135,8 @@ class BugController extends Controller
 
         $availableDevelopers = User::getAvailableDevelopers();
 
+        $lifecycle = BugAction::find()->andWhere(['bug_id'=>$id])->active()->orderBy(['created_at'=>SORT_DESC])->all();
+
         BugCreationForm::mkUserUploadDir();
         return $this->render('view',[
           'model' => $this->findModel($id),
@@ -141,6 +144,7 @@ class BugController extends Controller
           'comment' => $newComment,
           'taskModel' => $taskModel,
           'availableDevelopers' => $availableDevelopers,
+          'lifecycle' => $lifecycle,
         ]);
     }
 

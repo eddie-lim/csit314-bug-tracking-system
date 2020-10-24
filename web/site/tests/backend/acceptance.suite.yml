@@ -1,15 +1,15 @@
 class_name: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser:
-            url: 'http://admin.bts.localhost'
-            browser: chrome
-        # - WebDriver:
+        # - PhpBrowser:
         #     url: 'http://admin.bts.localhost'
-        #     clear_cookies: false
-        #     window_size: false # disabled in ChromeDriver
-        #     port: 9515
         #     browser: chrome
+        - WebDriver:
+            url: 'http://admin.bts.localhost'
+            clear_cookies: false
+            window_size: false # disabled in ChromeDriver
+            port: 9515
+            browser: chrome
         - Yii2:
             part: orm
             # entryScript: index-test.php

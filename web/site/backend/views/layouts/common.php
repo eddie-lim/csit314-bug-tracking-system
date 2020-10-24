@@ -177,15 +177,7 @@ $logEntries[] = [
             </div>
             <div class="text-white badge badge-pill badge-info">
                 <?php
-                    $role = User::ROLE_USER;
-                    if (Yii::$app->user->can(User::ROLE_REVIEWER)){
-                        $role = User::ROLE_REVIEWER;
-                    } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
-                        $role = User::ROLE_TRIAGER;
-                    } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
-                        $role = User::ROLE_DEVELOPER;
-                    }
-                    echo strtoupper($role);
+                    echo strtoupper(Yii::$app->user->identity->systemRole);
                 ?>
             </div>
             <!-- /sidebar user panel -->

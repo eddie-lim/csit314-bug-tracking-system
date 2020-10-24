@@ -11,11 +11,10 @@ use yii\helpers\Url;
 class LoginPage
 {
     
-    public function login($actor, $mobile_calling_code = '65', $mobile_number)
+    public function login($actor, $username, $password)
     {
-        // $this->actor->fillField('input[name="OtpForm[region_id]"]', $region_id);
-        $actor->fillField('#otpform-mobile_number',$mobile_calling_code);
-        $actor->fillField('input[name="OtpForm[mobile_number]"]', $mobile_number);
+        $actor->fillField('#loginform-username',$username);
+        $actor->fillField('#loginform-password',$password);
         $actor->click('login-button');
     }
 }

@@ -5,8 +5,8 @@ paths:
     log: _output
     data: _data
     helpers: _support
+bootstrap: _bootstrap.php #_bootstrap.php inside individual file of test suit
 settings:
-    bootstrap: _bootstrap.php #_bootstrap.php inside individual file of test suit
     suite_class: \PHPUnit_Framework_TestSuite
     colors: true
     memory_limit: 1024M

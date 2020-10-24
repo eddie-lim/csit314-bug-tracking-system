@@ -64,6 +64,18 @@ class User extends ActiveRecord implements IdentityInterface
         parent::init();
     }
 
+    public static function getSystemRole(){
+      $role = User::ROLE_USER;
+      if (Yii::$app->user->can(User::ROLE_REVIEWER)){
+          $role = User::ROLE_REVIEWER;
+      } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
+          $role = User::ROLE_TRIAGER;
+      } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
+          $role = User::ROLE_DEVELOPER;
+      }
+      return $role;
+    }
+
     /**
      * @inheritdoc
      */
