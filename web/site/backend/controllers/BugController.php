@@ -321,12 +321,12 @@ class BugController extends Controller
         }
     }
 
-    /**
-     * Handles ajax request for downloading bug documents
-     */
     public function actionDownloadFile()
     {
-        if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
+        // not actually secure, but [reasons] ...
+        if (!Yii::$app->request->referrer || !isset($_GET['key'])) {
+            return $this->redirect(['index']);
+        }
 
         $doc = BugDocument::findOne(intval($_GET['key']));
         $path = $doc->getFullPath();
