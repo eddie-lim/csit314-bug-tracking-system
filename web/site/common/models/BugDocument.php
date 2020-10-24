@@ -90,10 +90,15 @@ class BugDocument extends \common\components\MyCustomActiveRecord
         return $this->hasOne(Bug::className(), [ 'id' => 'bug_id' ]);
     }
 
+    public function getFullPath()
+    {
+        return $this->base_url . DIRECTORY_SEPARATOR . $this->path;
+    }
+
     public function getPreviewData()
     {
         if ($this->getType() === 'text') {
-            return file_get_contents($this->base_url . DIRECTORY_SEPARATOR . $this->path);
+            return file_get_contents($this->getFullPath());
         } else {
             return Yii::getAlias('@web') . '/' . $this->base_url . '/' . $this->path;
         }

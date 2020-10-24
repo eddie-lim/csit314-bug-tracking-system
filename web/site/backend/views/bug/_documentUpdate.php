@@ -39,7 +39,6 @@ $previews = $model->getDocumentPreviews();
          'initialPreviewAsData' => true,
          'overwriteInitial' => false,
          'deleteUrl' => Url::to('/bug/remove-file'),
-         // Placeholder: downloads not yet implemented
          'initialPreviewDownloadUrl' => Url::to('/bug/download-file'),
          'msgUploadEmpty' => 'File already uploaded',
         ],

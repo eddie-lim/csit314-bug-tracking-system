@@ -322,6 +322,18 @@ class BugController extends Controller
     }
 
     /**
+     * Handles ajax request for downloading bug documents
+     */
+    public function actionDownloadFile()
+    {
+        $doc = BugDocument::findOne(intval($_GET['key']));
+        $path = $doc->getFullPath();
+        if(file_exists($path)){
+            Yii::$app->response->sendFile($path);
+        }
+    }
+
+    /**
      * Handles ajax request for removing bug documents
      */
     public function actionRemoveFile()
