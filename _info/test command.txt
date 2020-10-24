@@ -1,6 +1,10 @@
-*  execute the commands at (csit314-bug-tracking-system\web\site) *
 
+Download Selenium and ChromeDriver from:
+https://codeception.com/docs/modules/WebDriver#local-testing
+Use CMD/Terminal and navigate to the folder where you saved 'ChromeDriver' and enter this command to start selenium server:
+chromedriver --url-base=/wd/hub
 
+After ChromeDriver execute the commands at (csit314-bug-tracking-system\web\site):
 
 WINDOWS
 --------------------
@@ -12,7 +16,7 @@ vendor\bin\codecept run unit --config D:\www\csit314-bug-tracking-system\web\sit
 
 
 
-MAC
+MAC AND LINUX??
 --------------------
 vendor/bin/codecept run -c /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/test/backend
 vendor/bin/codecept run acceptance --config /Users/eddielim/Sites/csit314-bug-tracking-system/web/site/tests/backend
