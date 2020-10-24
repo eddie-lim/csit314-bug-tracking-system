@@ -1,1 +1,5 @@
 vendor\bin\codecept run -c D:\www\csit314-bug-tracking-system\web\site
+
+vendor\bin\codecept run acceptance --config D:\www\csit314-bug-tracking-system\web\site\tests\backend
+vendor\bin\codecept run functional--config D:\www\csit314-bug-tracking-system\web\site\tests\backend
+vendor\bin\codecept run unit --config D:\www\csit314-bug-tracking-system\web\site\tests\backend

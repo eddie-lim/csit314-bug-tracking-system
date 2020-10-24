@@ -6,15 +6,31 @@ use kartik\export\ExportMenu;
 use dosamigos\chartjs\ChartJs;
 use common\models\Bug;
 use common\models\User;
+use rmrevin\yii\fontawesome\FAS;
 
 use kartik\daterange\DateRangePicker;
 use yii\data\ArrayDataProvider;
 use kartik\form\ActiveForm;
 
-$this->title = 'Statistics';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Statistics';
 ?>
+<style>
+    .stat-arb {
+        opacity: 0.8;
+    }
+    .stat-arb:hover {
+        opacity: 1;
+        text-shadow: 0 0 10px #000000;
+    }
+    .stacked-text {
+        color: white;
+    }
 
+</style>
+
+<div style="background-color: rgba(0,0,0,0.75); box-sizing: content-box !important;">
+    <h1 class="pl-5" style="color: white;">Statistics</h1>
+</div>
 <div class="d-flex flex-column justify-content-between">
   <div class="d-flex flex-row">
     <div class="w-50">
@@ -164,14 +180,14 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
     </div>
     <div class="d-flex flex-row justify-content-center">
-      <div class="d-inline-flex flex-column w-25 m-3 justify-content-center">
-        <div class="card bg-danger text-white text-center p-3">
+      <div class="d-inline-flex flex-column w-25 m-3">
+        <div class="card bg-danger text-white text-center stat-arb p-3">
           <b>Active bugs: <?php echo sizeof($actBugs) ?></b>
         </div>
-        <div class="card bg-success text-white text-center p-3">
+        <div class="card bg-success text-white text-center stat-arb p-3">
           <b>Resolved bugs: <?php echo sizeof($resBugs) ?></b>
         </div>
-        <div class="card bg-primary text-white text-center p-3">
+        <div class="card bg-primary text-white text-center stat-arb p-3">
           <b>Bugs pending review: <?php echo sizeof($pendBugs) ?></b>
         </div>
       </div>
@@ -189,36 +205,44 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
       </div>
-      <div class="d-inline-flex flex-column justify-content-around w-25 m-3">
-        <b>Bugs solved by our developers this month</b>
-        <div class="d-inline-flex flex-column justify-content-center">
+      <div class="card d-flex flex-column w-25 m-3 p-3">
+        <div class="card-title">
+            <b>Bugs solved by our developers this month</b>
+        </div>
+        <div class="d-inline-flex flex-column justify-content-center mt-3">
           <?php
+          $rank = [1,2,3];
           $colorArray = [
-            "background-color: rgb(254,225,12)",
-            "background-color: rgb(215,215,215)",
-            "background-color: rgb(167,112,68)",
+            "color: rgb(254,225,12)",
+            "color: rgb(215,215,215)",
+            "color: rgb(167,112,68)",
           ];
           foreach($devStats as $stats):
             ?>
-            <div class="card p-2" style="<?=array_shift($colorArray)?>">
-              <div class="container">
+              <div class="container mt-1">
+                <?= FAS::stack()
+                    ->on(FAS::icon('trophy',['style'=>array_shift($colorArray)]))
+                    ->text(array_shift($rank), 
+                        [
+                            'class'=>'stacked-text'
+                        ])
+                ?>
                 <b><?= User::findIdentity($stats['developer_user_id'])->username ?></b>
                 <span class="badge badge-secondary">
                   <?= $stats['counter'] ?>
                 </span>
               </div>
-            </div>
           <?php endforeach; ?>
         </div>
       </div>
     </div>
     <div class="d-inline-flex flex-row justify-content-center">
-      <div class="card w-25 m-3">
+      <div class="card m-3">
         <div class="card-body">
           <div class="card-title">
             <b>Current bugs by Priority Level</b>
           </div>
-          <div class="card-text">
+          <div class="card-text pt-3">
             <?php foreach($actBugPriority as $level): ?>
               Priority Level <?= $level['priority_level']?>
               <span class="badge badge-secondary">
@@ -228,22 +252,24 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
       </div>
-      <div class="card w-25 m-3">
+      <div class="card m-3">
         <div class="card-body">
           <div class="card-title">
             <b>Popular bug tags</b>
           </div>
-          <div class="card-text">
+          <div class="card-text pt-3">
             <?php foreach($bugTags as $tag): ?>
+              <div>
               <?= $tag['name'] ?>
               <span class="badge badge-secondary">
                 <?= $tag['counter'] ?>
               </span><br>
+              </div>
             <?php endforeach; ?>
           </div>
         </div>
       </div>
-      <div class="card w-25 m-3">
+      <div class="card m-3">
         <div class="card-body">
           <div class="card-title">
             <b>Bugs reported/resolved in <?php echo date('F')?></b>
@@ -262,14 +288,17 @@ $this->params['breadcrumbs'][] = $this->title;
             }
           }
           ?>
-          <div class="card-text">
-            Reported bugs
-            <span class="badge badge-danger">
-              <?php echo $curMonthRep;?>
-            </span><br>
-            Resolved bugs
-            <span class="badge badge-success">
-              <?php echo $curMonthRes;?>
+          <div class="card-text d-flex flex-row justify-content-around pt-2">
+            <div class="card bg-danger p-4 text-center">
+                <b>Reported bugs</b>
+                <?= FAS::icon('bug')->size(FAS::SIZE_2X)?>
+                <b><?php echo $curMonthRep;?></b>
+            </div>
+            <div class="card bg-success p-4 text-center">
+                <b>Resolved bugs</b>
+                <?= FAS::icon('virus-slash')->size(FAS::SIZE_2X)?>
+              <b><?php echo $curMonthRes;?></b>
+            </div>
             </span><br>
           </div>
         </div>
@@ -277,8 +306,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <hr class="w-100"/>
-    <h4> Statistics by date range </h4>
-    <div class="d-flex flex-row justify-content-center">
+    <div style="background-color: rgba(0,0,0,0.75); box-sizing: content-box !important;">
+        <h1 class="pl-5" style="color: white;">Statistics by date range</h1>
+    </div>
+    <div class="d-flex flex-row justify-content-center mt-5">
       <?php $form = ActiveForm::begin(['id' => 'export-form']) ?>
       <div class='col-md-12'>
         <?php

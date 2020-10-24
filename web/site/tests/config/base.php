@@ -40,5 +40,11 @@ return [
             ],
             */
         ],
-    ]
+    ],
+    'params' => [
+        'adminEmail' => 'admin@bts.site',
+        'adminEmailName' => 'bts Admin',
+        'robotEmail' => 'robot@bts.site',
+        'robotEmailName' => 'bts System'
+    ],
 ];

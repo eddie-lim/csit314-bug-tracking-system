@@ -41,7 +41,7 @@ class SystemAuditTrailSearch extends SystemAuditTrail
      */
     public function search($params)
     {
-        $query = SystemAuditTrail::find();
+        $query = SystemAuditTrail::find()->orderBy(['created_at'=>SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
