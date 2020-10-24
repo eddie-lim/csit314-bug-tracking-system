@@ -9,6 +9,7 @@ use kartik\widgets\FileInput;
 */
 
 $previews = $model->getDocumentPreviews();
+$canEditAttachment = Yii::$app->user->id === $model->created_by;
 ?>
 
 <div>
@@ -32,12 +33,14 @@ $previews = $model->getDocumentPreviews();
          'showRemove' => false,
          'showUpload' => false,
          'showClose' => false,
+         'showBrowse' => $canEditAttachment,
          'browseLabel' => 'Add Document',
          'dropZoneEnabled' => false,
          'initialPreview' => $previews['data'],
          'initialPreviewConfig'  => $previews['config'],
          'initialPreviewAsData' => true,
          'overwriteInitial' => false,
+         'initialPreviewShowDelete' => $canEditAttachment,
          'deleteUrl' => Url::to('/bug/remove-file'),
          'initialPreviewDownloadUrl' => Url::to('/bug/download-file'),
          'msgUploadEmpty' => 'File already uploaded',
