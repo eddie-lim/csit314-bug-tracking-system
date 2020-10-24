@@ -326,6 +326,8 @@ class BugController extends Controller
      */
     public function actionDownloadFile()
     {
+        if (!Yii::$app->request->isAjax) return $this->redirect(['index']);
+
         $doc = BugDocument::findOne(intval($_GET['key']));
         $path = $doc->getFullPath();
         if(file_exists($path)){
