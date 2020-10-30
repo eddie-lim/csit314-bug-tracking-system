@@ -7,9 +7,16 @@ modules:
         - WebDriver:
             url: 'http://admin.bts.localhost'
             clear_cookies: false
+            restart: false # bring over session
             window_size: false # disabled in ChromeDriver
             port: 9515
             browser: chrome
+            capabilities:
+                chromeOptions:
+                    args: ["allow-insecure-localhost", "start-maximized", "no-sandbox"]
+                    prefs:
+                        download.default_directory: "/home/zt/php/csit314-bug-tracking-system/web/site/tests/backend/_downloads"
+        - Filesystem
         - Yii2:
             part: orm
             # entryScript: index-test.php

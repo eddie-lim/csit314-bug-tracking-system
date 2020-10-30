@@ -1,0 +1,31 @@
+<?php
+
+use tests\backend\_pages\LoginPage;
+use tests\backend\AcceptanceTester as AT;
+
+/* @var $scenario Codeception\Scenario */
+class LoginCest {
+    public $loginPage;
+    public $I;
+
+    public function _before(AT $I) {
+        $this->loginPage = new LoginPage();
+        //$I->maximizeWindow();
+    }
+
+    public function _after() {
+    }
+
+    public function invalidCredentialsLogin(AT $I)
+    {
+        $I->login('webmaster', 'wrongpass');
+        $I->wait(3);
+        $I->see('Incorrect username or password.');
+    }
+
+    public function validCredentialsLogin(AT $I)
+    {
+        $I->login('webmaster', 'webmaster');
+        $I->see('Bug Tracking Sys', '//span[@class="brand-text font-weight-bold"]');
+    }
+}
