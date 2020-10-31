@@ -1,4 +1,5 @@
 <?php
+require(__DIR__ . '/../../common/env.php');
 require_once(__DIR__ . '/../bootstrap.php');
 
 // Prepare Yii
