@@ -90,6 +90,14 @@ $this->params['breadcrumbs'][] = 'Statistics';
         ?>
       </div>
       <div class="w-50">
+        <?php
+            if(!array_search(date('m-Y'), array_column($reportedBugs, 'm_date'))){
+                array_push($reportedBugs, array('m_date'=>date('m-Y'), 'counter'=>0));
+            }
+            if(!array_search(date('m-Y'), array_column($resolvedBugs, 'm_date'))){
+                array_push($resolvedBugs, array('m_date'=>date('m-Y'), 'counter'=>0));
+            }
+        ?>
         <?= ChartJs::widget([
           'type' => 'line',
           'clientOptions' => [
@@ -128,8 +136,9 @@ $this->params['breadcrumbs'][] = 'Statistics';
         ]);
         ?>
       </div>
-      <div class="w-50">
-        <?= ChartJs::widget([
+      <div class="w-50 text-center">
+        <!-- no bugs in the current month yet -->
+        <? ChartJs::widget([
           'type' => 'pie',
           'clientOptions' => [
             'height' => 100,
@@ -177,6 +186,10 @@ $this->params['breadcrumbs'][] = 'Statistics';
           ]
         ]);
         ?>
+        <?php if(sizeof($curBugStatus) === 0): ?>
+            <b style="color:grey;font-size:14px;">Status of bugs this month</b><br>
+            <p class="pt-5">No bugs created this month yet.</p>
+        <?php endif; ?>
       </div>
     </div>
     <div class="d-flex flex-row justify-content-center">
@@ -275,18 +288,20 @@ $this->params['breadcrumbs'][] = 'Statistics';
             <b>Bugs reported/resolved in <?php echo date('F')?></b>
           </div>
           <?php
-          $curMonthRep = null;
-          $curMonthRes = null;
+          $curMonthRep = array();
+          $curMonthRes = array();
           foreach($reportedBugs as $data){
             if($data['m_date'] === date('m-Y')){
               $curMonthRep = $data['counter'];
             }
           }
+          
           foreach($resolvedBugs as $data){
             if($data['m_date'] === date('m-Y')){
               $curMonthRes = $data['counter'];
             }
           }
+
           ?>
           <div class="card-text d-flex flex-row justify-content-around pt-2">
             <div class="card bg-danger p-4 text-center">

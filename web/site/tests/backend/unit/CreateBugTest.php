@@ -35,7 +35,6 @@ class CreateBugTest extends \Codeception\Test\Unit
         codecept_debug($asd->id);
     }
 
-    /*
     public function testDing()
     { 
         $id = $this->tester->grabRecord(BugComment::class, ['comment' => 'sdfs']);
@@ -52,6 +51,8 @@ class CreateBugTest extends \Codeception\Test\Unit
         $this->tester->haveRecord(BugComment::class, ['xd'=> 2, 'comment' => 'azxcvm']);
     }
 
+
+    /*
     public function testCreateBug()
     {
         $form = new BugCreationForm();
