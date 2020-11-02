@@ -4,9 +4,13 @@ namespace tests\common\traits;
 
 trait UnitTestHelper {
 
-    public function fieldIsPresent($model, $field)
+    public function fieldIsPresent($model, $field, $addBlankStrings = false)
     {
-        $blanks = [ NULL, '', '     ' ];
+        $blanks = [ NULL ];
+        if ($addBlankStrings) {
+            array_push($blanks, [ '', '     ' ]);
+        }
+
         foreach ($blanks as $blank) {
             $model->setAttribute($field, $blank);
             $this->assertFalse($model->validate());
@@ -33,5 +37,31 @@ trait UnitTestHelper {
 
         $model->setAttribute($field, str_repeat('a', $maxLen + 1));
         $this->assertFalse($model->validate());
+    }
+
+    public function fieldHasPermittedValue($model, $field, $permitted, $unpermitted)
+    {
+        foreach($permitted as $val) {
+            $model->setAttribute($field, $val);
+            $this->assertTrue($model->validate());
+        }
+
+        foreach($unpermitted as $val) {
+            $model->setAttribute($field, $val);
+            $this->assertFalse($model->validate());
+        }
+    }
+
+    public function fieldHasValidReference($model, $field, $validIds, $invalidIds)
+    {
+        foreach($validIds as $id) {
+            $this->bug->$field = $id;
+            $this->assertTrue($model->validate());
+        }
+
+        foreach($invalidIds as $id) {
+            $this->bug->$field = $id;
+            $this->assertFalse($model->validate());
+        }
     }
 }
