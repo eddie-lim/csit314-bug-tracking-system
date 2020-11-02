@@ -18,8 +18,8 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
 
     public function init() {
         if (!isset(Yii::$app->controller) || is_null(Yii::$app->controller)){
-            $this->detachBehavior('timestamp');
-            $this->detachBehavior('blame');
+            // $this->detachBehavior('timestamp');
+            // $this->detachBehavior('blame');
             $this->detachBehavior('auditTrail');
         }
         if(property_exists($this,'status') && !method_exists($this,'search')) {
