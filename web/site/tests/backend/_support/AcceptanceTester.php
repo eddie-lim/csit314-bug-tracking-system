@@ -228,4 +228,40 @@ class AcceptanceTester extends \Codeception\Actor
         $this->wait(1);
         $this->see('reopen', '#bug_status');        
     }
+
+    public function selectDateRange($start = "2 Oct 2020", $end = "16 Oct 2020")
+    {
+        $startDate = explode(" ", $start);
+        $endDate = explode(" ", $end);
+
+
+        $this->clickWithLeftButton('//input[@name="ExportForm[date_range]"]');
+        $this->wait(1);
+
+        // navigate to correct month/year
+        while(True){
+            $curCalendar = explode(' ', $this->grabTextFrom('//div[@class="drp-calendar left"]/div/table/thead/tr/th[@class="month"]'));
+            if( ($curCalendar[0] === $startDate[1]) && ($curCalendar[1] === $startDate[2]) ){
+                break;
+            }
+            $this->clickWithLeftButton('//div[@class="drp-calendar left"]/div/table/thead/tr/th[@class="prev available"]/span');
+        }
+
+
+        $this->clickWithLeftButton('//div[@class="drp-calendar left"]/div/table/tbody/tr/td[contains(@class, "available") and text()="'.$startDate[0].'"]');
+
+        while(True){
+            $curCalendar = explode(' ', $this->grabTextFrom('//div[@class="drp-calendar right"]/div/table/thead/tr/th[@class="month"]'));
+            if( ($curCalendar[0] === $endDate[1]) && ($curCalendar[1] === $endDate[2]) ){
+                break;
+            }
+            $this->clickWithLeftButton('//div[@class="drp-calendar right"]/div/table/thead/tr/th[@class="next available"]/span');
+        }
+        $this->clickWithLeftButton('//div[@class="drp-calendar right"]/div/table/tbody/tr/td[contains(@class, "available") and text()="'.$startDate[0].'"]');
+
+        $this->click("Apply");
+        $this->wait(2);
+    }
 }
+
+///html/body/div[3]/div[2]/div[1]/table/tbody/tr[1]/td[6]
