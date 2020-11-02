@@ -10,6 +10,7 @@ use Exception;
 use backend\models\BugCreationForm;
 use common\components\MyCustomActiveRecord;
 use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use common\behaviors\MyAuditTrailBehavior;
 use \trntv\filekit\behaviors\UploadBehavior;
 

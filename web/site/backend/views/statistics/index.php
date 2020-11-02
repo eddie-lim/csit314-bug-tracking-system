@@ -137,58 +137,58 @@ $this->params['breadcrumbs'][] = 'Statistics';
         ?>
       </div>
       <div class="w-50 text-center">
-        <!-- no bugs in the current month yet -->
-        <? ChartJs::widget([
-          'type' => 'pie',
-          'clientOptions' => [
-            'height' => 100,
-            'width' => 200,
-            'title' => [
-              'display' => true,
-              'text' => 'Status of bugs this month',
-            ],
-            'elements' => [
-              'arc' => [
-                'borderWidth' => 1,
-              ],
-            ],
-          ],
-          'data' => [
-            'labels' => array_map('ucfirst', array_column($curBugStatus, 'bug_status')),
-            'datasets' => [
-              [
-                'backgroundColor' => [
-                  "rgba(145,53,55,0.2)",
-                  "rgba(121,119,108,0.2)",
-                  "rgba(47,44,35,0.2)",
-                  "rgba(229,210,225,0.2)",
-                  "rgba(200,63,101,0.2)",
-                  "rgba(183,130,112,0.2)",
-                  "rgba(183,130,112,0.2)",
-                  "rgba(204,187,192,0.2)",
-                ],
-                'pointBackgroundColor' => [
-                  "rgba(145,53,55,1)",
-                  "rgba(121,119,108,1)",
-                  "rgba(47,44,35,1)",
-                  "rgba(229,21125,1)",
-                  "rgba(200,63,101,1)",
-                  "rgba(183,130,112,1)",
-                  "rgba(183,130,112,1)",
-                  "rgba(204,187,192,1)",
-                ],
-                'pointBorderColor' => "#fff",
-                'pointHoverBackgroundColor' => "#fff",
-                'pointHoverBorderColor' => "rgba(179,181,198,1)",
-                'data' => array_column($curBugStatus, 'counter'),
-              ],
-            ]
-          ]
-        ]);
-        ?>
         <?php if(sizeof($curBugStatus) === 0): ?>
             <b style="color:grey;font-size:14px;">Status of bugs this month</b><br>
             <p class="pt-5">No bugs created this month yet.</p>
+        <? else: ?>
+            <?= ChartJs::widget([
+                'type' => 'pie',
+                'clientOptions' => [
+                    'height' => 100,
+                    'width' => 200,
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Status of bugs this month',
+                    ],
+                    'elements' => [
+                      'arc' => [
+                        'borderWidth' => 1,
+                      ],
+                    ],
+                ],
+                'data' => [
+                    'labels' => array_map('ucfirst', array_column($curBugStatus, 'bug_status')),
+                    'datasets' => [
+                        [
+                            'backgroundColor' => [
+                              "rgba(145,53,55,0.2)",
+                              "rgba(121,119,108,0.2)",
+                              "rgba(47,44,35,0.2)",
+                              "rgba(229,210,225,0.2)",
+                              "rgba(200,63,101,0.2)",
+                              "rgba(183,130,112,0.2)",
+                              "rgba(183,130,112,0.2)",
+                              "rgba(204,187,192,0.2)",
+                            ],
+                            'pointBackgroundColor' => [
+                              "rgba(145,53,55,1)",
+                              "rgba(121,119,108,1)",
+                              "rgba(47,44,35,1)",
+                              "rgba(229,21125,1)",
+                              "rgba(200,63,101,1)",
+                              "rgba(183,130,112,1)",
+                              "rgba(183,130,112,1)",
+                              "rgba(204,187,192,1)",
+                            ],
+                            'pointBorderColor' => "#fff",
+                            'pointHoverBackgroundColor' => "#fff",
+                            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                            'data' => array_column($curBugStatus, 'counter'),
+                        ],
+                    ]
+                ]
+            ]);
+            ?>
         <?php endif; ?>
       </div>
     </div>

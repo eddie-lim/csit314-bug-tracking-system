@@ -52,15 +52,15 @@ trait UnitTestHelper {
         }
     }
 
-    public function fieldHasValidReference($model, $field, $validIds, $invalidIds)
+    public function fieldHasValidReference($model, $field, $validIds, $invalidIds, $name)
     {
         foreach($validIds as $id) {
-            $this->bug->$field = $id;
+            $this->$name->$field = $id;
             $this->assertTrue($model->validate());
         }
 
         foreach($invalidIds as $id) {
-            $this->bug->$field = $id;
+            $this->$name->$field = $id;
             $this->assertFalse($model->validate());
         }
     }

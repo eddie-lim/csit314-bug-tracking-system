@@ -133,7 +133,7 @@ class BugTest extends \Codeception\Test\Unit
         ];
 
         $this->fieldHasValidReference(
-            $this->bug, 'developer_user_id', $devIds, $nonDevIds
+            $this->bug, 'developer_user_id', $devIds, $nonDevIds, 'bug'
         );
     }
 
@@ -175,7 +175,7 @@ class BugTest extends \Codeception\Test\Unit
         $userIds = [ 1, 2, 10, 25, 50 ];
         $nonUserIds = [ -1, 0, 1000];
 
-        $this->fieldHasValidReference($this->bug, 'created_by', $userIds, $nonUserIds);
+        $this->fieldHasValidReference($this->bug, 'created_by', $userIds, $nonUserIds, 'bug');
     }
 
     // Test created at
@@ -196,7 +196,7 @@ class BugTest extends \Codeception\Test\Unit
         $userIds = [ 1, 2, 10, 25, 50 ];
         $nonUserIds = [ -1, 0, 1000];
 
-        $this->fieldHasValidReference($this->bug, 'updated_by', $userIds, $nonUserIds);
+        $this->fieldHasValidReference($this->bug, 'updated_by', $userIds, $nonUserIds, 'bug');
     }
 
     // Test updated at
