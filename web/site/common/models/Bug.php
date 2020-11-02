@@ -59,19 +59,47 @@ class Bug extends MyCustomActiveRecord
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['title', 'description', 'priority_level'], 'required'],
+            [['title', 'description', 'bug_status', 'priority_level'], 'required'],
             [['description', 'bug_status', 'priority_level', 'delete_status'], 'string'],
             [['developer_user_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
-            [['title'], 'string', 'max' => 128],
-            [['notes'], 'string', 'max' => 1028],
+            ['title', 'string', 'max' => 128],
+            ['bug_status', 'in', 'range' => [ 'new', 'assigned', 'fixing', 'pending_review',
+                                              'completed', 'rejected', 'reopen' ]],
+            ['priority_level', 'in', 'range' => [ '1', '2', '3' ]],
+            ['developer_user_id', 'validateDevUID'],
+            ['notes', 'string', 'max' => 1028],
+            ['delete_status', 'in', 'range' => [ 'enabled', 'disabled' ]],
+            [['created_by', 'updated_by'], 'validateUserExists'],
         ];
+    }
+
+    public function validateDevUID($attribute, $params, $validator)
+    {
+        $query = new \yii\db\Query();
+        $query->select('user_id')
+              ->from('rbac_auth_assignment')
+              ->where([
+                  'user_id' => $this->$attribute,
+                  'item_name' => User::ROLE_DEVELOPER
+              ]);
+
+        if (!$query->exists()) {
+            $this->addError($attribute, 'dev uid must refer to existing developer');
+        }
+    }
+
+    public function validateUserExists($attribute, $params, $validator)
+    {
+        $userExists = User::find()->where([ 'id' => $this->$attribute ])->exists();
+        if (!$userExists) {
+            $this->addError($attribute, "$attribute must refer to existing user");
+        }
     }
 
     /**
@@ -95,6 +123,65 @@ class Bug extends MyCustomActiveRecord
         ];
     }
 
+    public function getBugStatusBadgeColor(){
+      $badge_type = "badge-light";
+      switch ($this->bug_status) {
+        case Bug::BUG_STATUS_FIXING:
+          $badge_type = "badge-warning";
+          break;
+        case Bug::BUG_STATUS_COMPLETED:
+          $badge_type = "badge-success";
+          break;
+        case Bug::BUG_STATUS_ASSIGNED:
+          $badge_type = "badge-info";
+          break;
+        default:
+          $badge_type = "badge-light";
+          break;
+      }
+      return $badge_type;
+    }
+
+    public function getPriorityLevelBadgeColor(){
+      $badge_type = "badge-light";
+      switch ($this->priority_level) {
+        case SELF::PRIORITY_LOW:
+          $badge_type = "badge-info";
+          break;
+        case SELF::PRIORITY_MED:
+          $badge_type = "badge-warning";
+          break;
+        case SELF::PRIORITY_HIGH:
+          $badge_type = "badge-danger";
+          break;
+        default:
+          $badge_type = "badge-light";
+          break;
+      }
+      return $badge_type;
+    }
+
+    public function toObject() {
+        $m = $this;
+
+        $o = (object) [];
+        $o->id = $m->id;
+        $o->title = $m->title;
+        $o->description = $m->description;
+        $o->bug_status = $m->bug_status;
+        $o->priority_level = $m->priority_level;
+        $o->developer = empty($m->developer_user_id) ? "" : User::findIdentity($m->developer_user_id)->publicIdentity;
+        $o->notes = $m->notes;
+        $o->delete_status = $m->delete_status;
+        $o->created_at = Yii::$app->formatter->asDateTime($m->created_at);
+        $o->created_by = User::findIdentity($m->created_by)->publicIdentity;
+        $o->updated_at = Yii::$app->formatter->asDateTime($m->updated_at);
+        $o->updated_by = User::findIdentity($m->updated_by)->publicIdentity;
+        $o->bug_status_badge = $m->bugStatusBadgeColor;
+        $o->priority_level_badge = $m->priorityLevelBadgeColor;
+        return $o;
+    }
+
     public function getDocuments()
     {
         return $this->hasMany(BugDocument::className(), [ 'bug_id' => 'id' ]);
@@ -102,7 +189,8 @@ class Bug extends MyCustomActiveRecord
 
     public function getTags()
     {
-        return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id'])->andWhere(['delete_status'=>MyCustomActiveRecord::DELETE_STATUS_ENABLED ]);
+        return $this->hasMany(BugTag::className(), [ 'bug_id' => 'id'])
+                    ->andWhere(['delete_status'=>MyCustomActiveRecord::DELETE_STATUS_ENABLED ]);
     }
 
     public function getDeveloperUser()
@@ -169,65 +257,6 @@ class Bug extends MyCustomActiveRecord
           SELF::BUG_STATUS_REJECTED => "Rejected",
           SELF::BUG_STATUS_REOPEN => "Re-Open",
       ];
-    }
-
-    public function toObject() {
-        $m = $this;
-
-        $o = (object) [];
-        $o->id = $m->id;
-        $o->title = $m->title;
-        $o->description = $m->description;
-        $o->bug_status = $m->bug_status;
-        $o->priority_level = $m->priority_level;
-        $o->developer = empty($m->developer_user_id) ? "" : User::findIdentity($m->developer_user_id)->publicIdentity;
-        $o->notes = $m->notes;
-        $o->delete_status = $m->delete_status;
-        $o->created_at = Yii::$app->formatter->asDateTime($m->created_at);
-        $o->created_by = User::findIdentity($m->created_by)->publicIdentity;
-        $o->updated_at = Yii::$app->formatter->asDateTime($m->updated_at);
-        $o->updated_by = User::findIdentity($m->updated_by)->publicIdentity;
-        $o->bug_status_badge = $m->bugStatusBadgeColor;
-        $o->priority_level_badge = $m->priorityLevelBadgeColor;
-        return $o;
-    }
-
-    public function getBugStatusBadgeColor(){
-      $badge_type = "badge-light";
-      switch ($this->bug_status) {
-        case Bug::BUG_STATUS_FIXING:
-          $badge_type = "badge-warning";
-          break;
-        case Bug::BUG_STATUS_COMPLETED:
-          $badge_type = "badge-success";
-          break;
-        case Bug::BUG_STATUS_ASSIGNED:
-          $badge_type = "badge-info";
-          break;
-        default:
-          $badge_type = "badge-light";
-          break;
-      }
-      return $badge_type;
-    }
-
-    public function getPriorityLevelBadgeColor(){
-      $badge_type = "badge-light";
-      switch ($this->priority_level) {
-        case SELF::PRIORITY_LOW:
-          $badge_type = "badge-info";
-          break;
-        case SELF::PRIORITY_MED:
-          $badge_type = "badge-warning";
-          break;
-        case SELF::PRIORITY_HIGH:
-          $badge_type = "badge-danger";
-          break;
-        default:
-          $badge_type = "badge-light";
-          break;
-      }
-      return $badge_type;
     }
 
     public static function getActiveBugsData() {
