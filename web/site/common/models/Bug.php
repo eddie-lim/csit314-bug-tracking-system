@@ -278,14 +278,19 @@ class Bug extends MyCustomActiveRecord
     }
 
     public static function getTopDeveloperData() {
-        return SELF::find()
-          ->select(['COUNT(*) AS counter', 'developer_user_id'])
-          ->where(['bug_status'=>SELF::BUG_STATUS_COMPLETED])
-          ->groupBy('developer_user_id')
-          ->orderBy(['counter'=>SORT_DESC])
-          ->asArray()
-          ->limit(3)
-          ->all();
+        $date = new \DateTime('now');
+        $st = $date->modify('first day of this month')->format('m-Y');
+
+        return BugAction::find()
+            ->select(['COUNT(*) AS counter', 'developer_user_id'])
+            ->leftJoin('bug', '`bug`.`id` = `bug_action`.`bug_id`')
+            ->where(['action_type'=>SELF::BUG_STATUS_COMPLETED])
+            ->andWhere(['FROM_UNIXTIME(`bug_action`.`created_at`, "%m-%Y")' => $st])
+            ->groupBy('developer_user_id')
+            ->orderBy(['counter'=>SORT_DESC])
+            ->asArray()
+            ->limit(3)
+            ->all();
     }
 
 
