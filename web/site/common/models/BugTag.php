@@ -51,10 +51,12 @@ class BugTag extends MyCustomActiveRecord
     public function rules()
     {
         return [
+            [['bug_id', 'name'], 'required'],
             [['bug_id', 'created_at', 'created_by'], 'integer'],
+            ['bug_id', 'exist', 'targetClass' => Bug::class, 'targetAttribute' => ['bug_id' => 'id']],
+            ['created_by', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
             [['delete_status'], 'in', 'range'=>array_keys(MyCustomActiveRecord::deleteStatuses())],
             [['name'], 'string', 'max' => 128],
-            [['bug_id', 'name'], 'required'],
         ];
     }
 

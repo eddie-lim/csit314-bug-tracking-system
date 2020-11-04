@@ -81,6 +81,13 @@ class BugController extends Controller
      */
     public function actionIndex()
     {
+      $tag = new BugTag();
+      $tag->bug_id = 1 ;
+      $tag->name = "eddietest" ;
+      $tag->delete_status = 'enabled' ;
+      print_r($tag->validate());
+      exit();
+
         $searchModel = new BugSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

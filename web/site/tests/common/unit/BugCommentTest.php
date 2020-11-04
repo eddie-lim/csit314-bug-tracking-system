@@ -36,19 +36,50 @@ class BugCommentTest extends \Codeception\Test\Unit
     
     }
 
-    public function testbugCommentIsValid()
+    public function testBugIdIsRequired()
     {
-        $this->assertTrue($this->bugComment->validate());
+        $this->assertTrue($this->bugComment->validate(['bug_id']));
     }
 
     public function testBugIdIsInteger()
     {
         $this->fieldHasType($this->bugComment, 'bug_id', 'integer');
     }
+    
+    public function testCommentIsRequired()
+    {
+        $this->assertTrue($this->bugComment->validate(['comment']));
+    }
 
     public function testCommentIsString()
     {
         $this->fieldHasType($this->bugComment, 'comment', 'string');
+    }
+
+    public function testDeleteStatusHasPermittedValue()
+    {
+        $permit = array_keys(MyCustomActiveRecord::deleteStatuses());
+
+        $reject = [
+            'some', 'random', 'values', 'thats', 'not', 'permitted'
+        ];
+
+        $this->fieldHasPermittedValue($this->bugComment, 'delete_status', $permit, $reject);
+    }
+
+    public function testCreatedAtIsInteger()
+    {
+        $this->fieldHasType($this->bugComment, 'created_at', 'integer');
+    }
+
+    public function testCreatedByInteger()
+    {
+        $this->fieldHasType($this->bugComment, 'created_by', 'integer');
+    }
+
+    public function testBugTagIsValid()
+    {
+        $this->assertTrue($this->bugComment->validate());
     }
 
     public function testCreatedAtInsertCurrentTimeOnCreate()
@@ -59,5 +90,4 @@ class BugCommentTest extends \Codeception\Test\Unit
 
         $this->assertEqualsWithDelta($time, $this->bugComment->created_at, 1);
     }
-
 }

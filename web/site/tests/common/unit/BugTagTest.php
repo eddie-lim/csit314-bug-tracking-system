@@ -10,10 +10,11 @@ class BugTagTest extends \Codeception\Test\Unit
 {
     use traits\UnitTestHelper;
 
-    const DEFAULT_BUG_ID = 500;
+    const DEFAULT_BUG_ID = 1;
     const DEFAULT_NAME = "frontend";
     const DEFAULT_DELETE_STATUS = "enabled";
-    const DEFAULT_CREATOR       = 1;
+    const DEFAULT_CREATOR = 1;
+    const MAX_NAME_LEN = 128;
     /**
      * @var \tests\common\UnitTester
      */
@@ -22,24 +23,21 @@ class BugTagTest extends \Codeception\Test\Unit
     protected function _before()
     {
         $this->bugTag = new BugTag();
-        $this->bugTag->created_at      = time();
-        $this->bugTag->created_by      = SELF::DEFAULT_CREATOR;
+        $this->bugTag->bug_id = SELF::DEFAULT_BUG_ID;
+        $this->bugTag->name = SELF::DEFAULT_NAME;
+        $this->bugTag->delete_status = SELF::DEFAULT_DELETE_STATUS;
+        $this->bugTag->created_at = time();
+        $this->bugTag->created_by = SELF::DEFAULT_CREATOR;
     }
 
     protected function _after()
     {
     
     }
-    
+
     public function testBugIdIsRequired()
     {
-        $this->assertFalse($this->bugTag->validate(['bug_id']));
-    }
-
-    public function testBugIdIsPresent()
-    {
-        $this->bugTag->bug_id = SELF::DEFAULT_BUG_ID;
-        $this->fieldIsPresent($this->bugTag, 'bug_id', true);
+        $this->assertTrue($this->bugTag->validate(['bug_id']));
     }
 
     public function testBugIdIsInteger()
@@ -49,13 +47,7 @@ class BugTagTest extends \Codeception\Test\Unit
     
     public function testNameIsRequired()
     {
-        $this->assertFalse($this->bugTag->validate(['name']));
-    }
-
-    public function testNameIsPresent()
-    {
-        $this->bugTag->name = SELF::DEFAULT_NAME;
-        $this->fieldIsPresent($this->bugTag, 'name', true);
+        $this->assertTrue($this->bugTag->validate(['name']));
     }
 
     public function testNameIsString()
@@ -63,10 +55,9 @@ class BugTagTest extends \Codeception\Test\Unit
         $this->fieldHasType($this->bugTag, 'name', 'string');
     }
 
-    public function testDeleteStatusIsPresent()
+    public function testNameMax128Chars()
     {
-        $this->bugTag->delete_status = SELF::DEFAULT_DELETE_STATUS;
-        $this->fieldIsPresent($this->bugTag, 'delete_status', true);
+        $this->fieldHasMaxLength($this->bugTag, 'name', SELF::MAX_NAME_LEN);
     }
 
     public function testDeleteStatusHasPermittedValue()
@@ -80,19 +71,9 @@ class BugTagTest extends \Codeception\Test\Unit
         $this->fieldHasPermittedValue($this->bugTag, 'delete_status', $permit, $reject);
     }
 
-    public function testCreatedAtIsPresent()
-    {
-        $this->fieldIsPresent($this->bugTag, 'created_at', true);
-    }
-
     public function testCreatedAtIsInteger()
     {
         $this->fieldHasType($this->bugTag, 'created_at', 'integer');
-    }
-
-    public function testCreatedByIsPresent()
-    {
-        $this->fieldIsPresent($this->bugTag, 'created_by', true);
     }
 
     public function testCreatedByInteger()
@@ -103,7 +84,6 @@ class BugTagTest extends \Codeception\Test\Unit
     public function testBugTagIsValid()
     {
         $this->assertTrue($this->bugTag->validate());
-        codecept_debug('hello');
     }
 
     public function testCreatedAtInsertCurrentTimeOnCreate()
