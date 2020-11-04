@@ -26,29 +26,29 @@ trait UnitTestHelper {
 
         foreach ($invalid_values as $invalid) {
             $model->setAttribute($field, $invalid);
-            $this->assertFalse($model->validate());
+            $this->assertFalse($model->validate([$field]));
         }
     }
 
     public function fieldHasMaxLength($model, $field, $maxLen)
     {
         $model->setAttribute($field, str_repeat('a', $maxLen));
-        $this->assertTrue($model->validate());
+        $this->assertTrue($model->validate([$field]));
 
         $model->setAttribute($field, str_repeat('a', $maxLen + 1));
-        $this->assertFalse($model->validate());
+        $this->assertFalse($model->validate([$field]));
     }
 
     public function fieldHasPermittedValue($model, $field, $permitted, $unpermitted)
     {
         foreach($permitted as $val) {
             $model->setAttribute($field, $val);
-            $this->assertTrue($model->validate());
+            $this->assertTrue($model->validate([$field]));
         }
 
         foreach($unpermitted as $val) {
             $model->setAttribute($field, $val);
-            $this->assertFalse($model->validate());
+            $this->assertFalse($model->validate([$field]));
         }
     }
 
@@ -56,12 +56,12 @@ trait UnitTestHelper {
     {
         foreach($validIds as $id) {
             $this->$name->$field = $id;
-            $this->assertTrue($model->validate());
+            $this->assertTrue($model->validate([$field]));
         }
 
         foreach($invalidIds as $id) {
             $this->$name->$field = $id;
-            $this->assertFalse($model->validate());
+            $this->assertFalse($model->validate([$field]));
         }
     }
 }
