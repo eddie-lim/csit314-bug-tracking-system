@@ -75,7 +75,6 @@
         "codeception/module-asserts": "^1.0.0",
         "codeception/module-db": "dev-master",
         "codeception/module-phpbrowser": "dev-master",
-        "codeception/module-rest": "dev-master",
         "codeception/module-webdriver": "dev-master"
     },
     "autoload-dev": {
