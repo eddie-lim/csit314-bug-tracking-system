@@ -223,18 +223,21 @@ $logEntries[] = [
                         [
                             'label' => Yii::t('backend', 'System'),
                             'options' => ['class' => 'nav-header'],
+                            'visible'=> Yii::$app->user->can('administrator')
                         ],
                         [
                             'label' => Yii::t('backend', 'Users'),
                             'icon' => FAS::icon('users', ['class' => ['nav-icon']]),
                             'url' => ['/user/index'],
                             'active' => Yii::$app->controller->id === 'user',
+                            'visible'=> Yii::$app->user->can('administrator')
                         ],
                         [
                             'label' => Yii::t('backend', 'Audit Trail'),
                             'url' => ['/activity-log/audit-trail-log'],
                             'icon' => FAS::icon('history', ['class' => ['nav-icon']]),
                             'active' => Yii::$app->controller->id === 'activity-log',
+                            'visible'=> Yii::$app->user->can('administrator')
                         ],
                     ],
                 ]) ?>
