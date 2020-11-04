@@ -174,9 +174,9 @@ class Bug extends MyCustomActiveRecord
         $o->notes = $m->notes;
         $o->delete_status = $m->delete_status;
         $o->created_at = Yii::$app->formatter->asDateTime($m->created_at);
-        $o->created_by = User::findIdentity($m->created_by)->publicIdentity;
+        $o->created_by = empty($m->updated_by) ? null : User::findIdentity($m->created_by)->publicIdentity;
         $o->updated_at = Yii::$app->formatter->asDateTime($m->updated_at);
-        $o->updated_by = User::findIdentity($m->updated_by)->publicIdentity;
+        $o->updated_by = empty($m->updated_by) ? null : User::findIdentity($m->updated_by)->publicIdentity;
         $o->bug_status_badge = $m->bugStatusBadgeColor;
         $o->priority_level_badge = $m->priorityLevelBadgeColor;
         return $o;
@@ -288,7 +288,6 @@ class Bug extends MyCustomActiveRecord
           ->all();
     }
 
-
     public static function getTopReporterData($st, $et){
         return SELF::find()
           ->select(['COUNT(*) AS counter', 'created_by'])
@@ -309,6 +308,7 @@ class Bug extends MyCustomActiveRecord
           ->asArray()
           ->all();
     }
+
     public static function getCurBugStatusData(){
         return SELF::find()
           ->select(['bug_status', 'created_at', 'COUNT(id) AS counter'])

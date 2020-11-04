@@ -15,11 +15,11 @@ return [
     'components' => [
         'db' => [
             'class' => yii\db\Connection::class,
-            'dsn' => env('DB_DSN'),
-            'username' => env('DB_USERNAME'), //use test db for testing (TEST_DB_USERNAME, TEST_DB_PASSWORD, TEST_DB_DSN)
-            'password' => env('DB_PASSWORD'),
-            'tablePrefix' => env('DB_TABLE_PREFIX'),
-            'charset' => env('DB_CHARSET', 'utf8')
+            'dsn' => env('TEST_DB_DSN'),
+            'username' => env('TEST_DB_USERNAME'), //use test db for testing (TEST_DB_USERNAME, TEST_DB_PASSWORD, TEST_DB_DSN)
+            'password' => env('TEST_DB_PASSWORD'),
+            'tablePrefix' => env('TEST_DB_TABLE_PREFIX'),
+            'charset' => env('TEST_DB_CHARSET', 'utf8')
         ],
         'mailer' => [
             'useFileTransport' => true,
