@@ -259,16 +259,9 @@ class BugTest extends \Codeception\Test\Unit
 
     public function testAssocTagsGetsCorrectBugTags()
     {
+        // create bugs
         $bug1 = $this->bug;
         $bug1->save();
-
-        for ($i = 1; $i <= 3; $i++) {
-            $tag = BugTag::makeModel($bug1->id, "bug1_tag_0$i");
-            $tag->save();
-        }
-        $tag = BugTag::makeModel($bug1->id, "bug1_tag_04");
-        $tag->delete_status = MyCustomActiveRecord::DELETE_STATUS_DISABLED;
-        $tag->save();
 
         $bug2 = new Bug();
         $bug2->title = 'Control Bug';
@@ -277,14 +270,26 @@ class BugTest extends \Codeception\Test\Unit
         $bug2->bug_status = Bug::BUG_STATUS_NEW;
         $bug2->save();
 
+        // create enabled tags
+        for ($i = 1; $i <= 3; $i++) {
+            $tag = BugTag::makeModel($bug1->id, "bug1_tag_0$i");
+            $tag->save();
+        }
         for ($i = 1; $i <= 2; $i++) {
             $tag = BugTag::makeModel($bug2->id, "bug2_tag_0$i", 'base_url');
             $tag->save();
         }
+
+        // create disabled tags (should not be retrieved)
+        $tag = BugTag::makeModel($bug1->id, "bug1_tag_04");
+        $tag->delete_status = MyCustomActiveRecord::DELETE_STATUS_DISABLED;
+        $tag->save();
+
         $tag = BugTag::makeModel($bug2->id, "bug2_tag_03");
         $tag->delete_status = MyCustomActiveRecord::DELETE_STATUS_DISABLED;
         $tag->save();
 
+        // asserts
         $this->assertEquals(3, count($bug1->tags));
         foreach ($bug1->tags as $tag) {
             $this->assertEquals($bug1->id, $tag->bug_id);

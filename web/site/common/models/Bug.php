@@ -75,7 +75,8 @@ class Bug extends MyCustomActiveRecord
             ['developer_user_id', 'validateDevUID'],
             ['notes', 'string', 'max' => 1028],
             ['delete_status', 'in', 'range' => [ 'enabled', 'disabled' ]],
-            [['created_by', 'updated_by'], 'validateUserExists'],
+            ['created_by', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
+            ['updated_by', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
         ];
     }
 
@@ -86,19 +87,11 @@ class Bug extends MyCustomActiveRecord
               ->from('rbac_auth_assignment')
               ->where([
                   'user_id' => $this->$attribute,
-                  'item_name' => User::ROLE_DEVELOPER
+                  'item_name' => User::ROLE_DEVELOPER,
               ]);
 
         if (!$query->exists()) {
             $this->addError($attribute, 'dev uid must refer to existing developer');
-        }
-    }
-
-    public function validateUserExists($attribute, $params, $validator)
-    {
-        $userExists = User::find()->where([ 'id' => $this->$attribute ])->exists();
-        if (!$userExists) {
-            $this->addError($attribute, "$attribute must refer to existing user");
         }
     }
 
