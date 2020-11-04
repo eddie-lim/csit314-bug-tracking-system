@@ -11,8 +11,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
-/**
- * User model
+/** * User model
  *
  * @property integer $id
  * @property string $username
@@ -330,12 +329,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function getAvailableDevelopers(){
         $developers = User::find()
-        ->join('LEFT JOIN','bug','bug.developer_user_id = user.id')
+        //->join('LEFT JOIN','bug','bug.developer_user_id = user.id')
         ->join('LEFT JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
         ->andWhere(['rbac_auth_assignment.item_name'=> User::ROLE_DEVELOPER])
-        ->andWhere(['bug.developer_user_id'=> null])
-        ->groupBy('user.id')
+        //->andWhere(['bug.developer_user_id'=> null])
         ->all();
+        Yii::warning($developers);
         $availableDevelopers = [];
         foreach ($developers as $developer) {
           $d = array('id' => $developer->id, 'publicIdentity' => $developer->publicIdentity);
