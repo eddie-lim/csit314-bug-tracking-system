@@ -54,8 +54,8 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
     public static function deleteStatuses()
     {
         return [
-            self::DELETE_STATUS_ENABLED => Yii::t('common', 'Enabled'),
-            self::DELETE_STATUS_DISABLED => Yii::t('common', 'Disabled')
+            self::DELETE_STATUS_ENABLED => 'Enabled',
+            self::DELETE_STATUS_DISABLED => 'Disabled'
         ];
     }
 

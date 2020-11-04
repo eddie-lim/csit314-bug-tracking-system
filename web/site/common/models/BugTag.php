@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use common\components\MyCustomActiveRecord;
 
 /**
  * This is the model class for table "bug_tag".
@@ -15,7 +16,7 @@ use yii\db\ActiveRecord;
  * @property int|null $created_at
  * @property int|null $created_by
  */
-class BugTag extends \common\components\MyCustomActiveRecord
+class BugTag extends MyCustomActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -51,8 +52,9 @@ class BugTag extends \common\components\MyCustomActiveRecord
     {
         return [
             [['bug_id', 'created_at', 'created_by'], 'integer'],
-            [['delete_status'], 'string'],
+            [['delete_status'], 'in', 'range'=>array_keys(MyCustomActiveRecord::deleteStatuses())],
             [['name'], 'string', 'max' => 128],
+            [['bug_id', 'name'], 'required'],
         ];
     }
 
