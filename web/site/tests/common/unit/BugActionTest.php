@@ -18,7 +18,7 @@ class BugActionTest extends \Codeception\Test\Unit
     const BUGACTION_DEFAULT_ACTION_TYPE = "assigned";
     const BUGACTION_DEFAULT_NOTES = "test note";
     const BUGACTION_DEFAULT_DELETE_STATUS = "enabled";
-    const BUGACTION_DEFAULT_CREATED_AT = 1604462730; //2020-11-04T04:05:30+00:00 
+    const BUGACTION_DEFAULT_CREATED_AT = 1604462730; //2020-11-04T04:05:30+00:00
     const BUGACTION_DEFAULT_CREATED_BY = 1;
 
     // constant Bug model
@@ -26,14 +26,14 @@ class BugActionTest extends \Codeception\Test\Unit
     const BUG_DEFAULT_DESCRIPTION = 'description_wingwong';
     const BUG_DEFAULT_STATUS = 'new';
     const BUG_DEFAULT_PRIORITY_LEVEL = 2;
-    const BUG_DEFAULT_DEVELOPER_USER_ID = 1; 
+    const BUG_DEFAULT_DEVELOPER_USER_ID = 1;
     const BUG_DEFAULT_NOTES = NULL;
     const BUG_DEFAULT_DELETE_STATUS = 'enabled';
     const BUG_DEFAULT_CREATED_AT = 1604562730;
     const BUG_DEFAULT_CREATED_BY = 1;
     const BUG_DEFAULT_UPDATED_AT = 1604562730;
-    const BUG_DEFAULT_UPDATED_BY = 1; 
-    
+    const BUG_DEFAULT_UPDATED_BY = 1;
+
     // constant User model
     const USER_DEFAULT_USERNAME = 'test_420';
     const USER_DEFAULT_PASSWORD_HASH = '$2y$13$mF6n1Y6zZS2sxIj.O00Wme8a4BeLgQlAw89exGmrlzX0vYxurmyHS';
@@ -54,7 +54,6 @@ class BugActionTest extends \Codeception\Test\Unit
     protected $tester;
     protected $bug;
     protected $bugAction;
-    protected $bug;
     protected $bugId;
     protected $testUser;
     protected $testUserId;
