@@ -15,7 +15,7 @@ modules:
                 chromeOptions:
                     args: ["allow-insecure-localhost", "start-maximized", "no-sandbox"]
                     prefs:
-                        download.default_directory: "/home/zt/php/csit314-bug-tracking-system/web/site/tests/backend/_downloads"
+                        download.default_directory: "/tests/backend/_downloads"
         - Filesystem
         - Yii2:
             part: orm
@@ -24,3 +24,10 @@ modules:
             cleanup: false
             configFile: '../config/backend/acceptance.php'
         # - tests\common\_support\FixtureHelper
+        - Db:
+            dsn: 'mysql:host=127.0.0.1;dbname=csit314'
+            user: 'root'
+            password: ''
+            populate: true
+            cleanup: false
+            db_charset: 'utf8mb4'

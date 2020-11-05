@@ -14,5 +14,5 @@ settings:
 modules:
     config:
         Yii2:
-            configFile: '../config/base.php'   
+            configFile: '../config/backend/acceptance.php'   
             

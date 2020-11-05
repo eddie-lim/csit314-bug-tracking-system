@@ -7,7 +7,7 @@ use common\models\BugTag;
 use common\models\User;
 
 /* @var $scenario Codeception\Scenario */
-class checkAcceptanceCest{
+class checkStatisticsCest{
     public $I;
     
     public function _before() {
@@ -48,7 +48,6 @@ class checkAcceptanceCest{
     {
         $bug = new Bug();
         $devData = $bug->getTopDeveloperData();
-        codecept_debug(print_r($devData));
 
         foreach($devData as $data){
             $I->seeElement('//b[text()="'.User::findIdentity($data['developer_user_id'])->username.'"]');
@@ -90,24 +89,21 @@ class checkAcceptanceCest{
         $curMonthRep = array();
         $curMonthRes = array();
 
-        foreach($bugRep as $data){
-            if($data['m_date'] === date('m-Y')){
-              $curMonthRep = $data['counter'];
-            }
+
+        if(!array_search(date('m-Y'), array_column($bugRep, 'm_date'))){
+           $bugRep[date('m-Y')] = 0; 
         }
 
-        if(!array_key_exists(date('m-Y'), $curMonthRep)){
-           $curMonthRep[date('m-Y')] = 0; 
+        foreach($bugRep as $data){
+            $curMonthRep[$data['m_date']] = $data['counter'];
+        }
+
+        if(!array_search(date('m-Y'), array_column($bugRes, 'm_date'))){
+           $bugRes[date('m-Y')] = 0; 
         }
 
         foreach($bugRes as $data){
-            if($data['m_date'] === date('m-Y')){
-              $curMonthRes = $data['counter'];
-            }
-        }
-
-        if(!array_key_exists(date('m-Y'), $curMonthRes)){
-           $curMonthRes[date('m-Y')] = 0; 
+            $curMonthRes[$data['m_date']] = $data['counter'];
         }
 
         $I->seeElement('//i[contains(@class, "fa-bug")]/following-sibling::b[text()="'.$curMonthRep[date('m-Y')].'"]');

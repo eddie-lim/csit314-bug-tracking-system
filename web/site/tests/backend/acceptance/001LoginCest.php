@@ -10,22 +10,25 @@ class LoginCest {
 
     public function _before(AT $I) {
         $this->loginPage = new LoginPage();
-        //$I->maximizeWindow();
     }
 
     public function _after() {
     }
 
-    public function invalidCredentialsLogin(AT $I)
+    public function testLoginWithInvalidCredentials(AT $I)
     {
-        $I->login('webmaster', 'wrongpass');
-        $I->wait(3);
+        $I->login('John Hendrix', 'wrongpass');
         $I->see('Incorrect username or password.');
     }
 
-    public function validCredentialsLogin(AT $I)
+    public function testLoginWithValidCredentials(AT $I)
     {
-        $I->login('webmaster', 'webmaster');
+        $I->login('John Hendrix', 'password');
         $I->see('Bug Tracking Sys', '//span[@class="brand-text font-weight-bold"]');
+    }
+
+    public function testLogout(AT $I)
+    {
+        $I->logout();
     }
 }
