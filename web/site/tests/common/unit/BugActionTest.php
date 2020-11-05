@@ -52,6 +52,7 @@ class BugActionTest extends \Codeception\Test\Unit
      * @var \tests\common\UnitTester
      */
     protected $tester;
+    protected $bug;
     protected $bugAction;
     protected $bug;
     protected $bugId;
@@ -132,7 +133,6 @@ class BugActionTest extends \Codeception\Test\Unit
         // assigning bug action with inserted record
         $this->bugAction->bug_id = $this->bugId;
         $this->bugAction->created_by = $this->testUserId;
-
     }
 
     protected function _after()

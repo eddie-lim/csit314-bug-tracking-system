@@ -103,11 +103,7 @@ class BugDocument extends \common\components\MyCustomActiveRecord
 
     public function getPreviewData()
     {
-        if ($this->getType() === 'text') {
-            return file_get_contents($this->getFullPath());
-        } else {
-            return Yii::getAlias('@web') . '/' . $this->base_url . '/' . $this->path;
-        }
+        return Yii::getAlias('@web') . '/' . $this->base_url . '/' . $this->path;
     }
 
     public function getPreviewConfig()

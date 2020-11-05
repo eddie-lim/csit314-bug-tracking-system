@@ -75,7 +75,8 @@ class Bug extends MyCustomActiveRecord
             ['developer_user_id', 'validateDevUID'],
             ['notes', 'string', 'max' => 1028],
             ['delete_status', 'in', 'range' => [ 'enabled', 'disabled' ]],
-            [['created_by', 'updated_by'], 'validateUserExists'],
+            ['created_by', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
+            ['updated_by', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
         ];
     }
 
@@ -86,19 +87,11 @@ class Bug extends MyCustomActiveRecord
               ->from('rbac_auth_assignment')
               ->where([
                   'user_id' => $this->$attribute,
-                  'item_name' => User::ROLE_DEVELOPER
+                  'item_name' => User::ROLE_DEVELOPER,
               ]);
 
         if (!$query->exists()) {
             $this->addError($attribute, 'dev uid must refer to existing developer');
-        }
-    }
-
-    public function validateUserExists($attribute, $params, $validator)
-    {
-        $userExists = User::find()->where([ 'id' => $this->$attribute ])->exists();
-        if (!$userExists) {
-            $this->addError($attribute, "$attribute must refer to existing user");
         }
     }
 
@@ -174,9 +167,9 @@ class Bug extends MyCustomActiveRecord
         $o->notes = $m->notes;
         $o->delete_status = $m->delete_status;
         $o->created_at = Yii::$app->formatter->asDateTime($m->created_at);
-        $o->created_by = User::findIdentity($m->created_by)->publicIdentity;
+        $o->created_by = empty($m->updated_by) ? null : User::findIdentity($m->created_by)->publicIdentity;
         $o->updated_at = Yii::$app->formatter->asDateTime($m->updated_at);
-        $o->updated_by = User::findIdentity($m->updated_by)->publicIdentity;
+        $o->updated_by = empty($m->updated_by) ? null : User::findIdentity($m->updated_by)->publicIdentity;
         $o->bug_status_badge = $m->bugStatusBadgeColor;
         $o->priority_level_badge = $m->priorityLevelBadgeColor;
         return $o;
@@ -293,7 +286,6 @@ class Bug extends MyCustomActiveRecord
             ->all();
     }
 
-
     public static function getTopReporterData($st, $et){
         return SELF::find()
           ->select(['COUNT(*) AS counter', 'created_by'])
@@ -314,6 +306,7 @@ class Bug extends MyCustomActiveRecord
           ->asArray()
           ->all();
     }
+
     public static function getCurBugStatusData(){
         return SELF::find()
           ->select(['bug_status', 'created_at', 'COUNT(id) AS counter'])
