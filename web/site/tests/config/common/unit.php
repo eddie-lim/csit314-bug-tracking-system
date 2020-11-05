@@ -7,6 +7,6 @@ return yii\helpers\ArrayHelper::merge(
     require(dirname(__DIR__) . '/base.php'),
     [
         'id' => 'app-common',
-        'basePath' => YII_APP_BASE_PATH
+        'basePath' => YII_APP_BASE_PATH,
     ]
 );

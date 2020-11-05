@@ -4,4 +4,6 @@ modules:
     enabled:
         - Asserts
         - Yii2:
-            part: [ fixtures, orm ]
+            part: [ fixtures, orm, init ]
+            configFile: '../config/common/unit.php'
+            cleanup: true
