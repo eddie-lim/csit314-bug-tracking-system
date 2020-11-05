@@ -398,11 +398,11 @@ class BugTest extends \Codeception\Test\Unit
 
         $dt = \DateTime::createFromFormat('d M Y h:i:s A', $bugObj->created_at);
         $this->assertTrue($dt !== false && !array_sum($dt::getLastErrors()));
-        $this->assertEquals('John Doe', $bugObj->created_by);
+        $this->assertEquals('webmaster', $bugObj->created_by);
 
         $dt = \DateTime::createFromFormat('d M Y h:i:s A', $bugObj->updated_at);
         $this->assertTrue($dt !== false && !array_sum($dt::getLastErrors()));
-        $this->assertEquals('John Doe', $bugObj->updated_by);
+        $this->assertEquals('webmaster', $bugObj->updated_by);
 
         $this->assertEquals('badge-light', $bugObj->bug_status_badge);;
         $this->assertEquals('badge-info', $bugObj->priority_level_badge);;
