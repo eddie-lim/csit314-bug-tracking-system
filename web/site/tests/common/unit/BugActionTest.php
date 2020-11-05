@@ -9,7 +9,6 @@ class BugActionTest extends \Codeception\Test\Unit
 {
     use traits\UnitTestHelper;
 
-    const DEFAULT_BUG_ID = 500;
     const DEFAULT_ACTION_TYPE = "assigned";
     const DEFAULT_NOTES = "test note";
     const DEFAULT_DELETE_STATUS = "enabled";
@@ -21,12 +20,16 @@ class BugActionTest extends \Codeception\Test\Unit
      * @var \tests\common\UnitTester
      */
     protected $tester;
+    protected $bug;
     protected $bugAction;
 
     protected function _before()
     {
+        $this->bug = Bug::makeModel('test bug', 'for reference id');
+        $this->bug->save();
+
         $this->bugAction = new BugAction();
-        $this->bugAction->bug_id = SELF::DEFAULT_BUG_ID;
+        $this->bugAction->bug_id = $this->bug->id;
         $this->bugAction->action_type = SELF::DEFAULT_ACTION_TYPE;
         $this->bugAction->notes = SELF::DEFAULT_NOTES;
         $this->bugAction->delete_status = SELF::DEFAULT_DELETE_STATUS;
@@ -50,7 +53,7 @@ class BugActionTest extends \Codeception\Test\Unit
 
     public function testBugIdReferenceValid()
     {
-        $valid = [ SELF::DEFAULT_BUG_ID ];
+        $valid = [ $this->bug->id ];
         $invalid = [ -1, 0, 1000, 10000 ];
 
 
@@ -111,7 +114,7 @@ class BugActionTest extends \Codeception\Test\Unit
 
     public function testFnMakeModelReturnsCorrectBugAction()
     {
-        $this->assertEquals(SELF::DEFAULT_BUG_ID, $this->bugAction->makeModel($this->bugAction->bug_id, $this->bugAction->action_type)->bug_id);
+        $this->assertEquals($this->bug->id, $this->bugAction->makeModel($this->bugAction->bug_id, $this->bugAction->action_type)->bug_id);
         $this->assertNotEquals(1000, $this->bugAction->makeModel($this->bugAction->bug_id, $this->bugAction->action_type)->bug_id);
         $this->assertEquals(SELF::DEFAULT_ACTION_TYPE, $this->bugAction->makeModel($this->bugAction->bug_id, $this->bugAction->action_type)->action_type);
         $this->assertNotEquals('reopen', $this->bugAction->makeModel($this->bugAction->bug_id, $this->bugAction->action_type)->action_type);
