@@ -91,7 +91,7 @@ $logEntries[] = [
             'options' => ['class' => ['navbar-nav', 'ml-auto']],
             'encodeLabels' => false,
             'items' => [
-                [
+                /*[
                     // timeline events
                     'label' => FAR::icon('bell').' <span class="badge badge-success navbar-badge">'.TimelineEvent::find()->today()->count().'</span>',
                     'url'  => ['/timeline-event/index']
@@ -105,7 +105,7 @@ $logEntries[] = [
                         'class' => ['dropdown-menu', 'dropdown-menu-lg', 'dropdown-menu-right'],
                     ],
                     'items' => $logEntries,
-                ],
+                ],*/
                 '<li class="nav-item dropdown user-menu">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         '.Html::img(Yii::$app->user->identity->userProfile->getAvatar('/img/anonymous.png'), ['class' => ['img-circle', 'elevation-2', 'bg-white', 'user-image'], 'alt' => 'User image']).'

@@ -12,7 +12,7 @@ $this->params['body-class'] = 'login-page';
 ?>
 <div class="login-box">
     <div class="login-logo">
-        <?php echo Html::encode($this->title) ?>
+        <?php echo Yii::$app->name." <br>by I/O Hub" ?>
     </div><!-- /.login-logo -->
 
     <div class="card">
