@@ -18,6 +18,14 @@ use yii\db\ActiveRecord;
  */
 class BugAction extends \common\components\MyCustomActiveRecord
 {
+    const BUG_STATUS_NEW = "new";
+    const BUG_STATUS_ASSIGNED = "assigned";
+    const BUG_STATUS_FIXING = "fixing";
+    const BUG_STATUS_PENDING_REVIEW = "pending_review";
+    const BUG_STATUS_COMPLETED = "completed";
+    const BUG_STATUS_REJECTED ="rejected";
+    const BUG_STATUS_REOPEN = "reopen";
+
     /**
      * {@inheritdoc}
      */
@@ -51,8 +59,14 @@ class BugAction extends \common\components\MyCustomActiveRecord
     public function rules()
     {
         return [
+            ['bug_id', 'validateBugExists'],
             [['bug_id', 'created_at', 'created_by'], 'integer'],
-            [['action_type', 'notes', 'delete_status'], 'string'],
+            ['created_by', 'validateUserExists'],
+            [['action_type', 'delete_status'], 'string'],
+            ['notes', 'string', 'max' => 1028],
+            ['action_type', 'in', 'range' => [ 
+                'new', 'assigned', 'fixing', 'pending_review', 'completed', 'rejected', 'reopen'
+            ]],
         ];
     }
 
@@ -79,6 +93,22 @@ class BugAction extends \common\components\MyCustomActiveRecord
     public static function find()
     {
         return new \common\models\query\BugActionQuery(get_called_class());
+    }
+
+    public function validateUserExists($attribute, $params, $validator)
+    {
+        $userExists = User::find()->where([ 'id' => $this->$attribute ])->exists();
+        if (!$userExists) {
+            $this->addError($attribute, "$attribute must refer to existing user");
+        }
+    }
+
+    public function validateBugExists($attribute, $params, $validator)
+    {
+        $bugExists = Bug::find()->where([ 'id' => $this->$attribute ])->exists();
+        if (!$bugExists) {
+            $this->addError($attribute, "$attribute must refer to existing bug");
+        }
     }
 
     public static function makeModel($bug_id, $action_type){

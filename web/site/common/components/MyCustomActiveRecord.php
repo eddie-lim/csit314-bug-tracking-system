@@ -17,6 +17,11 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
     public $upload_file;
 
     public function init() {
+        if (!isset(Yii::$app->controller) || is_null(Yii::$app->controller)){
+            // $this->detachBehavior('timestamp');
+            // $this->detachBehavior('blame');
+            $this->detachBehavior('auditTrail');
+        }
         if(property_exists($this,'status') && !method_exists($this,'search')) {
             $this->status = SELF::DELETE_STATUS_ENABLED;
         }
@@ -49,8 +54,8 @@ class MyCustomActiveRecord extends \yii\db\ActiveRecord {
     public static function deleteStatuses()
     {
         return [
-            self::DELETE_STATUS_ENABLED => Yii::t('common', 'Enabled'),
-            self::DELETE_STATUS_DISABLED => Yii::t('common', 'Disabled')
+            self::DELETE_STATUS_ENABLED => 'Enabled',
+            self::DELETE_STATUS_DISABLED => 'Disabled'
         ];
     }
 

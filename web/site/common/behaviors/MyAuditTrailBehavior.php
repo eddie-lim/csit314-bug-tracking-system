@@ -38,7 +38,7 @@ class MyAuditTrailBehavior extends Behavior
     }
 
     public function leaveTrail() {
-        if (!isset(Yii::$app->controller) || is_null(Yii::$app->controller)) return;
+        // if (!isset(Yii::$app->controller) || is_null(Yii::$app->controller)) return;
 
         //echo "leaveTrail";
 

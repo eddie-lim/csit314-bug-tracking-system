@@ -93,7 +93,6 @@ class StatisticsController extends Controller
             }
         }
 
-
         return $this->render('index', [
             'actBugs' => $bugModel->getActiveBugsData(),
             'resBugs' => $bugModel->getResolvedBugsData(),
