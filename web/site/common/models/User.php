@@ -334,7 +334,6 @@ class User extends ActiveRecord implements IdentityInterface
         ->andWhere(['rbac_auth_assignment.item_name'=> User::ROLE_DEVELOPER])
         //->andWhere(['bug.developer_user_id'=> null])
         ->all();
-        Yii::warning($developers);
         $availableDevelopers = [];
         foreach ($developers as $developer) {
           $d = array('id' => $developer->id, 'publicIdentity' => $developer->publicIdentity);

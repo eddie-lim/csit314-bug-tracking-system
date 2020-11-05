@@ -38,7 +38,7 @@ class BugDocument extends \common\components\MyCustomActiveRecord
     {
         return [
             "timestamp" => [
-                'class' => yii\behaviors\TimestampBehavior::className(),
+                'class' => \yii\behaviors\TimestampBehavior::className(),
                 'attributes' => [
                     MyCustomActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                 ],
@@ -67,7 +67,12 @@ class BugDocument extends \common\components\MyCustomActiveRecord
         return ArrayHelper::merge([
             [['path', 'base_url'], 'safe'],
             [['bug_id', 'created_at', 'created_by'], 'integer'],
-            [['delete_status'], 'string'],
+            ['created_by', 'validateUserExists'],
+            ['bug_id', 'validateBugExists'],
+            ['delete_status', 'string'],
+            ['delete_status', 'in', 'range' => [
+                'enabled', 'disabled'
+            ]],
         ], parent::rules());
     }
 
@@ -131,6 +136,9 @@ class BugDocument extends \common\components\MyCustomActiveRecord
     {
         $details = SELF::getAjaxFileDetails($fileDetails);
         $dir = BugCreationForm::getUserUploadDir();
+
+
+        Yii::warning($details['src'] . ' : ' . $dir . DIRECTORY_SEPARATOR . $details['name']);
         $result = move_uploaded_file(
             $details['src'], $dir . DIRECTORY_SEPARATOR . $details['name']
         );
@@ -224,6 +232,7 @@ class BugDocument extends \common\components\MyCustomActiveRecord
 
     private static function getAjaxFileDetails($details)
     {
+        Yii::warning($details);
         foreach ($details as $key => $value) {
             if ($key == 'name') {
                 $name = $value['documents'][0];
@@ -234,6 +243,21 @@ class BugDocument extends \common\components\MyCustomActiveRecord
         return [ 'name' => $name, 'src' => $src ];
     }
 
+    public function validateBugExists($attribute, $params, $validator)
+    {
+        $bugExists = Bug::find()->where([ 'id' => $this->$attribute ])->exists();
+        if (!$bugExists) {
+            $this->addError($attribute, "$attribute must refer to existing bug");
+        }
+    }
+
+    public function validateUserExists($attribute, $params, $validator)
+    {
+        $userExists = User::find()->where([ 'id' => $this->$attribute ])->exists();
+        if (!$userExists) {
+            $this->addError($attribute, "$attribute must refer to existing user");
+        }
+    }
     /**
      * {@inheritdoc}
      * @return \common\models\query\BugDocumentQuery the active query used by this AR class.
