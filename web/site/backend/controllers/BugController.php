@@ -51,7 +51,8 @@ class BugController extends Controller
         } elseif (Yii::$app->user->can(User::ROLE_TRIAGER)){
           $searchModel->setFilterByNewUnassigned(true);
         } elseif (Yii::$app->user->can(User::ROLE_DEVELOPER)) {
-          $searchModel->setFilterBy([Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REOPEN, Bug::BUG_STATUS_FIXING]);
+            $searchModel->setFilterBy([Bug::BUG_STATUS_ASSIGNED, Bug::BUG_STATUS_REOPEN, 
+                Bug::BUG_STATUS_FIXING, Bug::BUG_STATUS_PENDING_REVIEW]);
           $searchModel->setAssignedTo(Yii::$app->user->getID());
         }
 
