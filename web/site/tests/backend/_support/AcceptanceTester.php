@@ -50,19 +50,19 @@ class AcceptanceTester extends \Codeception\Actor
         $this->fillField('#bugcreationform-description', $params["description"]);
 
         foreach($params["images"] as $image)
-        { 
+        {
             $this->attachFile(
-                '//input[@type="file"]', 
+                '//input[@type="file"]',
                 $image // file located in _data
-            ); 
+            );
         }
 
 
         foreach($params["tags"] as $tag)
-        { 
+        {
             //https://php-webdriver.github.io/php-webdriver/1.0.0/Facebook/WebDriver/WebDriverKeys.html
             $this->pressKey(
-                '.select2-search__field', 
+                '.select2-search__field',
                 $tag,
                 \Facebook\WebDriver\WebDriverKeys::ENTER
             );
@@ -78,7 +78,7 @@ class AcceptanceTester extends \Codeception\Actor
         {
             $this->attachFile('//input[@type="file"]', $image);
             $this->wait(1);
-            $this->seeElement('//img[@title="'.$image.'"]'); 
+            $this->seeElement('//img[@title="'.$image.'"]');
         }
     }
 
@@ -90,7 +90,7 @@ class AcceptanceTester extends \Codeception\Actor
                 $this->wait(1);
                 $this->seeNumberOfElements('//div[@class="file-preview-thumbnails clearfix"]', 0);
             }
-        } else {  
+        } else {
             $this->click('//button[@class="close fileinput-remove"]');
             $this->dontSeeElement('//div[@class="kv-file-content"]');
         }
@@ -125,9 +125,9 @@ class AcceptanceTester extends \Codeception\Actor
         }
     }
 
-    public function accessBug($bug_id)
+    public function accessBug($bug_id, $title)
     {
-        $this->wait(1);
+        $this->waitForText($title, 30);
         $this->click('//a[@href="/bug/view?id='.$bug_id.'"]');
         $this->wait(2);
         $this->seeCurrentUrlMatches('~/bug/view\?id='.$bug_id.'~');
@@ -145,7 +145,7 @@ class AcceptanceTester extends \Codeception\Actor
     {
         $img = $this->grabMultiple('//a[@title="kv-file-download btn btn-sm btn-kv btn-default btn-outline-secondary"]');
         $img = $this->grabMultiple('//a[@title="Download file"]', 'download');
-        
+
         foreach($img as $imeji){
             $this->click('//a[@title="Download file" and @download="'.$imeji.'"]/i[@class="fas fa-download"]');
             $this->wait(2);
@@ -170,15 +170,15 @@ class AcceptanceTester extends \Codeception\Actor
         $this->click('//a[@id="create-tag"]');
         $this->fillField('#bugtaskform-notes', 'this is some content inside notes');
         $this->click('Update');
-        $this->wait(1);
 
         // check ajax status updates
-        $this->see($dev, '#developer_user');
+        $this->waitForText($dev, 30, '#developer_user');
         $this->see('assigned', '#bug_status');
         $this->see($pri+1, '//span[@id="priority_level" and contains(@class, "badge")]');
 
         $this->click('#task-form-header');
         $this->wait(1);
+
         // \xc2\xa0 to replace &nbsp;
         $availTags = str_replace("\xc2\xa0", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
         assert(in_array('tagtest1', $availTags));
@@ -192,10 +192,9 @@ class AcceptanceTester extends \Codeception\Actor
         $this->fillField('#create-tag-input', 'tagtest2');
         $this->click('//a[@id="create-tag"]');
         $this->click('Update');
-        $this->wait(2);
 
         // check ajax
-        $this->see('fixing', '#bug_status');
+        $this->waitForText('FIXING', 30, '#bug_status');
         $this->wait(1);
         // \xc2\xa0 to replace &nbsp;
         $availTags = str_replace("\xc2\xa0", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
@@ -207,8 +206,7 @@ class AcceptanceTester extends \Codeception\Actor
         $this->checkCommentFunction("fixed, pend rev");
         $this->selectOption('BugTaskForm[status]', 'Pending Review');
         $this->click('Update');
-        $this->wait(2);
-        $this->see('pending_review', '#bug_status');        
+        $this->waitForText('PENDING_REVIEW', 30, '#bug_status');
     }
 
     public function completeBug()
@@ -216,8 +214,7 @@ class AcceptanceTester extends \Codeception\Actor
         $this->checkCommentFunction("bug fix confirmed, closing.");
         $this->selectOption('BugTaskForm[status]', 'Complete');
         $this->click('Update');
-        $this->wait(1);
-        $this->see('complete', '#bug_status');        
+        $this->waitForText('COMPLETED', 30, '#bug_status');
     }
 
     public function reopenBug()
@@ -225,15 +222,13 @@ class AcceptanceTester extends \Codeception\Actor
         $this->checkCommentFunction("bug fix failed, reopening.");
         $this->selectOption('BugTaskForm[status]', 'Re-open');
         $this->click('Update');
-        $this->wait(1);
-        $this->see('reopen', '#bug_status');        
+        $this->waitForText('REOPEN', 30, '#bug_status');
     }
 
     public function selectDateRange($start = "2 Oct 2020", $end = "16 Oct 2020")
     {
         $startDate = explode(" ", $start);
         $endDate = explode(" ", $end);
-
 
         $this->clickWithLeftButton('//input[@name="ExportForm[date_range]"]');
         $this->wait(1);

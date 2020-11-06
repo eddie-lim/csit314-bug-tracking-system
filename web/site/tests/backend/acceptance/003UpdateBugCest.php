@@ -6,6 +6,7 @@ use tests\backend\AcceptanceTester as AT;
 class updateBugCest{
     public $I;
     protected $testId;
+    protected $targetTitle;
     protected $dev;
 
     public function _before(AT $I) {
@@ -19,19 +20,29 @@ class updateBugCest{
         $this->testId = $testId;
     }
 
+    protected function updateTargetTitle($title)
+    {
+        $this->targetTitle = $title;
+    }
+
     protected function updateDev($dev)
     {
         $this->dev = $dev;
     }
-     
+
     public function assignBugAsTriager(AT $I)
     {
         $I->login('Gene Williams', 'password');
         $I->click('//a[@href="/bug/tasks"]');
         $entries = $I->grabMultiple('//tbody/tr', 'data-key');
-        $this->updateTestId($entries[rand(0, count($entries)-1)]);
+
+        $bugId = $entries[rand(0, count($entries)-1)];
+        $this->updateTestId($bugId);
+        $bugTitle = $I->grabTextFrom('//a[@href="/bug/view?id=' . $bugId . '"]');
+        $this->updateTargetTitle($bugTitle);
+
         $I->wait(1);
-        $I->accessBug($this->testId);
+        $I->accessBug($this->testId, $this->targetTitle);
         $I->checkCommentFunction("huge bug, please fix");
         $I->checkDownloadFunction();
 
@@ -43,9 +54,10 @@ class updateBugCest{
     {
         $I->login($this->dev, 'password');
         // navigate to assigned form
+        $I->reloadPage();
         $I->click('//a[@href="/bug/tasks"]');
         $I->wait(1);
-        $I->accessBug($this->testId);
+        $I->accessBug($this->testId, $this->targetTitle);
         $I->checkCommentFunction("ok, accepted");
         $I->checkDownloadFunction();
         $I->acceptAssignedBug();
@@ -54,9 +66,10 @@ class updateBugCest{
     public function pendReviewBugAsDeveloper(AT $I)
     {
         $I->amOnPage('bug/index');
+        $I->reloadPage();
         $I->click('//a[@href="/bug/tasks"]');
         $I->wait(1);
-        $I->accessBug($this->testId);
+        $I->accessBug($this->testId, $this->targetTitle);
         $I->pendingReview();
         $I->logout();
     }
@@ -64,8 +77,10 @@ class updateBugCest{
     public function reopenBugAsReviewer(AT $I)
     {
         $I->login('Alvin Bruce', 'password');
+        $I->reloadPage();
         $I->click('//a[@href="/bug/tasks"]');
-        $I->accessBug($this->testId);
+        $I->wait(1);
+        $I->accessBug($this->testId, $this->targetTitle);
         $I->reopenBug();
         $I->logout();
         $this->acceptBugAsDeveloper($I);
@@ -75,10 +90,11 @@ class updateBugCest{
     public function completeBugAsReviewer(AT $I)
     {
         $I->login('Alvin Bruce', 'password');
+        $I->reloadPage();
         $I->click('//a[@href="/bug/tasks"]');
-        $I->accessBug($this->testId);
+        $I->wait(1);
+        $I->accessBug($this->testId, $this->targetTitle);
         $I->completeBug();
         $I->logout();
     }
 }
-
