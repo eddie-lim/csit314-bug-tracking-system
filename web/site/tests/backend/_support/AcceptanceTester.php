@@ -180,7 +180,7 @@ class AcceptanceTester extends \Codeception\Actor
         $this->wait(1);
 
         // \xc2\xa0 to replace &nbsp;
-        $availTags = str_replace("\xc2\xa0", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
+        $availTags = preg_replace("/[^A-Za-z0-9]/", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
         assert(in_array('tagtest1', $availTags));
 
         return $dev;
@@ -196,8 +196,9 @@ class AcceptanceTester extends \Codeception\Actor
         // check ajax
         $this->waitForText('FIXING', 30, '#bug_status');
         $this->wait(1);
+
         // \xc2\xa0 to replace &nbsp;
-        $availTags = str_replace("\xc2\xa0", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
+        $availTags = preg_replace("/[^A-Za-z0-9]/", '', array_map('strtolower', $this->grabMultiple('//div[@id="tag-badge-wrapper"]/div', 'innerText')));
         assert(in_array('tagtest2', $availTags));
     }
 
