@@ -1,0 +1,63 @@
+default:
+  image: crunchgeek/php-fpm:7.3
+  services:
+    - name: mysql:5.7
+
+# Select what we should cache between builds
+cache:
+  paths:
+    - ./web/site/vendor/
+
+variables:
+  MYSQL_DATABASE: csit314
+  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+  MYSQL_ROOT_PASSWORD: ""
+
+before_script:
+  # Update repos
+  - apt-get update -yqq
+  # Install libraries
+  - apt-get install -yqq git zlibc
+  # git libmcrypt-dev libpq-dev libcurl4-gnutls-dev libicu-dev libvpx-dev libjpeg-dev libpng-dev libxpm-dev zlib1g-dev libfreetype6-dev libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev libzip-dev
+  # Install PHP extensions
+  #- docker-php-ext-install zip pdo_pgsql curl json xml bz2 opcache pdo_mysql pcntl mysqli pdo
+
+install_project:
+  stage: build
+  script:
+    # Install project dependencies
+    - curl -sS https://getcomposer.org/installer | php
+    - mv composer.phar /usr/local/bin/composer
+    - cd ./web/site
+    - composer update
+    - composer install --ignore-platform-reqs
+    - ./vendor/bin/codecept build
+
+unit_test:
+  stage: test
+  script:
+    # Prep DB
+    - apt-get install -yqq --no-install-recommends default-mysql-client
+    - mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql < "_info/schema.sql"
+    # Install & enable Xdebug for code coverage reports
+    - pecl install xdebug
+    - docker-php-ext-enable xdebug
+    # Run tests
+    - cd ./web/site
+    - ./vendor/bin/codecept run unit --debug --config tests/common
+
+deploy_to_heroku:
+  stage: deploy
+  script:
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - cd ./web/site
+    - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+
+stages:
+  - build
+  - test
+  - deploy
+
+only:
+  - heroku-deploy
