@@ -146,6 +146,19 @@ class AcceptanceTester extends \Codeception\Actor
         $img = $this->grabMultiple('//a[@title="kv-file-download btn btn-sm btn-kv btn-default btn-outline-secondary"]');
         $img = $this->grabMultiple('//a[@title="Download file"]', 'download');
 
+        // https://github.com/Codeception/Codeception/issues/5518
+        // dynamically set download path for relevant page
+        $this->executeInSelenium(function(\Facebook\WebDriver\Remote\RemoteWebDriver $webdriver) {
+          $params = array(
+                'cmd' => 'Page.setDownloadBehavior',
+                'params' => array(
+                        "behavior" => 'allow',
+                        "downloadPath" => getcwd() .'/tests/backend/_downloads',
+                ),
+        );
+          $webdriver->executeCustomCommand('/session/:sessionId/chromium/send_command', 'POST', $params);
+        });
+
         foreach($img as $imeji){
             $this->click('//a[@title="Download file" and @download="'.$imeji.'"]/i[@class="fas fa-download"]');
             $this->wait(2);

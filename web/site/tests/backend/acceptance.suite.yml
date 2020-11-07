@@ -12,10 +12,8 @@ modules:
             port: 9515
             browser: chrome
             capabilities:
-                chromeOptions:
+                "goog:chromeOptions":
                     args: ["allow-insecure-localhost", "start-maximized", "no-sandbox"]
-                    prefs:
-                        download.default_directory: "/tests/backend/_downloads"
         - Filesystem
         - Yii2:
             part: orm
