@@ -19,6 +19,7 @@ class checkStatisticsCest{
     public function checkOverallBugsNumber(AT $I)
     {
         $I->login('Gene Williams', 'password');
+        $I->reloadPage();
         $I->click('//a[@href="/statistics/index"]');
         $I->wait(1);
         $bug = new Bug();
