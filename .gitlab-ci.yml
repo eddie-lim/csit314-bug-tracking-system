@@ -54,8 +54,8 @@ deploy_to_heroku:
     - cd ./web/site
     - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
 
-    only:
-      - heroku-deploy
+  only:
+    - heroku-deploy
 
 
 stages:
