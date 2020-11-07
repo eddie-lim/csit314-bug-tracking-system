@@ -280,7 +280,7 @@ class Bug extends MyCustomActiveRecord
             ->where(['action_type'=>SELF::BUG_STATUS_COMPLETED])
             ->andWhere(['FROM_UNIXTIME(`bug_action`.`created_at`, "%m-%Y")' => $st])
             ->groupBy('developer_user_id')
-            ->orderBy(['counter'=>SORT_DESC])
+            ->orderBy(['counter' => SORT_DESC, 'developer_user_id' => SORT_ASC])
             ->asArray()
             ->limit(3)
             ->all();

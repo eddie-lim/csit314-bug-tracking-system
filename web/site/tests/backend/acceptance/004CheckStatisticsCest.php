@@ -9,7 +9,7 @@ use common\models\User;
 /* @var $scenario Codeception\Scenario */
 class checkStatisticsCest{
     public $I;
-    
+
     public function _before() {
     }
 
@@ -43,13 +43,14 @@ class checkStatisticsCest{
         }
     }
 
-
     public function checkTopDevelopers(AT $I)
     {
         $bug = new Bug();
         $devData = $bug->getTopDeveloperData();
 
         foreach($devData as $data){
+            $devName = User::findIdentity($data['developer_user_id'])->username;
+            $I->waitForText($devName, 30);
             $I->seeElement('//b[text()="'.User::findIdentity($data['developer_user_id'])->username.'"]');
             $I->seeElement('//b[text()="'.User::findIdentity($data['developer_user_id'])->username.'"]/following-sibling::span[contains(@class, "badge") and contains(text(), "'.$data['counter'].'")]');
         }
@@ -66,7 +67,7 @@ class checkStatisticsCest{
             $I->seeElement('//div[@class="card-title"]/b[text()="Current bugs by Priority Level"]/../following-sibling::div[contains(., "Priority Level '.$x['priority_level'].'")]');
             $I->seeElement('//span[contains(@class, "badge") and contains(text(), "'.$x['counter'].'")]');
             $I->wait(1);
-        } 
+        }
     }
 
     public function checkPopularBugTags(AT $I)
@@ -91,7 +92,7 @@ class checkStatisticsCest{
 
 
         if(!array_search(date('m-Y'), array_column($bugRep, 'm_date'))){
-           $bugRep[date('m-Y')] = 0; 
+            $bugRep[date('m-Y')] = 0;
         }
 
         foreach($bugRep as $data){
@@ -99,7 +100,7 @@ class checkStatisticsCest{
         }
 
         if(!array_search(date('m-Y'), array_column($bugRes, 'm_date'))){
-           $bugRes[date('m-Y')] = 0; 
+            $bugRes[date('m-Y')] = 0;
         }
 
         foreach($bugRes as $data){
@@ -146,5 +147,4 @@ class checkStatisticsCest{
         $I->seeElement('//h2[text()="Top developers"]/following-sibling::div[@class="grid-view"]');
         $I->wait(1);
     }
-}
-
+  }
