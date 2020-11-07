@@ -33,6 +33,9 @@ install_project:
     - composer install --ignore-platform-reqs
     - ./vendor/bin/codecept build
 
+  only:
+    - heroku-deploy
+
 unit_test:
   stage: test
   script:
@@ -45,6 +48,9 @@ unit_test:
     # Run tests
     - cd ./web/site
     - ./vendor/bin/codecept run unit --debug --config tests/common
+
+  only:
+    - heroku-deploy
 
 deploy_to_heroku:
   stage: deploy
