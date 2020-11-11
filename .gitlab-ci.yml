@@ -41,7 +41,7 @@ unit_test:
   script:
     # Prep DB
     - apt-get install -yqq --no-install-recommends default-mysql-client
-    - mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql < "_info/schema.sql"
+    - mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql < "_info/test_schema.sql"
     # Install & enable Xdebug for code coverage reports
     - pecl install xdebug
     - docker-php-ext-enable xdebug
