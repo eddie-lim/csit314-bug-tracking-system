@@ -1,3 +1,4 @@
+[![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](https://www.yiiframework.com/)
 ![uow logo](./pictures/uow.png)
 # CSIT314 Software Development Methodologies Project - Bug Tracking System
 
